@@ -17,10 +17,10 @@ from kivy.uix.label import Label
 #from kivy.uix.treeview import TreeView, TreeViewNode
 #from kivy.uix.treeview import TreeViewLabel
 #from kivy.uix.scrollview import ScrollView
-#from kivy.clock import Clock
+from kivy.clock import Clock
 #import time
 
-from kivy.uix.slider import Slider
+from kivy.uix.progressbar import ProgressBar
 #from kivy.clock import Clock
 
 #from kivy.uix.bubble import Bubble
@@ -80,12 +80,12 @@ Builder.load_string('''
             text: ''
         Button:
             text: '2 min?'
-            on_release: root.two()
+            on_release: root.start=2
         Label:
             text: ''
         Button:
             text: '5 min'
-            on_release: root.five()
+            on_release: root.start=5
         Label:
             text: ''
         Button:
@@ -105,51 +105,53 @@ class PlanScreen(Screen):
 
 class MFScreen(Screen):
 	
+	start = 0
+	limit = 0
 	endtime = 0
 	nowtime = 0
 	nr = 0
 	parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness"]
 
-	def __init__ (self,**kwargs):
-		super (MFScreen, self).__init__(**kwargs)
-		pass
+	#def __init__ (self,**kwargs):
+		#super (MFScreen, self).__init__(**kwargs)
+		#pass
+
+	def update(self,dt):
 		
-	def two(self):
-		self.endtime=2*60
+		if self.start != 0:
+			self.endtime = self.start 
+			self.limit = self.start 
+			self.start = 0
+			box = BoxLayout(orientation='vertical')
+			popup1 = Popup(title='%s min mindfulness'%(self.start), content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
 
-
-
-		box = BoxLayout(orientation='vertical')
-		popup1 = Popup(title='2 min mindfulness', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
-
-		a1slider = Slider(
+			a1slider = ProgressBar(
+			value= self.nowtime,
+			max=self.endtime,
+			min=0,
 			size_hint_y=None,
-			size_hint_x=.5,
-			step=1,
-			min=-1,
-			max=7,
-			value=-1,
-			id="a1slider",
-			orientation='vertical',
+			size_hint_x=1,
+			orientation='horizontal'#,
+			#id="a1slider",
 			#height= 7*(a1text00.height)
 			
-		)
+			)
 		
-		a1slider.bind(height=a1slider.setter('self.minimum_height'))
-		box.add_widget(a1slider)
-	
-		box.add_widget(Label(text=self.parts[self.nr]))
-
-		next_btn = Button(text='next mindfulness')
-		next_btn.bind(on_release=lambda store_btn: self.nextpopup(popup1))
-		box.add_widget(next_btn)
-
-		exit_btn = Button(text='Exit mindfulness')
-		exit_btn.bind(on_release=lambda store_btn: self.exitpopup(popup1))
-		box.add_widget(exit_btn)
+			a1slider.bind(height=a1slider.setter('self.minimum_height'))
+			box.add_widget(a1slider)
 		
-		popup1.open()
+			box.add_widget(Label(text=self.parts[self.nr]))
 
+			next_btn = Button(text='next mindfulness')
+			next_btn.bind(on_release=lambda store_btn: self.nextpopup(popup1))
+			box.add_widget(next_btn)
+
+			exit_btn = Button(text='Exit mindfulness')
+			exit_btn.bind(on_release=lambda store_btn: self.exitpopup(popup1))
+			box.add_widget(exit_btn)
+			
+			popup1.open()
+		self.nowtime -= 1
 
 	def five(self):
 		box = BoxLayout(orientation='vertical')
@@ -239,7 +241,7 @@ class GnomieApp(App):
 		reviewscreen = ReviewScreen(name='reviewscreen')
 		mfscreen = MFScreen(name='mfscreen')
 		planscreen = PlanScreen(name='planscreen')
-		#Clock.schedule_interval(homescreen.update, 0.25)
+		Clock.schedule_interval(mfscreen.update, 0.25)
 		#if mngr=='start':
 		the_screenmanager.add_widget(startscreen)
 		the_screenmanager.add_widget(reviewscreen)
