@@ -5,7 +5,7 @@ kivy.require('1.7.2') # replace with your current kivy version !
 
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
-#from kivy.properties import ObjectProperty, StringProperty, NumericProperty
+from kivy.properties import ObjectProperty, StringProperty, NumericProperty
 from kivy.uix.button import Button
 #from kivy.uix.gridlayout import GridLayout
 #from functools import partial
@@ -35,7 +35,7 @@ from kivy.uix.progressbar import ProgressBar
 #markedlines=list()
 
 #my_screenmanager = ScreenManager()
-#mngr="start"
+mngr="start"
 Builder.load_string('''
 <StartScreen>:
 	name: 'startscreen'
@@ -80,142 +80,135 @@ Builder.load_string('''
             text: ''
         Button:
             text: '2 min?'
-            on_release: root.start=2
+            on_release: root.two()
         Label:
             text: ''
         Button:
-            text: '5 min'
-            on_release: root.start=5
+            text: '4 min'
+            on_release: root.four()
         Label:
             text: ''
         Button:
             text: 'Back to start?'
             on_release: app.root.current = 'startscreen'
+<ExeScreen>:
+    name: 'exescreen'
+    orientation: 'vertical'
+    MFExe:
+    
+<MFExe>:
+    anchor_x: 'center'
+    anchor_y: 'top'
+    orientation: 'vertical'
+    padding: 50
+    ProgressBar:
+        value: root.nowtime
+        max: root.limit
+    Label:
+        text: root.parts[root.nowpart]
+    Button:
+        text: "Next"
+        #on_release: if root.nowpart < 4: root.nowpart += 1
+        on_release: root.Next()
+    Button:
+        text: "Previous"
+        on_release: root.Prev()
+    Button:
+        text: "Exit"
+        on_release: root.Exit()
 <PlanScreen>:
     name: 'planscreen'
     BoxLayout:
         orientation: 'vertical'
         padding: 50
 ''')
-
+the_screenmanager = ScreenManager()
+endtime = 0	
 class PlanScreen(Screen):
 	def __init__ (self,**kwargs):
 		super (PlanScreen, self).__init__(**kwargs)
 		pass
 
 class MFScreen(Screen):
+	global endtime
+	global the_screenmanager
+	global mngr
+	def __init__ (self,**kwargs):
+		global endtime
+		super (MFScreen, self).__init__(**kwargs)
+	def two(self):
+		global the_screenmanager
+		global endtime
+		global mngr
+		mngr='exescreen'		
+		endtime=120
+		the_screenmanager.current = 'exescreen'
+
+	def four(self):
+		global the_screenmanager
+		global endtime
+		global mngr
+		mngr='exescreen'		
+		endtime=240
+		the_screenmanager.current = 'exescreen'
+
+class ExeScreen(Screen):
+	pass		
 	
-	start = 0
-	limit = 0
-	endtime = 0
-	nowtime = 0
-	nr = 0
-	parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness"]
-
-	#def __init__ (self,**kwargs):
-		#super (MFScreen, self).__init__(**kwargs)
-		#pass
-
-	def update(self,dt):
+class MFExe(BoxLayout):
+	global mngr
+	global the_screenmanager
+	global endtime
+	nowtime = NumericProperty(0)
+	#limit=NumericProperty(eval(str(endtime)))
+	limit=NumericProperty(0)
+	parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
+	nowpart = NumericProperty(0)
+	def __init__ (self,**kwargs):
+		#global the_screenmanager
+		#global endtime
+		super (MFExe, self).__init__(**kwargs)
+		#if mngr == 'exescreen':
+		#	Clock.schedule_interval(self.update, 0.25)
+		Clock.schedule_interval(self.update, 0.2)
 		
-		if self.start != 0:
-			self.endtime = self.start 
-			self.limit = self.start 
-			self.start = 0
-			box = BoxLayout(orientation='vertical')
-			popup1 = Popup(title='%s min mindfulness'%(self.start), content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
+	def update(self, dt):
+		self.limit=endtime
+		global mngr
+		if mngr == "exescreen":
+			if self.nowtime >= self.limit and self.nowpart < 5 and self.nowpart >= 0:
+				if self.nowpart == 5:
+					self.nowtime = 0
+				else:
+					self.nowpart+=1
+					self.nowtime = 0
+			elif self.nowpart != 5:		
+				self.nowtime+=1
+		#print self.nowtime
+		#print mngr
+		#print self.limit
+	
+	def Next(self):
+		if self.nowpart < 5:
+			self.nowpart += 1
+			self.nowtime=0
 
-			a1slider = ProgressBar(
-			value= self.nowtime,
-			max=self.endtime,
-			min=0,
-			size_hint_y=None,
-			size_hint_x=1,
-			orientation='horizontal'#,
-			#id="a1slider",
-			#height= 7*(a1text00.height)
+	def Prev(self):
+		if self.nowpart > 0:
+			self.nowpart -= 1
+			self.nowtime=0
 			
-			)
-		
-			a1slider.bind(height=a1slider.setter('self.minimum_height'))
-			box.add_widget(a1slider)
-		
-			box.add_widget(Label(text=self.parts[self.nr]))
-
-			next_btn = Button(text='next mindfulness')
-			next_btn.bind(on_release=lambda store_btn: self.nextpopup(popup1))
-			box.add_widget(next_btn)
-
-			exit_btn = Button(text='Exit mindfulness')
-			exit_btn.bind(on_release=lambda store_btn: self.exitpopup(popup1))
-			box.add_widget(exit_btn)
+	def Exit(self):
+		global the_screenmanager
+		global mngr
+		self.nowpart = 0
+		self.nowtime=0						
+		mngr = 'start'
+		the_screenmanager.current = 'mfscreen'
 			
-			popup1.open()
-		self.nowtime -= 1
-
-	def five(self):
-		box = BoxLayout(orientation='vertical')
-		popup1 = Popup(title='5 min mindfulness', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
-	
-		box.add_widget(Label(text='take a deep breath...'))
-
-		exit_btn = Button(text='Exit mindfulness')
-		exit_btn.bind(on_release=lambda store_btn: self.exitpopup(popup1))
-		box.add_widget(exit_btn)
 		
-		popup1.open()
 		
-	def exitpopup(self,popup1):
-		popup1.dismiss()
-		
-	def nextpopup(self,popup1):
-		popup1.dismiss()
-		if self.nr < 4:
-			self.nr += 1
-		box = BoxLayout(orientation='vertical')
-		popup1 = Popup(title='2 min mindfulness', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
-	
-		box.add_widget(Label(text=self.parts[self.nr]))
-
-		if self.nr < 4:
-			next_btn = Button(text='next step')
-			next_btn.bind(on_release=lambda store_btn: self.nextpopup(popup1))
-			box.add_widget(next_btn)
-		if self.nr > 0:
-			next_btn = Button(text='previous step')
-			next_btn.bind(on_release=lambda store_btn: self.prevpopup(popup1))
-			box.add_widget(next_btn)
-
-		exit_btn = Button(text='Exit mindfulness')
-		exit_btn.bind(on_release=lambda store_btn: self.exitpopup(popup1))
-		box.add_widget(exit_btn)
-		
-		popup1.open()
-
-	def prevpopup(self,popup1):
-		popup1.dismiss()
-		if self.nr > 0:
-			self.nr -= 1
-		box = BoxLayout(orientation='vertical')
-		popup1 = Popup(title='2 min mindfulness', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
-	
-		box.add_widget(Label(text=self.parts[self.nr]))
-
-		if self.nr > 0:
-			next_btn = Button(text='next step')
-			next_btn.bind(on_release=lambda store_btn: self.nextpopup(popup1))
-			box.add_widget(next_btn)
-		if self.nr > 0:
-			next_btn = Button(text='previous step')
-			next_btn.bind(on_release=lambda store_btn: self.prevpopup(popup1))
-			box.add_widget(next_btn)
-
-		exit_btn = Button(text='Exit mindfulness')
-		exit_btn.bind(on_release=lambda store_btn: self.exitpopup(popup1))
-		box.add_widget(exit_btn)
-		
-		popup1.open()
-		
+#https://stackoverflow.com/questions/40341674/update-kivy-label-using-screen-manager
 
 class ReviewScreen(Screen):
 	def __init__ (self,**kwargs):
@@ -233,22 +226,25 @@ class StartScreen(Screen):
 		pass		
 		
 class GnomieApp(App):
-	#global my_screenmanager
+	global my_screenmanager
 	def build(self):
-		#global my_screenmanager
-		the_screenmanager = ScreenManager()
+		global my_screenmanager
+		#the_screenmanager = ScreenManager()
 		startscreen = StartScreen(name='startscreen')
 		reviewscreen = ReviewScreen(name='reviewscreen')
 		mfscreen = MFScreen(name='mfscreen')
+		exescreen = ExeScreen(name='exescreen')
 		planscreen = PlanScreen(name='planscreen')
-		Clock.schedule_interval(mfscreen.update, 0.25)
+		
 		#if mngr=='start':
 		the_screenmanager.add_widget(startscreen)
 		the_screenmanager.add_widget(reviewscreen)
 		the_screenmanager.add_widget(mfscreen)
+		the_screenmanager.add_widget(exescreen)
 		the_screenmanager.add_widget(planscreen)
 		return the_screenmanager
-		#return HomeScreen()
+		
+		
 		
 if __name__ == '__main__':
 	GnomieApp().run()
