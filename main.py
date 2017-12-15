@@ -242,24 +242,17 @@ class PlanScreen(Screen):
 		#https://stackoverflow.com/questions/36609017/kivy-spinner-widget-with-multiple-selection
 		#itemlist = list(idata.find(name=str(spinner.text)))
 		#itemlist=list({idata.find(spinner.text)['item']})
-		newitems=set()
-		for anitem in idata.find(name=str(spinner.text)):
-			#print anitem[1]
-			newitems.add(anitem[1])
+		newitems=list()
+		for anitem, atype in idata.find(itemtype=str(spinner.text)):
+			newitems.append(anitem)
+		print newitems
 		box.add_widget(MultiSelectSpinner(
 			#id="visions",
 			size_hint=(None, None),
 			size=(100, 44),
 			pos_hint={'center_x': .5, 'center_y': .5},
 		
-			#values=itemlist
-			#values= list(x[1] for x in idata.find(name='spinner'))
-			#values = idata.find(name=str(spinner.text))
-			#values=list({idata.get(str(spinner.text))})
-			
-			#values=newitems
-			
-			values = (" %s"%(','.join(newitems)))
+			values = newitems
 		))
 		
 		box.add_widget(Button(
@@ -268,6 +261,7 @@ class PlanScreen(Screen):
 			text='Remove'))
 		store_btn=(Button(text='Add item'))
 		inpt=TextInput(text='')
+		#problem?:
 		store_btn.bind(on_release=(lambda store_btn: self.add_item(spinner.text, inpt.text, popup1)))
 		box.add_widget(inpt)
 		box.add_widget(store_btn)
@@ -280,7 +274,7 @@ class PlanScreen(Screen):
 	def add_item(self, varitemtype, theitem, popup1):
 		popup1.dismiss()
 		
-		idata.put(theitem, itemtype=varitemtype, name=theitem)
+		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
 
 	def Exit(self):
 		global the_screenmanager
