@@ -34,7 +34,7 @@ from kivy.storage.jsonstore import JsonStore
 
 idata = JsonStore('itemdata.json')
 
-idata.put('item', Visions='')
+#idata.put('item', Visions='')
 #idata.put('Missions', item='')
 #idata.put('Objectives', item='')
 		#inpt=TextInput(text=settingdata.get('email')['address'], multiline=False)
@@ -42,7 +42,8 @@ idata.put('item', Visions='')
 	#def change_mail(self, theaddress, popup1):
 		#popup1.dismiss()
 		#settingdata.put('email', address=theaddress)
-		
+
+selected = list()		
 		
 #class TreeViewButton(Button, TreeViewNode):
 #	pass
@@ -216,6 +217,7 @@ class MultiSelectSpinner(Button):
 
 
 class PlanScreen(Screen):
+	global selected
 	#global idata
 	global the_screenmanager
 	global mngr	
@@ -223,6 +225,7 @@ class PlanScreen(Screen):
 		super (PlanScreen, self).__init__(**kwargs)
 		pass
 	def Items(self):
+		global selected
 		#global idata
 		global the_screenmanager
 		global mngr
@@ -245,20 +248,21 @@ class PlanScreen(Screen):
 		newitems=list()
 		for anitem, atype in idata.find(itemtype=str(spinner.text)):
 			newitems.append(anitem)
-		print newitems
-		box.add_widget(MultiSelectSpinner(
-			#id="visions",
+		slctid=MultiSelectSpinner(
+			id="slctid",
 			size_hint=(None, None),
 			size=(100, 44),
 			pos_hint={'center_x': .5, 'center_y': .5},
 		
 			values = newitems
-		))
-		
-		box.add_widget(Button(
-			text='Select'))
-		box.add_widget(Button(
-			text='Remove'))
+			)
+		box.add_widget(slctid)
+		slct_btn=(Button(text='Select and deselect to statement'))
+		slct_btn.bind(on_release=(lambda store_btn: self.slct_item(slctid,popup1)))
+		box.add_widget(slct_btn)
+		rmv_btn=(Button(text='Remove'))
+		rmv_btn.bind(on_release=(lambda store_btn: self.rmv_item(spinner.text,slctid, popup1)))
+		box.add_widget(rmv_btn)
 		store_btn=(Button(text='Add item'))
 		inpt=TextInput(text='')
 		#problem?:
@@ -271,10 +275,26 @@ class PlanScreen(Screen):
 		#popup1 = Popup(title='Add goal', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
 		popup1.open()
 
+	def slct_item(self,slctid,popup1):
+		#popup1.dismiss()
+		global selected
+		del selected[:]
+		selected=slctid.text.split(", ")		
+		popup1.dismiss()
+
+	def rmv_item(self,varitemtype,slctid,popup1):
+		global selected
+		popup1.dismiss()
+		del selected[:]
+		selected=slctid.text.split(", ")
+		for i in selected:
+			idata.delete(str(i))
+		self.Items()
+
 	def add_item(self, varitemtype, theitem, popup1):
 		popup1.dismiss()
-		
 		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
+		self.Items()
 
 	def Exit(self):
 		global the_screenmanager
@@ -315,6 +335,7 @@ class PlanExe(TabbedPanel):
 	global mngr
 	global the_screenmanager
 	global endtime
+	global selected
 	def __init__ (self,**kwargs):
 		super (PlanExe, self).__init__(**kwargs)
 		self.default_tab_text = "New"
@@ -322,10 +343,14 @@ class PlanExe(TabbedPanel):
 		box.add_widget(Label(text='abc'))
 		box.add_widget(Label(text='abc'))
 		box.add_widget(Label(text='abc'))
-		store_btn = Button(text='Add')
-		box.add_widget(store_btn)
+		add_btn = Button(text='Add')
+		add_btn.bind(on_release=(lambda store_btn: self.add_sm()))
+		box.add_widget(add_btn)
 		self.default_tab_content = box
 
+	def add_sm(self):
+		global selected
+		idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)		
 			
 class MFExe(BoxLayout):
 	global mngr
