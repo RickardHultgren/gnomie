@@ -223,7 +223,16 @@ class PlanScreen(Screen):
 	global mngr	
 	def __init__ (self,**kwargs):
 		super (PlanScreen, self).__init__(**kwargs)
-		pass
+		PlanExe=TabbedPanel(
+			size_hint= (1, 0.8),
+			pos_hint_x= {'x': 0, 'y': 0.125},
+			anchor_x= 'center',
+			anchor_y= 'top',
+			orientation= 'vertical',
+			padding= 50
+		)
+		self.add_widget(PlanExe)	
+		
 	def Items(self):
 		global selected
 		#global idata
@@ -258,7 +267,7 @@ class PlanScreen(Screen):
 			)
 		box.add_widget(slctid)
 		slct_btn=(Button(text='Select and deselect to statement'))
-		slct_btn.bind(on_release=(lambda store_btn: self.slct_item(slctid,popup1)))
+		slct_btn.bind(on_release=(lambda store_btn: self.slct_item(spinner.text,slctid,popup1)))
 		box.add_widget(slct_btn)
 		rmv_btn=(Button(text='Remove'))
 		rmv_btn.bind(on_release=(lambda store_btn: self.rmv_item(spinner.text,slctid, popup1)))
@@ -275,11 +284,14 @@ class PlanScreen(Screen):
 		#popup1 = Popup(title='Add goal', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
 		popup1.open()
 
-	def slct_item(self,slctid,popup1):
+	def slct_item(self,varitemtype,slctid,popup1):
 		#popup1.dismiss()
 		global selected
 		del selected[:]
-		selected=slctid.text.split(", ")		
+		selected.append(varitemtype)
+		
+		selected.extend(slctid.text.split(", "))
+		
 		popup1.dismiss()
 
 	def rmv_item(self,varitemtype,slctid,popup1):
@@ -336,20 +348,42 @@ class PlanExe(TabbedPanel):
 	global the_screenmanager
 	global endtime
 	global selected
+	objs = str('')
+	miss = str('')
+	viss = str('')
+	#inpt=TextInput(text=settingdata.get('email')['address'], multiline=False)
 	def __init__ (self,**kwargs):
 		super (PlanExe, self).__init__(**kwargs)
+		Clock.schedule_interval(self.update, 0.2)
+		
+	def update(self, dt):
+		global mngr
+
+		if len(selected) > 1:
+			if selected[0] == "Objects":
+				self.objs = ', '.join(list(selected[1:]))
+			if selected[0] == "Missions":
+				self.miss = ', '.join(list(selected[1:]))
+			if selected[0] == "Visions":
+				self.viss = ', '.join(list(selected[1:]))
+		
 		self.default_tab_text = "New"
 		box = BoxLayout(orientation='vertical')
-		box.add_widget(Label(text='abc'))
-		box.add_widget(Label(text='abc'))
-		box.add_widget(Label(text='abc'))
+		box.add_widget(Label(text='if'))
+		box.add_widget(Label(text=self.objs))
+		box.add_widget(Label(text='then'))
+		box.add_widget(Label(text=self.miss))
+		box.add_widget(Label(text='so that'))
+		box.add_widget(Label(text=self.viss))
 		add_btn = Button(text='Add')
-		add_btn.bind(on_release=(lambda store_btn: self.add_sm()))
+		#selected
+		#add_btn.bind(on_release=(lambda store_btn: self.add_sm()))
 		box.add_widget(add_btn)
 		self.default_tab_content = box
 
 	def add_sm(self):
 		global selected
+		selectedstr = ', '.join(selected)
 		idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)		
 			
 class MFExe(BoxLayout):
