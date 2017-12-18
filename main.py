@@ -140,7 +140,7 @@ Builder.load_string('''
         size_hint: 1, 0.10
         pos_hint: {'x': 0, 'y': 0.90}
         text: "Item"
-        on_release: root.Items()
+        on_release: app.root.current = 'visitems'
     PlanExe:
     Button:
         size_hint: 1, 0.10
@@ -158,12 +158,131 @@ Builder.load_string('''
         text: 'first tab'
         Label:
             text: 'First tab content area'    
+<VisItems>:
+    anchor_x: 'center'
+    anchor_y: 'top'
+    orientation: 'vertical'
+    padding: 50
+    Spinner:
+        id:'visspinner'
+        # default value shown
+        text:'Visions'
+        # available values
+        values:'Objectives', 'Missions', 'Objectives'
+        # just for positioning in our example
+        size_hint:None, None
+        size:100, 44
+        pos_hint:{'center_x': .5, 'center_y': .5}
+        
+        on_release: self.select_screen()
+    
+    MultiSelectSpinner:
+        id:'visslctid'
+        size_hint:(None, None)
+        size:(100, 44)
+        pos_hint:{'center_x': .5, 'center_y': .5}
+        values : root.newitems
+    Button
+        text:'Select and deselect to statement'
+        on_release:root.slct_item(root.objspinner.text, root.slctid)
+    Button
+        text:'Remove'
+        on_release:root.rmv_obj(root.objspinner.text, root.slctid)
+    Button
+        text:'Add item'
+        on_release:root.add_obj(root.spinner.text, root.inpt.text)
+    TextInput:
+        text:''
+        id:'visinpt'  
+    Button
+        text:'Cancel'
+        on_release: root.current = 'planscreen'
+<MisItem>:
+    anchor_x: 'center'
+    anchor_y: 'top'
+    orientation: 'vertical'
+    padding: 50
+    Spinner:
+        id:'misspinner'
+        # default value shown
+        text:'Missions'
+        # available values
+        values:'Objectives', 'Missions', 'Objectives'
+        # just for positioning in our example
+        size_hint:(None, None)
+        size:(100, 44)
+        pos_hint:{'center_x': .5, 'center_y': .5}
+        
+        on_release: self.select_screen()
+        
+    MultiSelectSpinner:
+        id:"misslctid"
+        size_hint:(None, None)
+        size:(100, 44)
+        pos_hint:{'center_x': .5, 'center_y': .5}
+        values : root.newitems            
+    Button
+        text:'Select and deselect to statement'
+        on_release:root.slct_item(root.objspinner.text, root.slctid)
+    Button
+        text:'Remove'
+        on_release:root.rmv_obj(root.objspinner.text, root.slctid)
+    Button
+        text:'Add item'
+        on_release:root.add_obj(root.spinner.text, root.inpt.text)
+    TextInput:
+        text:''
+        id:'visinpt'  
+    Button
+        text:'Cancel'
+        on_release: root.current = 'planscreen'
+<ObjItem>:
+    anchor_x: 'center'
+    anchor_y: 'top'
+    orientation: 'vertical'
+    padding: 50
+    Spinner:
+        id:'objspinner'
+        # default value shown
+        text:'Visions'
+        # available values
+        values:('Objectives', 'Missions', 'Objectives')
+        # just for positioning in our example
+        size_hint:(None, None)
+        size:(100, 44)
+        pos_hint:{'center_x': .5, 'center_y': .5}
+        
+        on_release: self.select_screen()
+        
+    MultiSelectSpinner:
+        id:"objslctid"
+        size_hint:(None, None)
+        size:(100, 44)
+        pos_hint:{'center_x': .5, 'center_y': .5}
+        values : root.newitems            
+    Button
+        text:'Select and deselect to statement'
+        on_release:root.slct_item(root.objspinner.text, root.slctid)
+    Button
+        text:'Remove'
+        on_release:root.rmv_obj(root.objspinner.text, root.slctid)
+    Button
+        text:'Add item'
+        on_release:root.add_obj(root.spinner.text, root.inpt.text)
+    TextInput:
+        text:''
+        id:'visinpt'  
+    Button
+        text:'Cancel'
+        on_release: root.current = 'planscreen'
+
 <MultiSelectOption@ToggleButton>:
-    size_hint: .5, None
-    height: '48dp'            
+    size_hint: 1, None
+    height: '48dp'
+
 ''')
 the_screenmanager = ScreenManager()
-endtime = 0	
+endtime = 0    
 
 class MultiSelectSpinner(Button):
 	"""Widget allowing to select multiple text options."""
@@ -215,7 +334,6 @@ class MultiSelectSpinner(Button):
 		else:
 			self.text = ''
 
-
 class PlanScreen(Screen):
 	global selected
 	#global idata
@@ -233,80 +351,45 @@ class PlanScreen(Screen):
 		)
 		self.add_widget(PlanExe)	
 		
-	def Items(self):
+class VisItems(Screen):
+	global selected
+	#global idata
+	global the_screenmanager
+	global mngr
+
+	newitems=ListProperty()
+
+	def __init__(self, **kwargs):
 		global selected
 		#global idata
 		global the_screenmanager
 		global mngr
-		box = BoxLayout(orientation='vertical')
-		popup1 = Popup(title='About', content=box, size_hint=(0.9, 0.9))
-		spinner = Spinner(
-			# default value shown
-			text='Visions',
-			# available values
-			values=('Visions', 'Missions', 'Objectives'),
-			# just for positioning in our example
-			size_hint=(None, None),
-			size=(100, 44),
-			pos_hint={'center_x': .5, 'center_y': .5}
-		)
-		box.add_widget(spinner)
-		#https://stackoverflow.com/questions/36609017/kivy-spinner-widget-with-multiple-selection
-		#itemlist = list(idata.find(name=str(spinner.text)))
-		#itemlist=list({idata.find(spinner.text)['item']})
-		newitems=list()
-		for anitem, atype in idata.find(itemtype=str(spinner.text)):
-			newitems.append(anitem)
-		slctid=MultiSelectSpinner(
-			id="slctid",
-			size_hint=(None, None),
-			size=(100, 44),
-			pos_hint={'center_x': .5, 'center_y': .5},
-		
-			values = newitems
-			)
-		box.add_widget(slctid)
-		slct_btn=(Button(text='Select and deselect to statement'))
-		slct_btn.bind(on_release=(lambda store_btn: self.slct_item(spinner.text,slctid,popup1)))
-		box.add_widget(slct_btn)
-		rmv_btn=(Button(text='Remove'))
-		rmv_btn.bind(on_release=(lambda store_btn: self.rmv_item(spinner.text,slctid, popup1)))
-		box.add_widget(rmv_btn)
-		store_btn=(Button(text='Add item'))
-		inpt=TextInput(text='')
-		#problem?:
-		store_btn.bind(on_release=(lambda store_btn: self.add_item(spinner.text, inpt.text, popup1)))
-		box.add_widget(inpt)
-		box.add_widget(store_btn)
-		cncl_btn = Button(text='Cancel')
-		cncl_btn.bind(on_release=lambda store_btn: popup1.dismiss())
-		box.add_widget(cncl_btn)
-		#popup1 = Popup(title='Add goal', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
-		popup1.open()
 
-	def slct_item(self,varitemtype,slctid,popup1):
+		super (VisItems, self).__init__(**kwargs)
+		for anitem, atype in idata.find(itemtype=str(self.ids.visspinner.text)):
+			self.newitems.append(anitem)
+
+	def slct_item(self,varitemtype,slctid):
 		#popup1.dismiss()
 		global selected
 		del selected[:]
 		selected.append(varitemtype)
-		
 		selected.extend(slctid.text.split(", "))
-		
 		popup1.dismiss()
-
-	def rmv_item(self,varitemtype,slctid,popup1):
+		
+	def rmv_obj(self,varitemtype,slctid):
 		global selected
 		popup1.dismiss()
 		del selected[:]
 		selected=slctid.text.split(", ")
 		for i in selected:
 			idata.delete(str(i))
-		self.Items()
+		self.ObjItems()		
 
-	def add_item(self, varitemtype, theitem, popup1):
+	def add_obj(self, varitemtype, theitem):
 		popup1.dismiss()
 		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
-		self.Items()
+		self.ObjItems()
 
 	def Exit(self):
 		global the_screenmanager
@@ -315,8 +398,152 @@ class PlanScreen(Screen):
 		self.nowtime=0						
 		mngr = 'start'
 		the_screenmanager.current = 'startscreen'
-		
 
+	#def select_screen(self, spinner, thetext):
+	def select_screen(self, spinner, thetext):
+		self.show(thetext)
+
+	#def show(self, name, popup1):
+	def show(self, name):
+		if name=='Visions':
+			#popup1.dismiss()
+			self.VisItems()
+		if name=='Missions':
+			#popup1.dismiss()
+			self.MisItems()
+		if name=='Objectives':
+			#popup1.dismiss()
+			self.ObjItems()			
+			
+class MisItems(Screen):
+	global selected
+	#global idata
+	global the_screenmanager
+	global mngr
+
+	newitems=ListProperty()
+	def __init__(self, **kwargs):
+		global selected
+		#global idata
+		global the_screenmanager
+
+		global mngr
+
+		super (MisItems, self).__init__(**kwargs)
+		for anitem, atype in idata.find(itemtype=str(self.ids.misspinner.text)):
+			self.newitems.append(anitem)
+		#now
+		#https://stackoverflow.com/questions/27809703/kivy-sending-text-from-spinner-to-another-function#27810290				
+
+	def slct_item(self,varitemtype,slctid):
+		#popup1.dismiss()
+		global selected
+		del selected[:]
+		selected.append(varitemtype)
+		selected.extend(slctid.text.split(", "))
+		popup1.dismiss()
+		
+	def rmv_obj(self,varitemtype,slctid):
+		global selected
+		popup1.dismiss()
+		del selected[:]
+		selected=slctid.text.split(", ")
+		for i in selected:
+			idata.delete(str(i))
+		self.ObjItems()		
+
+	def add_obj(self, varitemtype, theitem):
+		popup1.dismiss()
+		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
+		self.ObjItems()
+
+	def Exit(self):
+		global the_screenmanager
+		global mngr
+		self.nowpart = 0
+		self.nowtime=0						
+		mngr = 'start'
+		the_screenmanager.current = 'startscreen'
+
+	#def select_screen(self, spinner, thetext):
+	def select_screen(self, spinner, thetext):
+		self.show(thetext)
+
+	#def show(self, name, popup1):
+	def show(self, name):
+		if name=='Visions':
+			#popup1.dismiss()
+			self.VisItems()
+		if name=='Missions':
+			#popup1.dismiss()
+			self.MisItems()
+		if name=='Objectives':
+			#popup1.dismiss()
+			self.ObjItems()			
+			
+class ObjItems(Screen):
+	global selected
+	#global idata
+	global the_screenmanager
+	global mngr
+	newitems=ListProperty()
+
+	def __init__(self, **kwargs):
+		global selected
+		#global idata
+		global the_screenmanager
+		global mngr
+
+		super (ObjItems, self).__init__(**kwargs)
+		for anitem, atype in idata.find(itemtype=str(self.ids.objspinner.text)):
+			self.newitems.append(anitem)
+
+	def slct_item(self,varitemtype,slctid):
+		#popup1.dismiss()
+		global selected
+		del selected[:]
+		selected.append(varitemtype)
+		selected.extend(slctid.text.split(", "))
+		popup1.dismiss()
+		
+	def rmv_obj(self,varitemtype,slctid):
+		global selected
+		popup1.dismiss()
+		del selected[:]
+		selected=slctid.text.split(", ")
+		for i in selected:
+			idata.delete(str(i))
+		self.ObjItems()		
+
+	def add_obj(self, varitemtype, theitem):
+		popup1.dismiss()
+		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
+		self.ObjItems()
+
+	def Exit(self):
+		global the_screenmanager
+		global mngr
+		self.nowpart = 0
+		self.nowtime=0						
+		mngr = 'start'
+		the_screenmanager.current = 'startscreen'
+
+	#def select_screen(self, spinner, thetext):
+	def select_screen(self, spinner, thetext):
+		self.show(thetext)
+
+	#def show(self, name, popup1):
+	def show(self, name):
+		if name=='Visions':
+			#popup1.dismiss()
+			self.VisItems()
+		if name=='Missions':
+			#popup1.dismiss()
+			self.MisItems()
+		if name=='Objectives':
+			#popup1.dismiss()
+			self.ObjItems()			
+			
 class MFScreen(Screen):
 	global endtime
 	global the_screenmanager
@@ -360,7 +587,7 @@ class PlanExe(TabbedPanel):
 		global mngr
 
 		if len(selected) > 1:
-			if selected[0] == "Objects":
+			if selected[0] == "Objectives":
 				self.objs = ', '.join(list(selected[1:]))
 			if selected[0] == "Missions":
 				self.miss = ', '.join(list(selected[1:]))
@@ -369,16 +596,16 @@ class PlanExe(TabbedPanel):
 		
 		self.default_tab_text = "New"
 		box = BoxLayout(orientation='vertical')
-		box.add_widget(Label(text='if'))
-		box.add_widget(Label(text=self.objs))
-		box.add_widget(Label(text='then'))
-		box.add_widget(Label(text=self.miss))
-		box.add_widget(Label(text='so that'))
-		box.add_widget(Label(text=self.viss))
+		self.add_widget(Label(text='if'))
+		self.add_widget(Label(text=self.objs))
+		self.add_widget(Label(text='then'))
+		self.add_widget(Label(text=self.miss))
+		self.add_widget(Label(text='so that'))
+		self.add_widget(Label(text=self.viss))
 		add_btn = Button(text='Add')
 		#selected
 		#add_btn.bind(on_release=(lambda store_btn: self.add_sm()))
-		box.add_widget(add_btn)
+		self.add_widget(add_btn)
 		self.default_tab_content = box
 
 	def add_sm(self):
@@ -453,11 +680,11 @@ class StartScreen(Screen):
 	def About(self):
 		box = BoxLayout(orientation='vertical')
 		popup1 = Popup(title='About', content=box, size_hint=(None, None), size=(400, 400))
-		box.add_widget(Label(text='Gnomie is an open source app licensed under\nthe BSD2-license. The founder and principal developer is\nRickard Verner Hultgren'))
+		self.add_widget(Label(text='Gnomie is an open source app licensed under\nthe BSD2-license. The founder and principal developer is\nRickard Verner Hultgren'))
 
 		store_btn = Button(text='OK')
 		store_btn.bind(on_release=lambda store_btn: popup1.dismiss())
-		box.add_widget(store_btn)
+		self.add_widget(store_btn)
 		#popup1 = Popup(title='Add goal', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
 		popup1.open()
 
@@ -474,6 +701,9 @@ class GnomieApp(App):
 		mfscreen = MFScreen(name='mfscreen')
 		exescreen = ExeScreen(name='exescreen')
 		planscreen = PlanScreen(name='planscreen')
+		visitems = VisItems(name='visitems')
+		misitems = MisItems(name='misitems')
+		objitems = ObjItems(name='objitems')
 		
 		#if mngr=='start':
 		the_screenmanager.add_widget(startscreen)
@@ -481,6 +711,9 @@ class GnomieApp(App):
 		the_screenmanager.add_widget(mfscreen)
 		the_screenmanager.add_widget(exescreen)
 		the_screenmanager.add_widget(planscreen)
+		the_screenmanager.add_widget(visitems)
+		the_screenmanager.add_widget(misitems)
+		the_screenmanager.add_widget(objitems)
 		return the_screenmanager
 		
 if __name__ == '__main__':
