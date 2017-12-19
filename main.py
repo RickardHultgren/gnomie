@@ -350,15 +350,6 @@ class PlanScreen(Screen):
 	global mngr	
 	def __init__ (self,**kwargs):
 		super (PlanScreen, self).__init__(**kwargs)
-		PlanExe=TabbedPanel(
-			size_hint= (1, 0.8),
-			pos_hint_x= {'x': 0, 'y': 0.125},
-			anchor_x= 'center',
-			anchor_y= 'top',
-			orientation= 'vertical',
-			padding= 50
-		)
-		self.add_widget(PlanExe)	
 		
 class VisItems(Screen):
 	global selected
@@ -601,16 +592,16 @@ class PlanExe(TabbedPanel):
 		
 		self.default_tab_text = "New"
 		box = BoxLayout(orientation='vertical')
-		self.add_widget(Label(text='if'))
-		self.add_widget(Label(text=self.objs))
-		self.add_widget(Label(text='then'))
-		self.add_widget(Label(text=self.miss))
-		self.add_widget(Label(text='so that'))
-		self.add_widget(Label(text=self.viss))
+		box.add_widget(Label(text='if'))
+		box.add_widget(Label(text=self.objs))
+		box.add_widget(Label(text='then'))
+		box.add_widget(Label(text=self.miss))
+		box.add_widget(Label(text='so that'))
+		box.add_widget(Label(text=self.viss))
 		add_btn = Button(text='Add')
 		#selected
 		#add_btn.bind(on_release=(lambda store_btn: self.add_sm()))
-		self.add_widget(add_btn)
+		box.add_widget(add_btn)
 		self.default_tab_content = box
 
 	def add_sm(self):
