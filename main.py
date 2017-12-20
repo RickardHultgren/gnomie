@@ -146,18 +146,14 @@ Builder.load_string('''
         size_hint: 1, 0.10
         pos_hint: {'x': 0, 'y': 0}
         text: "Exit"
-        on_release: root.Exit()
-<PlanExe>
+        on_release: app.root.current = 'startscreen'
+<PlanExe>:
     size_hint: 1, 0.8
     pos_hint: {'x': 0, 'y': 0.10}
     anchor_x: 'center'
     anchor_y: 'top'
     orientation: 'vertical'
     padding: 50
-    TabbedPanelItem:
-        text: 'first tab'
-        Label:
-            text: 'First tab content area'    
 <VisItems>:
     name:'visitems'
     BoxLayout:
@@ -288,7 +284,6 @@ Builder.load_string('''
 <MultiSelectOption@ToggleButton>:
     size_hint: 1, None
     height: '48dp'
-<PlanExe>:
 ''')
 the_screenmanager = ScreenManager()
 endtime = 0    
@@ -368,13 +363,16 @@ class VisItems(Screen):
 		super (VisItems, self).__init__(**kwargs)
 		for anitem, atype in idata.find(itemtype=str(self.ids.visspinner.text)):
 			self.newitems.append(anitem)
+		#print 'init %s'%selected
 
 	def slct_item(self,varitemtype,slctid):
 		global selected
 		del selected[:]
 		selected.append(varitemtype)
 		selected.extend(slctid.text.split(", "))
-		the_screenmanager.current = 'visitems'
+		#print 'rmv_item %s'%selected
+		#the_screenmanager.current = 'visitems'
+		the_screenmanager.current = 'planscreen'
 		
 	def rmv_vis(self,varitemtype,slctid):
 		global selected
@@ -382,6 +380,7 @@ class VisItems(Screen):
 		selected=slctid.text.split(", ")
 		for i in selected:
 			idata.delete(str(i))
+		#print 'rmv_vis %s'%selected
 		the_screenmanager.current = 'visitems'		
 
 	def add_vis(self, varitemtype, theitem):
@@ -404,13 +403,13 @@ class VisItems(Screen):
 	def show(self, name):
 		global the_screenmanager
 		if name=='Visions':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current='visitems'
 		if name=='Missions':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current='misitems'
 		if name=='Objectives':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current='objitems'			
 			
 class MisItems(Screen):
@@ -438,7 +437,8 @@ class MisItems(Screen):
 		del selected[:]
 		selected.append(varitemtype)
 		selected.extend(slctid.text.split(", "))
-		the_screenmanager.current = 'misitems'
+		#the_screenmanager.current = 'misitems'
+		the_screenmanager.current = 'planscreen'
 		
 	def add_mis(self,varitemtype,slctid):
 		global selected
@@ -468,13 +468,13 @@ class MisItems(Screen):
 	def show(self, name):
 		global the_screenmanager
 		if name=='Visions':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current = 'visitems'
 		if name=='Missions':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current = 'misitems'
 		if name=='Objectives':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current = 'objitems'			
 			
 class ObjItems(Screen):
@@ -499,7 +499,8 @@ class ObjItems(Screen):
 		del selected[:]
 		selected.append(varitemtype)
 		selected.extend(slctid.text.split(", "))
-		the_screenmanager.current = 'objitems'
+		#the_screenmanager.current = 'objitems'
+		the_screenmanager.current = 'planscreen'
 		
 	def rmv_obj(self,varitemtype,slctid):
 		global selected
@@ -530,13 +531,13 @@ class ObjItems(Screen):
 	def show(self, name):
 		global the_screenmanager
 		if name=='Visions':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current='visitems'
 		if name=='Missions':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current='misitems'
 		if name=='Objectives':
-			the_screenmanager.current = 'planscreen'
+			#the_screenmanager.current = 'planscreen'
 			the_screenmanager.current='objitems'			
 			
 class MFScreen(Screen):
@@ -571,38 +572,54 @@ class PlanExe(TabbedPanel):
 	global the_screenmanager
 	global endtime
 	global selected
-	objs = str('')
-	miss = str('')
-	viss = str('')
+	
+	objs = StringProperty('')
+	miss = StringProperty('')
+	viss = StringProperty('')
+	box = BoxLayout(orientation='vertical')
 	#inpt=TextInput(text=settingdata.get('email')['address'], multiline=False)
 	def __init__ (self,**kwargs):
+		global selected
 		super (PlanExe, self).__init__(**kwargs)
-		Clock.schedule_interval(self.update, 0.2)
-		
-	def update(self, dt):
-		global mngr
+		self.default_tab_content = self.box
+		#for 
+			#TabbedPanelItem:
+			#text: 'tab3'
+			#RstDocument:
+			#text:
+				
+				#'\\n'.join(("Hello world", "-----------",
+				#"You are in the third tab."))
 
-		if len(selected) > 1:
+		Clock.schedule_interval(self.planupdate, 0.2)
+
+	def planupdate(self, dt):
+		global mngr
+		global selected
+		#print selected
+		self.box.clear_widgets()
+		if len(selected) > 0:
 			if selected[0] == "Objectives":
-				self.objs = ', '.join(list(selected[1:]))
+				self.objs = ', '.join(list(selected[0:]))
 			if selected[0] == "Missions":
-				self.miss = ', '.join(list(selected[1:]))
+				self.miss = ', '.join(list(selected[0:]))
 			if selected[0] == "Visions":
-				self.viss = ', '.join(list(selected[1:]))
+				self.viss = ', '.join(list(selected[0:]))
 		
 		self.default_tab_text = "New"
-		box = BoxLayout(orientation='vertical')
-		box.add_widget(Label(text='if'))
-		box.add_widget(Label(text=self.objs))
-		box.add_widget(Label(text='then'))
-		box.add_widget(Label(text=self.miss))
-		box.add_widget(Label(text='so that'))
-		box.add_widget(Label(text=self.viss))
+		#self.box = self.boxLayout(orientation='vertical')
+		self.box.add_widget(Label(text='if'))
+		self.box.add_widget(Label(text=self.objs))
+		self.box.add_widget(Label(text='then'))
+		self.box.add_widget(Label(text=self.miss))
+		self.box.add_widget(Label(text='so that'))
+		self.box.add_widget(Label(text=self.viss))
 		add_btn = Button(text='Add')
-		#selected
-		#add_btn.bind(on_release=(lambda store_btn: self.add_sm()))
-		box.add_widget(add_btn)
-		self.default_tab_content = box
+
+
+		self.box.add_widget(add_btn)
+		self.default_tab_content = self.box
+
 
 	def add_sm(self):
 		global selected
