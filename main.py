@@ -196,13 +196,11 @@ Builder.load_string('''
             #pos_hint:'center_x': .5, 'center_y': .5
             
             on_release: root.select_screen()
-        
-        MultiSelectSpinner:
-            id:visslctid
+        BoxLayout:
+		    id:vismsspinner
             size_hint:(None, None)
             size:(100, 44)
-            pos_hint:{'center_x': .5, 'center_y': .5}
-            values : root.newitems
+            pos_hint:{'center_x': .5, 'center_y': .5}		    
         Button:
             text:'Select and deselect to statement'
             on_release:root.slct_item(visspinner.text, visslctid)
@@ -380,18 +378,28 @@ class VisItems(Screen):
 
 	newitems=ListProperty()
 
+	visslctid = MultiSelectSpinner(
+		id="visslctid",
+		#now
+		#values = newitems
+	)
+
 	def __init__(self, **kwargs):
 		global selected
 		#global idata
 		global the_screenmanager
 		global mngr
 		global newdict
-
+		newitems=str()
 		super (VisItems, self).__init__(**kwargs)
+		
+
+		self.ids.vismsspinner.add_widget(self.visslctid)
 		#idata = JsonStore('itemdata.json')
 		for name in newdict:
 			if str(newdict[name])==str(self.ids.visspinner.text):
 				self.newitems.append(name)
+		self.visslctid.values = self.newitems
 		#print "\n\n\n%s\n\n\n"%idataname['name']
 		#print 'init %s'%selected
 
@@ -400,6 +408,8 @@ class VisItems(Screen):
 		del selected[:]
 		selected.append(varitemtype)
 		selected.extend(slctid.text.split(", "))
+
+		
 		#print 'rmv_item %s'%selected
 		#the_screenmanager.current = 'visitems'
 		the_screenmanager.current = 'planscreen'
@@ -414,6 +424,9 @@ class VisItems(Screen):
 			for name in newdict:
 				if str(name)==str(i):
 					self.newitems.remove(str(i))			
+		self.ids.vismsspinner.remove_widget(self.visslctid)		
+		self.visslctid.values = self.newitems
+		self.ids.vismsspinner.add_widget(self.visslctid)		
 		#print 'rmv_vis %s'%selected
 		#mngr = "visitem"
 		#App.get_running_app().stop()
@@ -424,6 +437,10 @@ class VisItems(Screen):
 		global newdict
 		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
 		newdict[theitem] = varitemtype
+		
+		self.ids.vismsspinner.remove_widget(self.visslctid)		
+		self.visslctid.values = self.newitems
+		self.ids.vismsspinner.add_widget(self.visslctid)		
 		#global mngr
 		#mngr = "visitem"
 		#App.get_running_app().stop()
