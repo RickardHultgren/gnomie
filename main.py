@@ -8,7 +8,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.properties import ListProperty, ObjectProperty, StringProperty, NumericProperty
 from kivy.factory import Factory
 from kivy.uix.button import Button
-from kivy.uix.tabbedpanel import TabbedPanel
+from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
 from kivy.uix.spinner import Spinner
 from kivy.uix.dropdown import DropDown
 #from kivy.uix.gridlayout import GridLayout
@@ -33,7 +33,29 @@ from kivy.uix.progressbar import ProgressBar
 from kivy.storage.jsonstore import JsonStore
 
 idata = JsonStore('itemdata.json')
+idatacpy = dict(JsonStore('itemdata.json'))
+newdict = dict()
+#{u'abc': {u'itemtype': u'Visions', u'name': u'abc'}, u'def': {u'itemtype': u'Visions', u'name': u'def'}}
+for key in idatacpy:
+	counting = 0
+	subdict = idatacpy[key]
+	thekey = str()
+	thevalue = str()
+	for subkey in subdict:
+		if counting == 0:
+			thekey = subdict[subkey]
+			counting += 1
+		elif counting == 1:
+			thevalue = subdict[subkey]
+			newdict[thevalue] = thekey
+			thekey=str()
+			thevalue=str()
+			counting = 0
+print newdict
+#into dict x:y
 
+
+#print newdict
 #idata.put('item', Visions='')
 #idata.put('Missions', item='')
 #idata.put('Objectives', item='')
@@ -187,12 +209,16 @@ Builder.load_string('''
         Button:
             text:'Remove'
             on_release:root.rmv_vis(visspinner.text, visslctid)
-        Button:
-            text:'Add item'
-            on_release:root.add_vis(visspinner.text, visinpt.text)
-        TextInput:
-            text:''
-            id:visinpt
+        BoxLayout:
+            orientation: 'horizontal'
+            TextInput:
+                size_hint : 0.75, None
+                text:''
+                id:visinpt
+            Button:
+                size_hint : 0.25, None
+                text:'Add item'
+                on_release:root.add_vis(visspinner.text, visinpt.text)                
         Button:
             text:'Cancel'
             on_release:app.root.current = 'planscreen'
@@ -214,7 +240,6 @@ Builder.load_string('''
             size_hint:None, None
             size:100, 44
             #pos_hint:'center_x': .5, 'center_y': .5
-            
             on_release: root.select_screen()
             
         MultiSelectSpinner:
@@ -351,6 +376,7 @@ class VisItems(Screen):
 	#global idata
 	global the_screenmanager
 	global mngr
+	global newdict
 
 	newitems=ListProperty()
 
@@ -359,10 +385,14 @@ class VisItems(Screen):
 		#global idata
 		global the_screenmanager
 		global mngr
+		global newdict
 
 		super (VisItems, self).__init__(**kwargs)
-		for anitem, atype in idata.find(itemtype=str(self.ids.visspinner.text)):
-			self.newitems.append(anitem)
+		#idata = JsonStore('itemdata.json')
+		for name in newdict:
+			if str(newdict[name])==str(self.ids.visspinner.text):
+				self.newitems.append(name)
+		#print "\n\n\n%s\n\n\n"%idataname['name']
 		#print 'init %s'%selected
 
 	def slct_item(self,varitemtype,slctid):
@@ -376,16 +406,32 @@ class VisItems(Screen):
 		
 	def rmv_vis(self,varitemtype,slctid):
 		global selected
+		global newdict
 		del selected[:]
 		selected=slctid.text.split(", ")
 		for i in selected:
 			idata.delete(str(i))
+			for name in newdict:
+				if str(name)==str(i):
+					self.newitems.remove(str(i))			
 		#print 'rmv_vis %s'%selected
-		the_screenmanager.current = 'visitems'		
+		#mngr = "visitem"
+		#App.get_running_app().stop()
+		#GnomieApp().run()
+		the_screenmanager.current = 'visitems'				
 
 	def add_vis(self, varitemtype, theitem):
+		global newdict
 		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
+		newdict[theitem] = varitemtype
+		#global mngr
+		#mngr = "visitem"
+		#App.get_running_app().stop()
+		#Clock.unschedule(PlanExe.planupdate)
+		#GnomieApp().stop()
+		#GnomieApp().run()
 		the_screenmanager.current = 'visitems'
+		#return the_screenmanager
 
 	def Exit(self):
 		global the_screenmanager
@@ -427,8 +473,9 @@ class MisItems(Screen):
 		global mngr
 
 		super (MisItems, self).__init__(**kwargs)
-		for anitem, atype in idata.find(itemtype=str(self.ids.misspinner.text)):
-			self.newitems.append(anitem)
+		#idata = JsonStore('itemdata.json')
+		#for anitem, atype in newdict.find(itemtype=str(self.ids.misspinner.text)):
+		#	self.newitems.append(anitem)
 		#now
 		#https://stackoverflow.com/questions/27809703/kivy-sending-text-from-spinner-to-another-function#27810290				
 
@@ -491,8 +538,9 @@ class ObjItems(Screen):
 		global mngr
 
 		super (ObjItems, self).__init__(**kwargs)
-		for anitem, atype in idata.find(itemtype=str(self.ids.objspinner.text)):
-			self.newitems.append(anitem)
+		#idata = JsonStore('itemdata.json')
+		#for anitem, atype in newdict.find(itemtype=str(self.ids.objspinner.text)):
+		#	self.newitems.append(anitem)
 
 	def slct_item(self,varitemtype,slctid):
 		global selected
@@ -578,11 +626,14 @@ class PlanExe(TabbedPanel):
 	viss = StringProperty('')
 	box = BoxLayout(orientation='vertical')
 	#inpt=TextInput(text=settingdata.get('email')['address'], multiline=False)
+
 	def __init__ (self,**kwargs):
 		global selected
 		super (PlanExe, self).__init__(**kwargs)
 		self.default_tab_content = self.box
-		#for 
+		#for anitem, atype in newdict.find(itemtype=str('Statements')):
+		#for idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)
+			#self.add_widget(TabbedPanelItem(text="tab1"))
 			#TabbedPanelItem:
 			#text: 'tab3'
 			#RstDocument:
@@ -625,6 +676,7 @@ class PlanExe(TabbedPanel):
 		global selected
 		selectedstr = ', '.join(selected)
 		idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)		
+		newdict['Statements'] = 'selectedstr'		
 			
 class MFExe(BoxLayout):
 	global mngr
