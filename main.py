@@ -203,10 +203,10 @@ Builder.load_string('''
             pos_hint:{'center_x': .5, 'center_y': .5}		    
         Button:
             text:'Select and deselect to statement'
-            on_release:root.slct_item(visspinner.text, visslctid)
+            on_release:root.slct_item(visspinner.text, root.visslctid)
         Button:
             text:'Remove'
-            on_release:root.rmv_vis(visspinner.text, visslctid)
+            on_release:root.rmv_vis(visspinner.text, root.visslctid)
         BoxLayout:
             orientation: 'horizontal'
             TextInput:
