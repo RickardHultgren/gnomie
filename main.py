@@ -51,7 +51,7 @@ for key in idatacpy:
 			thekey=str()
 			thevalue=str()
 			counting = 0
-print newdict
+#print newdict
 #into dict x:y
 
 
@@ -427,6 +427,8 @@ class VisItems(Screen):
 		self.ids.vismsspinner.remove_widget(self.visslctid)		
 		self.visslctid.values = self.newitems
 		self.ids.vismsspinner.add_widget(self.visslctid)		
+		#now
+		#selected = slctid.text=()
 		#print 'rmv_vis %s'%selected
 		#mngr = "visitem"
 		#App.get_running_app().stop()
@@ -437,18 +439,23 @@ class VisItems(Screen):
 		global newdict
 		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
 		newdict[theitem] = varitemtype
+		print newdict
 		
 		self.ids.vismsspinner.remove_widget(self.visslctid)		
 		self.visslctid.values = self.newitems
 		self.ids.vismsspinner.add_widget(self.visslctid)		
 		#global mngr
 		#mngr = "visitem"
-		#App.get_running_app().stop()
+		App.get_running_app().stop()
 		#Clock.unschedule(PlanExe.planupdate)
 		#GnomieApp().stop()
 		#GnomieApp().run()
 		the_screenmanager.current = 'visitems'
 		#return the_screenmanager
+		#try:
+			#self.ids.vismsspinner.add_widget(self.visslctid)
+		#except:
+			#pass
 
 	def Exit(self):
 		global the_screenmanager
@@ -668,11 +675,11 @@ class PlanExe(TabbedPanel):
 		self.box.clear_widgets()
 		if len(selected) > 0:
 			if selected[0] == "Objectives":
-				self.objs = ', '.join(list(selected[0:]))
+				self.objs = ', '.join(list(selected[1:]))
 			if selected[0] == "Missions":
-				self.miss = ', '.join(list(selected[0:]))
+				self.miss = ', '.join(list(selected[1:]))
 			if selected[0] == "Visions":
-				self.viss = ', '.join(list(selected[0:]))
+				self.viss = ', '.join(list(selected[1:]))
 		
 		self.default_tab_text = "New"
 		#self.box = self.boxLayout(orientation='vertical')
