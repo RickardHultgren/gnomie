@@ -75,6 +75,7 @@ selected = list()
 
 #my_screenmanager = ScreenManager()
 mngr="start"
+
 Builder.load_string('''
 <StartScreen>:
 	name: 'startscreen'
@@ -375,7 +376,7 @@ class VisItems(Screen):
 	global the_screenmanager
 	global mngr
 	global newdict
-
+	
 	newitems=ListProperty()
 
 	visslctid = MultiSelectSpinner(
@@ -393,16 +394,14 @@ class VisItems(Screen):
 		newitems=str()
 		super (VisItems, self).__init__(**kwargs)
 		
-
-		self.ids.vismsspinner.add_widget(self.visslctid)
-		#idata = JsonStore('itemdata.json')
 		for name in newdict:
 			if str(newdict[name])==str(self.ids.visspinner.text):
 				self.newitems.append(name)
 		self.visslctid.values = self.newitems
-		#print "\n\n\n%s\n\n\n"%idataname['name']
-		#print 'init %s'%selected
-
+		try:
+			self.ids.vismsspinner.add_widget(self.visslctid)
+		except:
+			pass
 	def slct_item(self,varitemtype,slctid):
 		global selected
 		del selected[:]
@@ -420,42 +419,32 @@ class VisItems(Screen):
 		del selected[:]
 		selected=slctid.text.split(", ")
 		for i in selected:
+			#now
 			idata.delete(str(i))
 			for name in newdict:
-				if str(name)==str(i):
-					self.newitems.remove(str(i))			
+				#https://stackoverflow.com/questions/11277432/how-to-remove-a-key-from-a-python-dictionary#11277439
+				if newdict[name]==str(i):
+					my_dict.pop(str(i), None)
+					#self.newitems.remove(str(i))
+
 		self.ids.vismsspinner.remove_widget(self.visslctid)		
 		self.visslctid.values = self.newitems
 		self.ids.vismsspinner.add_widget(self.visslctid)		
-		#now
-		#selected = slctid.text=()
-		#print 'rmv_vis %s'%selected
-		#mngr = "visitem"
-		#App.get_running_app().stop()
-		#GnomieApp().run()
-		the_screenmanager.current = 'visitems'				
+		App.get_running_app().stop()
+		GnomieApp().run()
+		the_screenmanager.current = 'visitems'
 
 	def add_vis(self, varitemtype, theitem):
 		global newdict
 		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
 		newdict[theitem] = varitemtype
-		print newdict
-		
+
 		self.ids.vismsspinner.remove_widget(self.visslctid)		
 		self.visslctid.values = self.newitems
 		self.ids.vismsspinner.add_widget(self.visslctid)		
-		#global mngr
-		#mngr = "visitem"
 		App.get_running_app().stop()
-		#Clock.unschedule(PlanExe.planupdate)
-		#GnomieApp().stop()
-		#GnomieApp().run()
+		GnomieApp().run()
 		the_screenmanager.current = 'visitems'
-		#return the_screenmanager
-		#try:
-			#self.ids.vismsspinner.add_widget(self.visslctid)
-		#except:
-			#pass
 
 	def Exit(self):
 		global the_screenmanager
