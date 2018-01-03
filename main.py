@@ -25,6 +25,7 @@ from kivy.storage.jsonstore import JsonStore
 #Declaration of variables:
 selected = list()		
 topic = str('Visions')		
+#the_screenmanager = ScreenManager(transition=FadeTransition())
 the_screenmanager = ScreenManager()
 endtime = 0  
 idata = JsonStore('itemdata.json')
@@ -264,10 +265,7 @@ class ItemScreen(Screen):
 	global newdict
 	global topic
 	
-	#problemline:
-	
 	newitems = ListProperty()
-	
 	slctid = MultiSelectSpinner(
 		id="slctid",
 		#now
@@ -280,7 +278,6 @@ class ItemScreen(Screen):
 		self.vises()
 		
 	def vises(self):
-		#now
 		global topic
 		global the_screenmanager
 		global newdict
@@ -289,9 +286,7 @@ class ItemScreen(Screen):
 			if str(newdict[thename])==str(topic):
 			#if str(newdict[name])==str(self.ids.visspinner.text):
 				self.newitems.append(thename)
-		#spinner for selecting items:
 		self.slctid.values = self.newitems
-		
 		#try:
 		#	self.ids.msspinner.add_widget(self.slctid)
 		#except:
@@ -301,37 +296,31 @@ class ItemScreen(Screen):
 		global topic
 		global the_screenmanager
 		global newdict
-		newitems=str()
-		#super (VisItems, self).__init__(**kwargs)
+		#super (Items, self).__init__(**kwargs)
 		for thename in newdict:
 			if str(newdict[thename])==str(topic):
-			#if str(newdict[thename])==str(self.ids.visspinner.text):
+			#if str(newdict[name])==str(self.ids.visspinner.text):
 				self.newitems.append(thename)
-		#spinner for selecting items:
 		self.slctid.values = self.newitems
 		#try:
 		#	self.ids.msspinner.add_widget(self.slctid)
 		#except:
 		#	pass
-
 
 	def objes(self):
 		global topic
 		global the_screenmanager
 		global newdict
-		newitems=str()
-		#super (VisItems, self).__init__(**kwargs)
+		#super (Items, self).__init__(**kwargs)
 		for thename in newdict:
 			if str(newdict[thename])==str(topic):
-			#if str(newdict[thename])==str(self.ids.visspinner.text):
+			#if str(newdict[name])==str(self.ids.visspinner.text):
 				self.newitems.append(thename)
-		#spinner for selecting items:
 		self.slctid.values = self.newitems
 		#try:
 		#	self.ids.msspinner.add_widget(self.slctid)
 		#except:
 		#	pass
-
 
 	def slct_item(self,varitemtype,slctid):
 		global selected
@@ -391,16 +380,19 @@ class ItemScreen(Screen):
 
 	#def show(self, name, popup1):
 	def show(self, name):
-		global the_screenmanager
+		#global the_screenmanager
+		global topic
 		if name=='Visions':
 			#the_screenmanager.current = 'planscreen'
-			the_screenmanager.current='itemscreen'
-		#if name=='Missions':
+			topic='Visions'
+		if name=='Missions':
 			#the_screenmanager.current = 'planscreen'
 			#the_screenmanager.current='misitems'
-		#if name=='Objectives':
+			topic='Missions'
+		if name=='Objectives':
 			#the_screenmanager.current = 'planscreen'
 			#the_screenmanager.current='objitems'			
+			topic='Objectives'
 			
 class MFScreen(Screen):
 	global endtime
@@ -507,17 +499,19 @@ class MFExe(BoxLayout):
 		Clock.schedule_interval(self.update, 0.2)
 		
 	def update(self, dt):
+		global the_screenmanager
 		self.limit=endtime
-#		
-#		if mngr == "exescreen":
-#			if self.nowtime >= self.limit and self.nowpart < 5 and self.nowpart >= 0:
-#				if self.nowpart == 5:
-#					self.nowtime = 0
-#				else:
-#					self.nowpart+=1
-#					self.nowtime = 0
-#			elif self.nowpart != 5:		
-#				self.nowtime+=1
+		#https://github.com/kivy/kivy/issues/2801		
+		if the_screenmanager.current is 'exescreen':
+		#if mngr == "exescreen":
+			if self.nowtime >= self.limit and self.nowpart < 5 and self.nowpart >= 0:
+				if self.nowpart == 5:
+					self.nowtime = 0
+				else:
+					self.nowpart+=1
+					self.nowtime = 0
+			elif self.nowpart != 5:		
+				self.nowtime+=1
 		#print self.nowtime
 		#print mngr
 		#print self.limit
