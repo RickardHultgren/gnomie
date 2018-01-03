@@ -278,6 +278,9 @@ class ItemScreen(Screen):
 		self.vises()
 		
 	def vises(self):
+		self.ids.vis_button.background_color= (1.0, 0.0, 0.0, 1.0)
+		self.ids.mis_button.background_color= (1.0, 1.0, 1.0, 1.0)
+		self.ids.obj_button.background_color= (1.0, 1.0, 1.0, 1.0)
 		global topic
 		global the_screenmanager
 		global newdict
@@ -293,6 +296,9 @@ class ItemScreen(Screen):
 		#	pass
 
 	def mises(self):
+		self.ids.mis_button.background_color= (1.0, 0.0, 0.0, 1.0)
+		self.ids.vis_button.background_color= (1.0, 1.0, 1.0, 1.0)
+		self.ids.obj_button.background_color= (1.0, 1.0, 1.0, 1.0)		
 		global topic
 		global the_screenmanager
 		global newdict
@@ -308,6 +314,9 @@ class ItemScreen(Screen):
 		#	pass
 
 	def objes(self):
+		self.ids.obj_button.background_color= (1.0, 0.0, 0.0, 1.0)
+		self.ids.mis_button.background_color= (1.0, 1.0, 1.0, 1.0)
+		self.ids.vis_button.background_color= (1.0, 1.0, 1.0, 1.0)		
 		global topic
 		global the_screenmanager
 		global newdict
