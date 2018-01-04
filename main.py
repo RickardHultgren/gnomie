@@ -273,14 +273,19 @@ class PlanScreen(Screen):
 
 #	def planupdate(self, dt):
 	def planupdate(self):
-		
+		try:
+			self.remove_widget(self.tabs)		
+		except:
+			pass				
 		global selected
 		global newdict
 		self.tabs.default_tab_content = self.box
 		#now
-		self.tabs.add_widget(TabbedPanelItem('abc'))
+		#self.tabs.add_widget(TabbedPanelItem(text='abc'))
 		for thename in newdict:
-			if str(newdict[thename])==str('Statement'):
+			print thename
+			print newdict[thename]
+			if str(newdict[thename])==str('Statements'):
 				namelist=thename.split(", ")
 				self.tabs.add_widget(TabbedPanelItem(text=namelist[0]))
 			#TabbedPanelItem:
@@ -311,18 +316,15 @@ class PlanScreen(Screen):
 		add_btn = Button(text='Add', on_release=lambda add_btn: self.add_sm(inpttbl.text))
 		self.box.add_widget(add_btn)
 		self.tabs.default_tab_content = self.box
-		try:
-			self.remove_widget(self.tabs)		
-		except:
-			pass		
 		self.add_widget(self.tabs)
 
 
 	def add_sm(self,smname):
+		#now
 		global selected
 		selectedstr = smname + ', '.join(selected)
 		idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)		
-		newdict['Statements'] = 'selectedstr'		
+		newdict[selectedstr] =	'Statements'
 		try:
 			self.remove_widget(self.box)		
 			self.clear_widget()
