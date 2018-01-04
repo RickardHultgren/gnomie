@@ -136,7 +136,6 @@ Builder.load_string('''
         on_release: root.chngIscreen()
         #on_release: app.root.current = 'itemscreen'
         text: "Item"
-    PlanExe:
     Button:
         size_hint: 1, 0.10
         pos_hint: {'x': 0, 'y': 0}
@@ -190,13 +189,6 @@ Builder.load_string('''
 <MultiSelectOption@ToggleButton>:
     size_hint: 1, None
     height: '48dp'
-<PlanExe>:
-    size_hint: 1, 0.8
-    pos_hint: {'x': 0, 'y': 0.10}
-    anchor_x: 'center'
-    anchor_y: 'top'
-    orientation: 'vertical'
-    padding: 50
 ''')  
 
 class MultiSelectSpinner(Button):
@@ -250,11 +242,95 @@ class MultiSelectSpinner(Button):
 			self.text = ''
 
 class PlanScreen(Screen):
-	global selected
+	global newdict
 	global the_screenmanager
+	global endtime
+	global selected	
 	
+	objs = StringProperty('')
+	miss = StringProperty('')
+	viss = StringProperty('')
+	box = BoxLayout(orientation='vertical')
+	
+	tabs=TabbedPanel(
+    #size_hint= {1, 0.8},
+    #pos_hint= {0, 0.10},
+    anchor_x= 'center',
+    anchor_y= 'top',
+    orientation= 'vertical',
+    padding= 50
+    )
+
 	def __init__ (self,**kwargs):
 		super (PlanScreen, self).__init__(**kwargs)
+		try:
+			self.remove_widget(self.tabs)		
+		except:
+			pass
+		self.planupdate()			
+		#self.add_widget(self.tabs)
+		#Clock.schedule_interval(self.planupdate, 0.2)
+
+#	def planupdate(self, dt):
+	def planupdate(self):
+		
+		global selected
+		global newdict
+		self.tabs.default_tab_content = self.box
+		#now
+		self.tabs.add_widget(TabbedPanelItem('abc'))
+		for thename in newdict:
+			if str(newdict[thename])==str('Statement'):
+				namelist=thename.split(", ")
+				self.tabs.add_widget(TabbedPanelItem(text=namelist[0]))
+			#TabbedPanelItem:
+			#text: 'tab3'
+			#RstDocument:
+			#text:
+				#'\\n'.join(("Hello world", "-----------",
+				#"You are in the third tab."))
+		#self.box.clear_widgets()
+		if len(selected) > 0:
+			if selected[0] == "Objectives":
+				self.objs = ', '.join(list(selected[1:]))
+			if selected[0] == "Missions":
+				self.miss = ', '.join(list(selected[1:]))
+			if selected[0] == "Visions":
+				self.viss = ', '.join(list(selected[1:]))
+		self.tabs.default_tab_text = "New"
+		#self.box = self.boxLayout(orientation='vertical')
+		self.box.add_widget(Label(text='Statement name:'))
+		inpttbl=(TextInput(text=''))
+		self.box.add_widget(inpttbl)
+		self.box.add_widget(Label(text='if'))
+		self.box.add_widget(Label(text=self.objs))
+		self.box.add_widget(Label(text='then'))
+		self.box.add_widget(Label(text=self.miss))
+		self.box.add_widget(Label(text='so that'))
+		self.box.add_widget(Label(text=self.viss))
+		add_btn = Button(text='Add', on_release=lambda add_btn: self.add_sm(inpttbl.text))
+		self.box.add_widget(add_btn)
+		self.tabs.default_tab_content = self.box
+		try:
+			self.remove_widget(self.tabs)		
+		except:
+			pass		
+		self.add_widget(self.tabs)
+
+
+	def add_sm(self,smname):
+		global selected
+		selectedstr = smname + ', '.join(selected)
+		idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)		
+		newdict['Statements'] = 'selectedstr'		
+		try:
+			self.remove_widget(self.box)		
+			self.clear_widget()
+		except:
+			pass
+		self.planupdate()			
+		#self.add_widget(self.box)	
+			
 	def chngIscreen(self):
 		global the_screenmanager
 		the_screenmanager.current = 'itemscreen'
@@ -279,7 +355,9 @@ class ItemScreen(Screen):
 		global the_screenmanager
 		global newdict
 		topic='Visions'
-		self.newitems=dict()
+		self.slctid.text=''
+		self.newitems=dict({})
+
 		for thename in newdict:
 			if str(newdict[thename])==str(topic):
 				self.newitems.append(thename)
@@ -300,7 +378,9 @@ class ItemScreen(Screen):
 		global the_screenmanager
 		global newdict
 		topic='Missions'
-		self.newitems=dict()
+		self.slctid.text=''
+		self.newitems=dict({})
+
 		for thename in newdict:
 			if str(newdict[thename])==str(topic):
 				self.newitems.append(thename)
@@ -321,7 +401,8 @@ class ItemScreen(Screen):
 		global the_screenmanager
 		global newdict
 		topic='Objectives'
-		self.newitems=dict()
+		self.slctid.text=''
+		self.newitems=dict({})
 		for thename in newdict:
 			if str(newdict[thename])==str(topic):
 				self.newitems.append(thename)
@@ -416,67 +497,6 @@ class MFScreen(Screen):
 class ExeScreen(Screen):
 	pass		
 
-class PlanExe(TabbedPanel):
-	global newdict
-	global the_screenmanager
-	global endtime
-	global selected
-	
-	objs = StringProperty('')
-	miss = StringProperty('')
-	viss = StringProperty('')
-	box = BoxLayout(orientation='vertical')
-
-	def __init__ (self,**kwargs):
-		global selected
-		global newdict
-		super (PlanExe, self).__init__(**kwargs)
-		self.default_tab_content = self.box
-		for thename in newdict:
-			if str(newdict[thename])==str('Statement'):
-				self.add_widget(TabbedPanelItem(text="tab1"))
-			
-			#TabbedPanelItem:
-			#text: 'tab3'
-			#RstDocument:
-			#text:
-				
-				#'\\n'.join(("Hello world", "-----------",
-				#"You are in the third tab."))
-
-		Clock.schedule_interval(self.planupdate, 0.2)
-
-	def planupdate(self, dt):
-		global selected
-		#print selected
-		self.box.clear_widgets()
-		if len(selected) > 0:
-			if selected[0] == "Objectives":
-				self.objs = ', '.join(list(selected[1:]))
-			if selected[0] == "Missions":
-				self.miss = ', '.join(list(selected[1:]))
-			if selected[0] == "Visions":
-				self.viss = ', '.join(list(selected[1:]))
-		
-		self.default_tab_text = "New"
-		#self.box = self.boxLayout(orientation='vertical')
-		self.box.add_widget(Label(text='if'))
-		self.box.add_widget(Label(text=self.objs))
-		self.box.add_widget(Label(text='then'))
-		self.box.add_widget(Label(text=self.miss))
-		self.box.add_widget(Label(text='so that'))
-		self.box.add_widget(Label(text=self.viss))
-		add_btn = Button(text='Add', on_release=lambda add_btn: self.add_sm())
-		self.box.add_widget(add_btn)
-		self.default_tab_content = self.box
-
-
-	def add_sm(self):
-		global selected
-		selectedstr = ', '.join(selected)
-		idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)		
-		newdict['Statements'] = 'selectedstr'		
-			
 class MFExe(BoxLayout):
 	
 	global the_screenmanager
