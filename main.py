@@ -1,7 +1,7 @@
 import kivy
 kivy.require('1.7.2') # replace with your current kivy version !
 from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.properties import ListProperty, ObjectProperty, StringProperty, NumericProperty
 from kivy.factory import Factory
 from kivy.uix.button import Button
@@ -22,11 +22,11 @@ from kivy.storage.jsonstore import JsonStore
 #from kivy.uix.treeview import TreeViewLabel
 #from kivy.uix.scrollview import ScrollView
 
-#Declaration of variables:
+#Declaration of global variables:
 selected = list()		
 topic = str('Visions')		
-#the_screenmanager = ScreenManager(transition=FadeTransition())
 the_screenmanager = ScreenManager()
+the_screenmanager.transition = FadeTransition()
 endtime = 0  
 idata = JsonStore('itemdata.json')
 idatacpy = dict(JsonStore('itemdata.json'))
@@ -170,20 +170,20 @@ Builder.load_string('''
             pos_hint:{'center_x': .5, 'center_y': .5}		    
         Button:
             text:'Select and deselect to statement'
-            on_release:root.slct_item(visspinner.text, root.slctid)
+            on_release:root.slct_item(root.slctid)
         Button:
             text:'Remove'
-            on_release:root.rmv_vis(visspinner.text, root.slctid)
+            on_release:root.rmv_vis(root.slctid)
         BoxLayout:
             orientation: 'horizontal'
             TextInput:
                 size_hint : 0.75, None
                 text:''
-                id:visinpt
+                id:msinput
             Button:
                 size_hint : 0.25, None
                 text:'Add item'
-                on_release:root.add_vis(visspinner.text, visinpt.text)                
+                on_release:root.add_item(msinput.text)                
         Button:
             text:'Cancel'
             on_release:app.root.current = 'planscreen'    
@@ -264,19 +264,13 @@ class ItemScreen(Screen):
 	global the_screenmanager
 	global newdict
 	global topic
-	
 	newitems = ListProperty()
 	slctid = MultiSelectSpinner(
-		id="slctid",
-		#now
-		#values = newitems
+		id="slctid"
 	)
-
 	def __init__(self, **kwargs):
-		
 		super (ItemScreen, self).__init__(**kwargs)
 		self.vises()
-		
 	def vises(self):
 		self.ids.vis_button.background_color= (1.0, 0.0, 0.0, 1.0)
 		self.ids.mis_button.background_color= (1.0, 1.0, 1.0, 1.0)
@@ -284,17 +278,18 @@ class ItemScreen(Screen):
 		global topic
 		global the_screenmanager
 		global newdict
-		#super (Items, self).__init__(**kwargs)
+		topic='Visions'
+		self.newitems=dict()
 		for thename in newdict:
 			if str(newdict[thename])==str(topic):
-			#if str(newdict[name])==str(self.ids.visspinner.text):
 				self.newitems.append(thename)
+		if self.newitems == []:
+			self.newitems.append(' ')		
 		self.slctid.values = self.newitems
-		#try:
-		#	self.ids.msspinner.add_widget(self.slctid)
-		#except:
-		#	pass
-
+		try:
+			self.ids.msspinner.add_widget(self.slctid)
+		except:
+			pass
 	def mises(self):
 		self.ids.mis_button.background_color= (1.0, 0.0, 0.0, 1.0)
 		self.ids.vis_button.background_color= (1.0, 1.0, 1.0, 1.0)
@@ -302,17 +297,18 @@ class ItemScreen(Screen):
 		global topic
 		global the_screenmanager
 		global newdict
-		#super (Items, self).__init__(**kwargs)
+		topic='Missions'
+		self.newitems=dict()
 		for thename in newdict:
 			if str(newdict[thename])==str(topic):
-			#if str(newdict[name])==str(self.ids.visspinner.text):
 				self.newitems.append(thename)
+		if self.newitems == []:
+			self.newitems.append(' ')		
 		self.slctid.values = self.newitems
-		#try:
-		#	self.ids.msspinner.add_widget(self.slctid)
-		#except:
-		#	pass
-
+		try:
+			self.ids.msspinner.add_widget(self.slctid)
+		except:
+			pass
 	def objes(self):
 		self.ids.obj_button.background_color= (1.0, 0.0, 0.0, 1.0)
 		self.ids.mis_button.background_color= (1.0, 1.0, 1.0, 1.0)
@@ -320,72 +316,71 @@ class ItemScreen(Screen):
 		global topic
 		global the_screenmanager
 		global newdict
-		#super (Items, self).__init__(**kwargs)
+		topic='Objectives'
+		self.newitems=dict()
 		for thename in newdict:
 			if str(newdict[thename])==str(topic):
-			#if str(newdict[name])==str(self.ids.visspinner.text):
 				self.newitems.append(thename)
+		if self.newitems == []:
+			self.newitems.append(' ')		
 		self.slctid.values = self.newitems
-		#try:
-		#	self.ids.msspinner.add_widget(self.slctid)
-		#except:
-		#	pass
-
-	def slct_item(self,varitemtype,slctid):
+		try:
+			self.ids.msspinner.add_widget(self.slctid)
+		except:
+			pass
+	def slct_item(self,slctid):
 		global selected
+		global topic
 		del selected[:]
-		selected.append(varitemtype)
+		selected.append(topic)
 		selected.extend(slctid.text.split(", "))
-
-		
-		#print 'rmv_item %s'%selected
-		#the_screenmanager.current = 'visitems'
 		the_screenmanager.current = 'planscreen'
-		
-	def rmv_vis(self,varitemtype,slctid):
+	def rmv_vis(self,slctid):
 		global selected
 		global newdict
+		global topic
 		del selected[:]
 		selected=slctid.text.split(", ")
 		for i in selected:
-			#now
 			idata.delete(str(i))
 			for name in newdict:
-				#https://stackoverflow.com/questions/11277432/how-to-remove-a-key-from-a-python-dictionary#11277439
 				if newdict[name]==str(i):
 					my_dict.pop(str(i), None)
 					#self.newitems.remove(str(i))
-
 		self.ids.msspinner.remove_widget(self.slctid)		
 		self.slctid.values = self.newitems
 		self.ids.msspinner.add_widget(self.slctid)		
-		App.get_running_app().stop()
-		GnomieApp().run()
-		the_screenmanager.current = 'itemscreen'
-
-	def add_vis(self, varitemtype, theitem):
+		if topic=='Visions':
+			self.vises()
+		if topic=='Missions':
+			self.mises()
+		if topic=='Objectives':
+			self.objes()		
+	def add_item(self, theitem):
 		global newdict
 		global the_screenmanager
-		idata.put(str(theitem), itemtype=varitemtype, name=theitem)
-		newdict[theitem] = varitemtype
-
+		global topic
+		idata.put(str(theitem), itemtype=topic, name=theitem)
+		newdict[theitem] = topic
 		self.ids.msspinner.remove_widget(self.slctid)		
 		self.slctid.values = self.newitems
-		self.ids.msspinner.add_widget(self.slctid)		
-		App.get_running_app().stop()
-		GnomieApp().run()
-		the_screenmanager.current = 'itemscreen'
+		self.ids.msspinner.add_widget(self.slctid)
+		if topic=='Visions':
+			self.vises()
+		if topic=='Missions':
+			self.mises()
+		if topic=='Objectives':
+			self.objes()						
 
 	def Exit(self):
 		global the_screenmanager
-		
 		self.nowpart = 0
 		self.nowtime=0						
 		the_screenmanager.current = 'planscreen'
 
 	#def select_screen(self, spinner, thetext):
 	def select_screen(self):
-		self.show(self.ids.visspinner.text)
+		self.show(self.ids.msspinner.text)
 
 	#def show(self, name, popup1):
 	def show(self, name):
