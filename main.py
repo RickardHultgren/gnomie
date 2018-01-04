@@ -287,9 +287,11 @@ class ItemScreen(Screen):
 			self.newitems.append(' ')		
 		self.slctid.values = self.newitems
 		try:
-			self.ids.msspinner.add_widget(self.slctid)
+			self.ids.msspinner.remove_widget(self.slctid)		
 		except:
 			pass
+		self.slctid.values = self.newitems
+		self.ids.msspinner.add_widget(self.slctid)
 	def mises(self):
 		self.ids.mis_button.background_color= (1.0, 0.0, 0.0, 1.0)
 		self.ids.vis_button.background_color= (1.0, 1.0, 1.0, 1.0)
@@ -306,9 +308,11 @@ class ItemScreen(Screen):
 			self.newitems.append(' ')		
 		self.slctid.values = self.newitems
 		try:
-			self.ids.msspinner.add_widget(self.slctid)
+			self.ids.msspinner.remove_widget(self.slctid)		
 		except:
 			pass
+		self.slctid.values = self.newitems
+		self.ids.msspinner.add_widget(self.slctid)
 	def objes(self):
 		self.ids.obj_button.background_color= (1.0, 0.0, 0.0, 1.0)
 		self.ids.mis_button.background_color= (1.0, 1.0, 1.0, 1.0)
@@ -323,11 +327,12 @@ class ItemScreen(Screen):
 				self.newitems.append(thename)
 		if self.newitems == []:
 			self.newitems.append(' ')		
-		self.slctid.values = self.newitems
 		try:
-			self.ids.msspinner.add_widget(self.slctid)
+			self.ids.msspinner.remove_widget(self.slctid)		
 		except:
 			pass
+		self.slctid.values = self.newitems
+		self.ids.msspinner.add_widget(self.slctid)
 	def slct_item(self,slctid):
 		global selected
 		global topic
@@ -346,10 +351,7 @@ class ItemScreen(Screen):
 			for name in newdict:
 				if newdict[name]==str(i):
 					my_dict.pop(str(i), None)
-					#self.newitems.remove(str(i))
-		self.ids.msspinner.remove_widget(self.slctid)		
-		self.slctid.values = self.newitems
-		self.ids.msspinner.add_widget(self.slctid)		
+					#self.newitems.remove(str(i))	
 		if topic=='Visions':
 			self.vises()
 		if topic=='Missions':
@@ -378,24 +380,16 @@ class ItemScreen(Screen):
 		self.nowtime=0						
 		the_screenmanager.current = 'planscreen'
 
-	#def select_screen(self, spinner, thetext):
 	def select_screen(self):
 		self.show(self.ids.msspinner.text)
 
-	#def show(self, name, popup1):
 	def show(self, name):
-		#global the_screenmanager
 		global topic
 		if name=='Visions':
-			#the_screenmanager.current = 'planscreen'
 			topic='Visions'
 		if name=='Missions':
-			#the_screenmanager.current = 'planscreen'
-			#the_screenmanager.current='misitems'
 			topic='Missions'
 		if name=='Objectives':
-			#the_screenmanager.current = 'planscreen'
-			#the_screenmanager.current='objitems'			
 			topic='Objectives'
 			
 class MFScreen(Screen):
@@ -423,7 +417,7 @@ class ExeScreen(Screen):
 	pass		
 
 class PlanExe(TabbedPanel):
-	
+	global newdict
 	global the_screenmanager
 	global endtime
 	global selected
@@ -432,15 +426,16 @@ class PlanExe(TabbedPanel):
 	miss = StringProperty('')
 	viss = StringProperty('')
 	box = BoxLayout(orientation='vertical')
-	#inpt=TextInput(text=settingdata.get('email')['address'], multiline=False)
 
 	def __init__ (self,**kwargs):
 		global selected
+		global newdict
 		super (PlanExe, self).__init__(**kwargs)
 		self.default_tab_content = self.box
-		#for anitem, atype in newdict.find(itemtype=str('Statements')):
-		#for idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)
-			#self.add_widget(TabbedPanelItem(text="tab1"))
+		for thename in newdict:
+			if str(newdict[thename])==str('Statement'):
+				self.add_widget(TabbedPanelItem(text="tab1"))
+			
 			#TabbedPanelItem:
 			#text: 'tab3'
 			#RstDocument:
@@ -452,7 +447,6 @@ class PlanExe(TabbedPanel):
 		Clock.schedule_interval(self.planupdate, 0.2)
 
 	def planupdate(self, dt):
-		
 		global selected
 		#print selected
 		self.box.clear_widgets()
@@ -472,9 +466,7 @@ class PlanExe(TabbedPanel):
 		self.box.add_widget(Label(text=self.miss))
 		self.box.add_widget(Label(text='so that'))
 		self.box.add_widget(Label(text=self.viss))
-		add_btn = Button(text='Add')
-
-
+		add_btn = Button(text='Add', on_release=lambda add_btn: self.add_sm())
 		self.box.add_widget(add_btn)
 		self.default_tab_content = self.box
 
@@ -537,8 +529,6 @@ class MFExe(BoxLayout):
 		self.nowtime=0						
 		the_screenmanager.current = 'mfscreen'
 			
-#https://stackoverflow.com/questions/40341674/update-kivy-label-using-screen-manager
-
 class ReviewScreen(Screen):
 	def __init__ (self,**kwargs):
 		super (ReviewScreen, self).__init__(**kwargs)
