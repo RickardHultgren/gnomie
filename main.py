@@ -312,19 +312,13 @@ class PlanScreen(Screen):
 				abox.add_widget(Label(text=themiss))
 				abox.add_widget(Label(text='so that'))
 				abox.add_widget(Label(text=theviss))
-				#add_btn = Button(text='Edit', on_release=lambda add_btn: self.add_sm(inpttbl.text))
+				#add_btn = Button(text='Edit statement', on_release=lambda add_btn: self.add_sm(inpttbl.text))
+				#del_btn = Button(text='Delete statement', on_release=lambda del_btn: self.add_sm(inpttbl.text))
 				#abox.add_widget(add_btn)
+				#abox.add_widget(del_btn)
 			thetab.add_widget(abox)
 			self.tabs.add_widget(thetab)
 
-			#TabbedPanelItem:
-			#text: 'tab3'
-			#RstDocument:
-			#text:
-				#'\\n'.join(("Hello world", "-----------",
-				#"You are in the third tab."))
-				
-		#self.box.clear_widgets()
 		if len(selected) > 0:
 			if selected[0] == "Objectives":
 				self.objs = ', '.join(list(selected[1:]))
