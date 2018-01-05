@@ -28,6 +28,9 @@ topic = str('Visions')
 the_screenmanager = ScreenManager()
 the_screenmanager.transition = FadeTransition()
 endtime = 0  
+statusdata = JsonStore('statusdata.json')
+statuscpy = dict(JsonStore('statusdata.json'))
+statusdict = dict()
 idata = JsonStore('itemdata.json')
 idatacpy = dict(JsonStore('itemdata.json'))
 newdict = dict()
@@ -246,10 +249,12 @@ class PlanScreen(Screen):
 	global the_screenmanager
 	global endtime
 	global selected	
+	global statuscpy
 	
 	objs = StringProperty('')
 	miss = StringProperty('')
 	viss = StringProperty('')
+	statusname = StringProperty('')
 	box = BoxLayout(orientation='vertical')
 	
 	tabs=TabbedPanel(
@@ -279,21 +284,49 @@ class PlanScreen(Screen):
 			pass				
 		global selected
 		global newdict
+		global statuscpy
 		self.tabs.default_tab_content = self.box
 		#now
 		#self.tabs.add_widget(TabbedPanelItem(text='abc'))
-		for thename in newdict:
-			print thename
-			print newdict[thename]
-			if str(newdict[thename])==str('Statements'):
-				namelist=thename.split(", ")
-				self.tabs.add_widget(TabbedPanelItem(text=namelist[0]))
+		for thename in statuscpy:
+			#print thename
+			thetab = TabbedPanelItem(text=thename)
+			abox = BoxLayout(orientation='vertical')
+			thesubdict = statuscpy[thename]
+			theviss='xxx'
+			themiss='xxx'
+			theobjs='xxx'
+			for thetopic in thesubdict:
+				namelist = thetopic.split(", ")
+
+				if thesubdict[thetopic] == "vis":
+					theviss=thetopic
+				if thesubdict[thetopic] == "mis":
+					themiss=thetopic
+				if thesubdict[thetopic] == "obj":
+					theobjs=thetopic
+				abox.add_widget(Label(text='Statement name:'))
+				inpttbl=(TextInput(text=thename))
+				abox.add_widget(inpttbl)
+				abox.add_widget(Label(text='if'))
+				abox.add_widget(Label(text=theobjs))
+				abox.add_widget(Label(text='then'))
+				abox.add_widget(Label(text=themiss))
+				abox.add_widget(Label(text='so that'))
+				abox.add_widget(Label(text=theviss))
+				#add_btn = Button(text='Edit', on_release=lambda add_btn: self.add_sm(inpttbl.text))
+				#abox.add_widget(add_btn)
+				thetab.add_widget(abox)
+				
+
+
 			#TabbedPanelItem:
 			#text: 'tab3'
 			#RstDocument:
 			#text:
 				#'\\n'.join(("Hello world", "-----------",
 				#"You are in the third tab."))
+				
 		#self.box.clear_widgets()
 		if len(selected) > 0:
 			if selected[0] == "Objectives":
@@ -318,21 +351,21 @@ class PlanScreen(Screen):
 		self.tabs.default_tab_content = self.box
 		self.add_widget(self.tabs)
 
-
-	def add_sm(self,smname):
+	def add_sm(self,status):
 		#now
 		global selected
-		selectedstr = smname + ', '.join(selected)
-		idata.put(str(selectedstr), itemtype='Statements', name=selectedstr)		
-		newdict[selectedstr] =	'Statements'
+		global statuscpy
+		self.statusname=status
+		statusdata.put(str(status), vis=self.viss, mis=self.miss, obj=self.objs)		
+		statuscpy[status] = {'vis':self.viss, 'mis':self.miss, 'obj':self.objs}	
 		try:
-			self.remove_widget(self.box)		
-			self.clear_widget()
+			self.remove_widget(self.tabs)		
+			#self.clear_widget()
 		except:
 			pass
-		self.planupdate()			
+		self.planupdate()		
 		#self.add_widget(self.box)	
-			
+		
 	def chngIscreen(self):
 		global the_screenmanager
 		the_screenmanager.current = 'itemscreen'
