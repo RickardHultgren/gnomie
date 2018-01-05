@@ -303,19 +303,19 @@ class PlanScreen(Screen):
 					themiss=thesubdict[thetopic]
 				if thetopic == "obj":
 					theobjs=thesubdict[thetopic]
-				abox.add_widget(Label(text='Statement name:'))
-				inpttbl=(TextInput(text=thename))
-				abox.add_widget(inpttbl)
-				abox.add_widget(Label(text='if'))
-				abox.add_widget(Label(text=theobjs))
-				abox.add_widget(Label(text='then'))
-				abox.add_widget(Label(text=themiss))
-				abox.add_widget(Label(text='so that'))
-				abox.add_widget(Label(text=theviss))
-				#add_btn = Button(text='Edit statement', on_release=lambda add_btn: self.add_sm(inpttbl.text))
-				#del_btn = Button(text='Delete statement', on_release=lambda del_btn: self.add_sm(inpttbl.text))
-				#abox.add_widget(add_btn)
-				#abox.add_widget(del_btn)
+			abox.add_widget(Label(text='Statement name:'))
+			inpttbl=(TextInput(text=thename))
+			abox.add_widget(inpttbl)
+			abox.add_widget(Label(text='if'))
+			abox.add_widget(Label(text=theobjs))
+			abox.add_widget(Label(text='then'))
+			abox.add_widget(Label(text=themiss))
+			abox.add_widget(Label(text='so that'))
+			abox.add_widget(Label(text=theviss))
+			#add_btn = Button(text='Edit statement', on_release=lambda add_btn: self.add_sm(inpttbl.text))
+			del_btn = Button(text='Delete statement', on_release=lambda del_btn: self.del_sm(thename))
+			#abox.add_widget(add_btn)
+			abox.add_widget(del_btn)
 			thetab.add_widget(abox)
 			self.tabs.add_widget(thetab)
 
@@ -356,6 +356,21 @@ class PlanScreen(Screen):
 			pass
 		self.planupdate()		
 		#self.add_widget(self.box)	
+		
+	def del_sm(self, aname):
+		global selected
+		global statuscpy
+		
+		#for name in statuscpy:
+		#	if name==aname:
+		#		statuscpy.pop(aname, None)
+		statusdata.delete(str(aname))
+		try:
+			self.remove_widget(self.tabs)		
+			#self.clear_widget()
+		except:
+			pass
+		self.planupdate()				
 		
 	def chngIscreen(self):
 		global the_screenmanager
