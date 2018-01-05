@@ -289,22 +289,20 @@ class PlanScreen(Screen):
 		#now
 		#self.tabs.add_widget(TabbedPanelItem(text='abc'))
 		for thename in statuscpy:
-			#print thename
 			thetab = TabbedPanelItem(text=thename)
 			abox = BoxLayout(orientation='vertical')
 			thesubdict = statuscpy[thename]
-			theviss='xxx'
-			themiss='xxx'
-			theobjs='xxx'
+			theviss = ''
+			themiss = ''
+			theobjs = ''
 			for thetopic in thesubdict:
-				namelist = thetopic.split(", ")
-
-				if thesubdict[thetopic] == "vis":
-					theviss=thetopic
-				if thesubdict[thetopic] == "mis":
-					themiss=thetopic
-				if thesubdict[thetopic] == "obj":
-					theobjs=thetopic
+#				print "key: %s, value: %s "%(thekey, thevalue)
+				if thetopic == "vis":
+					theviss=thesubdict[thetopic]
+				if thetopic == "mis":
+					themiss=thesubdict[thetopic]
+				if thetopic == "obj":
+					theobjs=thesubdict[thetopic]
 				abox.add_widget(Label(text='Statement name:'))
 				inpttbl=(TextInput(text=thename))
 				abox.add_widget(inpttbl)
@@ -316,9 +314,8 @@ class PlanScreen(Screen):
 				abox.add_widget(Label(text=theviss))
 				#add_btn = Button(text='Edit', on_release=lambda add_btn: self.add_sm(inpttbl.text))
 				#abox.add_widget(add_btn)
-				thetab.add_widget(abox)
-				
-
+			thetab.add_widget(abox)
+			self.tabs.add_widget(thetab)
 
 			#TabbedPanelItem:
 			#text: 'tab3'
