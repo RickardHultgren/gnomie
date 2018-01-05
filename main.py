@@ -265,13 +265,12 @@ class PlanScreen(Screen):
     orientation= 'vertical',
     padding= 50
     )
-	abox = BoxLayout(orientation='vertical')
 	def __init__ (self,**kwargs):
 		super (PlanScreen, self).__init__(**kwargs)
-		try:
-			self.remove_widget(self.tabs)		
-		except:
-			pass
+		#try:
+		#	self.remove_widget(self.tabs)		
+		#except:
+		#	pass
 		self.planupdate()			
 		#self.add_widget(self.tabs)
 		#Clock.schedule_interval(self.planupdate, 0.2)
@@ -289,9 +288,11 @@ class PlanScreen(Screen):
 		global statuscpy
 		self.tabs.default_tab_content = self.box
 		#now
-		#self.tabs.add_widget(TabbedPanelItem(text='abc'))
+		#first=TabbedPanelItem(text='abc')
 		for thename in statuscpy:
 			thetab = TabbedPanelItem(text=thename)
+
+			abox = BoxLayout(orientation='vertical')
 			thesubdict = statuscpy[thename]
 			theviss = ''
 			themiss = ''
@@ -304,20 +305,20 @@ class PlanScreen(Screen):
 					themiss=thesubdict[thetopic]
 				if thetopic == "obj":
 					theobjs=thesubdict[thetopic]
-			self.abox.add_widget(Label(text='Statement name:'))
+			abox.add_widget(Label(text='Statement name:'))
 			inpttbl=(TextInput(text=thename))
-			self.abox.add_widget(inpttbl)
-			self.abox.add_widget(Label(text='if'))
-			self.abox.add_widget(Label(text=theobjs))
-			self.abox.add_widget(Label(text='then'))
-			self.abox.add_widget(Label(text=themiss))
-			self.abox.add_widget(Label(text='so that'))
-			self.abox.add_widget(Label(text=theviss))
+			abox.add_widget(inpttbl)
+			abox.add_widget(Label(text='if'))
+			abox.add_widget(Label(text=theobjs))
+			abox.add_widget(Label(text='then'))
+			abox.add_widget(Label(text=themiss))
+			abox.add_widget(Label(text='so that'))
+			abox.add_widget(Label(text=theviss))
 			#add_btn = Button(text='Edit statement', on_release=lambda add_btn: self.add_sm(inpttbl.text))
 			del_btn = Button(text='Delete statement', on_release=lambda del_btn: self.del_sm(thename))
-			#self.abox.add_widget(add_btn)
-			self.abox.add_widget(del_btn)
-			thetab.add_widget(self.abox)
+			#abox.add_widget(add_btn)
+			abox.add_widget(del_btn)
+			thetab.add_widget(abox)
 			self.tabs.add_widget(thetab)
 
 		if len(selected) > 0:
@@ -327,6 +328,8 @@ class PlanScreen(Screen):
 				self.miss = ', '.join(list(selected[1:]))
 			if selected[0] == "Visions":
 				self.viss = ', '.join(list(selected[1:]))
+		#now
+		#Delete the content or make it to self...
 		self.tabs.default_tab_text = "New"
 		#self.box = self.boxLayout(orientation='vertical')
 		self.box.add_widget(Label(text='Statement name:'))
