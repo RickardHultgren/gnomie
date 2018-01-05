@@ -265,7 +265,7 @@ class PlanScreen(Screen):
     orientation= 'vertical',
     padding= 50
     )
-
+	abox = BoxLayout(orientation='vertical')
 	def __init__ (self,**kwargs):
 		super (PlanScreen, self).__init__(**kwargs)
 		try:
@@ -278,7 +278,9 @@ class PlanScreen(Screen):
 
 #	def planupdate(self, dt):
 	def planupdate(self):
+		#now
 		try:
+			self.clear_widget(self.tabs)
 			self.remove_widget(self.tabs)		
 		except:
 			pass				
@@ -290,7 +292,6 @@ class PlanScreen(Screen):
 		#self.tabs.add_widget(TabbedPanelItem(text='abc'))
 		for thename in statuscpy:
 			thetab = TabbedPanelItem(text=thename)
-			abox = BoxLayout(orientation='vertical')
 			thesubdict = statuscpy[thename]
 			theviss = ''
 			themiss = ''
@@ -303,20 +304,20 @@ class PlanScreen(Screen):
 					themiss=thesubdict[thetopic]
 				if thetopic == "obj":
 					theobjs=thesubdict[thetopic]
-			abox.add_widget(Label(text='Statement name:'))
+			self.abox.add_widget(Label(text='Statement name:'))
 			inpttbl=(TextInput(text=thename))
-			abox.add_widget(inpttbl)
-			abox.add_widget(Label(text='if'))
-			abox.add_widget(Label(text=theobjs))
-			abox.add_widget(Label(text='then'))
-			abox.add_widget(Label(text=themiss))
-			abox.add_widget(Label(text='so that'))
-			abox.add_widget(Label(text=theviss))
+			self.abox.add_widget(inpttbl)
+			self.abox.add_widget(Label(text='if'))
+			self.abox.add_widget(Label(text=theobjs))
+			self.abox.add_widget(Label(text='then'))
+			self.abox.add_widget(Label(text=themiss))
+			self.abox.add_widget(Label(text='so that'))
+			self.abox.add_widget(Label(text=theviss))
 			#add_btn = Button(text='Edit statement', on_release=lambda add_btn: self.add_sm(inpttbl.text))
 			del_btn = Button(text='Delete statement', on_release=lambda del_btn: self.del_sm(thename))
-			#abox.add_widget(add_btn)
-			abox.add_widget(del_btn)
-			thetab.add_widget(abox)
+			#self.abox.add_widget(add_btn)
+			self.abox.add_widget(del_btn)
+			thetab.add_widget(self.abox)
 			self.tabs.add_widget(thetab)
 
 		if len(selected) > 0:
@@ -350,8 +351,9 @@ class PlanScreen(Screen):
 		statusdata.put(str(status), vis=self.viss, mis=self.miss, obj=self.objs)		
 		statuscpy[status] = {'vis':self.viss, 'mis':self.miss, 'obj':self.objs}	
 		try:
+			self.clear_widget(self.tabs)
 			self.remove_widget(self.tabs)		
-			#self.clear_widget()
+			
 		except:
 			pass
 		self.planupdate()		
@@ -360,10 +362,7 @@ class PlanScreen(Screen):
 	def del_sm(self, aname):
 		global selected
 		global statuscpy
-		
-		#for name in statuscpy:
-		#	if name==aname:
-		#		statuscpy.pop(aname, None)
+		statuscpy.pop(aname, None)
 		statusdata.delete(str(aname))
 		try:
 			self.remove_widget(self.tabs)		
