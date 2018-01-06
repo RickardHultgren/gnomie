@@ -175,7 +175,7 @@ Builder.load_string('''
             on_release:root.slct_item(root.slctid)
         Button:
             text:'Remove'
-            on_release:root.rmv_vis(root.slctid)
+            on_release:root.rmv_item(root.slctid)
         BoxLayout:
             orientation: 'horizontal'
             TextInput:
@@ -249,10 +249,10 @@ class PlanScreen(Screen):
 	global selected	#in order to select
 	global statuscpy #in order to store "status"
 	
-	objs = StringProperty('') #items to be temporarely stored in a string
-	miss = StringProperty('') #items to be temporarely stored in a string
-	viss = StringProperty('') #items to be temporarely stored in a string
-	#statusname = StringProperty('') #name to be temporarely stored in a string	
+	objs = StringProperty('') #items to be temporarily stored in a string
+	miss = StringProperty('') #items to be temporarily stored in a string
+	viss = StringProperty('') #items to be temporarily stored in a string
+	#statusname = StringProperty('') #name to be temporarily stored in a string	
 	tabs=TabbedPanel(
 		#size_hint= {1, 0.8},
 		#pos_hint= {0, 0.10},
@@ -287,7 +287,8 @@ class PlanScreen(Screen):
 		#except:
 		#	pass																	
 
-		if len(selected) > 0: #temprarily stored items
+		if len(selected) > 1: #temprarily stored items
+		#if len(selected) > 0: #temprarily stored items
 			if selected[0] == "Objectives":
 				self.objs = ', '.join(list(selected[1:]))
 			if selected[0] == "Missions":
@@ -442,18 +443,23 @@ class ItemScreen(Screen):
 		self.slctid.values = self.newitems
 		self.ids.msspinner.add_widget(self.slctid)
 	def slct_item(self,slctid):
+		#slctid is the string representing the items
 		global selected
 		global topic
 		del selected[:]
 		selected.append(topic)
 		selected.extend(slctid.text.split(", "))
+		#"selected" is now: (topic), (), list of items...
 		the_screenmanager.current = 'planscreen'
-	def rmv_vis(self,slctid):
+	def rmv_item(self,slctid):
 		global selected
 		global newdict
 		global topic
 		del selected[:]
 		selected=slctid.text.split(", ")
+		
+		#now
+		#What is the topic?
 		for i in selected:
 			idata.delete(str(i))
 			for name in newdict:
