@@ -17,7 +17,7 @@ from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 from kivy.storage.jsonstore import JsonStore
 #from kivy.uix.gridlayout import GridLayout
-#from functools import partial
+from functools import partial
 #from kivy.uix.treeview import TreeView, TreeViewNode
 #from kivy.uix.treeview import TreeViewLabel
 #from kivy.uix.scrollview import ScrollView
@@ -245,60 +245,78 @@ class MultiSelectSpinner(Button):
 			self.text = ''
 
 class PlanScreen(Screen):
-	global newdict
-	global the_screenmanager
-	global endtime
-	global selected	
-	global statuscpy
+	global the_screenmanager #in order to change screen
+	global selected	#in order to select
+	global statuscpy #in order to store "status"
 	
-	objs = StringProperty('')
-	miss = StringProperty('')
-	viss = StringProperty('')
-	statusname = StringProperty('')
-	box = BoxLayout(orientation='vertical')
-	
+	objs = StringProperty('') #items to be temporarely stored in a string
+	miss = StringProperty('') #items to be temporarely stored in a string
+	viss = StringProperty('') #items to be temporarely stored in a string
+	#statusname = StringProperty('') #name to be temporarely stored in a string	
 	tabs=TabbedPanel(
-    #size_hint= {1, 0.8},
-    #pos_hint= {0, 0.10},
-    anchor_x= 'center',
-    anchor_y= 'top',
-    orientation= 'vertical',
-    padding= 50
-    )
+		#size_hint= {1, 0.8},
+		#pos_hint= {0, 0.10},
+		anchor_x= 'center',
+		anchor_y= 'top',
+		orientation= 'vertical',
+		padding= 50
+	)
+	box = BoxLayout(orientation='vertical') #the "box" is the content of the first tab in "tabs"
+	tabs.default_tab_content = box #Description of the relationship between "tabs" and "box"
 	def __init__ (self,**kwargs):
 		super (PlanScreen, self).__init__(**kwargs)
-		#try:
-		#	self.remove_widget(self.tabs)		
+		self.planupdate()
+		
+	def planupdate(self):
+		global selected
+		global statuscpy
+		#try: #The screen should be cleared before updated
+		#	self.clear_widget(self.box)
 		#except:
 		#	pass
-		self.planupdate()			
-		#self.add_widget(self.tabs)
-		#Clock.schedule_interval(self.planupdate, 0.2)
+		#try: #The screen should be cleared before updated
+		#	self.remove_widget(self.box)
+		#except:
+		#	pass				
+		#try: #The screen should be cleared before updated
+		#	self.clear_widget(self.tabs)
+		#except:
+		#	pass				
+		#try: #The screen should be cleared before updated
+		#	self.remove_widget(self.tabs)		
+		#except:
+		#	pass																	
 
-#	def planupdate(self, dt):
-	def planupdate(self):
-		#now
-		try:
-			self.clear_widget(self.tabs)
-			self.remove_widget(self.tabs)		
-		except:
-			pass				
-		global selected
-		global newdict
-		global statuscpy
+		if len(selected) > 0: #temprarily stored items
+			if selected[0] == "Objectives":
+				self.objs = ', '.join(list(selected[1:]))
+			if selected[0] == "Missions":
+				self.miss = ', '.join(list(selected[1:]))
+			if selected[0] == "Visions":
+				self.viss = ', '.join(list(selected[1:]))
+		self.tabs.default_tab_text = "New"
+		self.box.add_widget(Label(text='Statement name:'))
+		inpttbl=(TextInput(text=''))
+		self.box.add_widget(inpttbl)
+		self.box.add_widget(Label(text='if'))
+		self.box.add_widget(Label(text=self.objs))
+		self.box.add_widget(Label(text='then'))
+		self.box.add_widget(Label(text=self.miss))
+		self.box.add_widget(Label(text='so that'))
+		self.box.add_widget(Label(text=self.viss))
+		add_btn = Button(text='Add', on_release=lambda add_btn: self.add_status(inpttbl.text))
+		#del_btn.bind(on_release=partial(self.del_status, thename))
+		self.box.add_widget(add_btn)
 		self.tabs.default_tab_content = self.box
-		#now
-		#first=TabbedPanelItem(text='abc')
-		for thename in statuscpy:
+		print "\n\n\n%s\n\n\n"%statuscpy
+		for thename in statuscpy: #Go through stored statements
 			thetab = TabbedPanelItem(text=thename)
-
-			abox = BoxLayout(orientation='vertical')
+			abox = BoxLayout(orientation='vertical') #the "abox" is the content of the tab in question
 			thesubdict = statuscpy[thename]
 			theviss = ''
 			themiss = ''
 			theobjs = ''
 			for thetopic in thesubdict:
-#				print "key: %s, value: %s "%(thekey, thevalue)
 				if thetopic == "vis":
 					theviss=thesubdict[thetopic]
 				if thetopic == "mis":
@@ -314,64 +332,30 @@ class PlanScreen(Screen):
 			abox.add_widget(Label(text=themiss))
 			abox.add_widget(Label(text='so that'))
 			abox.add_widget(Label(text=theviss))
-			#add_btn = Button(text='Edit statement', on_release=lambda add_btn: self.add_sm(inpttbl.text))
-			del_btn = Button(text='Delete statement', on_release=lambda del_btn: self.del_sm(thename))
-			#abox.add_widget(add_btn)
+			#add_btn = Button(text='Edit statement', on_release=lambda add_btn: self.add_status(inpttbl.text))
+			#abox.add_widget(add_btn)			
+			del_btn = Button(text='Delete statement')
+			del_btn.bind(on_release=partial(self.del_status, thename))
 			abox.add_widget(del_btn)
 			thetab.add_widget(abox)
 			self.tabs.add_widget(thetab)
-
-		if len(selected) > 0:
-			if selected[0] == "Objectives":
-				self.objs = ', '.join(list(selected[1:]))
-			if selected[0] == "Missions":
-				self.miss = ', '.join(list(selected[1:]))
-			if selected[0] == "Visions":
-				self.viss = ', '.join(list(selected[1:]))
-		#now
-		#Delete the content or make it to self...
-		self.tabs.default_tab_text = "New"
-		#self.box = self.boxLayout(orientation='vertical')
-		self.box.add_widget(Label(text='Statement name:'))
-		inpttbl=(TextInput(text=''))
-		self.box.add_widget(inpttbl)
-		self.box.add_widget(Label(text='if'))
-		self.box.add_widget(Label(text=self.objs))
-		self.box.add_widget(Label(text='then'))
-		self.box.add_widget(Label(text=self.miss))
-		self.box.add_widget(Label(text='so that'))
-		self.box.add_widget(Label(text=self.viss))
-		add_btn = Button(text='Add', on_release=lambda add_btn: self.add_sm(inpttbl.text))
-		self.box.add_widget(add_btn)
-		self.tabs.default_tab_content = self.box
-		self.add_widget(self.tabs)
-
-	def add_sm(self,status):
-		#now
-		global selected
-		global statuscpy
-		self.statusname=status
-		statusdata.put(str(status), vis=self.viss, mis=self.miss, obj=self.objs)		
-		statuscpy[status] = {'vis':self.viss, 'mis':self.miss, 'obj':self.objs}	
 		try:
-			self.clear_widget(self.tabs)
-			self.remove_widget(self.tabs)		
-			
+			self.add_widget(self.tabs)  #load widget
 		except:
 			pass
-		self.planupdate()		
-		#self.add_widget(self.box)	
 		
-	def del_sm(self, aname):
-		global selected
+	def add_status(self,status,*arg):
+		global statuscpy
+		print "STATUS:%s"%status
+		#self.statusname = status
+		statusdata.put(str(status), vis=self.viss, mis=self.miss, obj=self.objs)		
+		statuscpy[status] = {'vis':self.viss, 'mis':self.miss, 'obj':self.objs}	
+		self.planupdate()
+		
+	def del_status(self, aname, *arg):
 		global statuscpy
 		statuscpy.pop(aname, None)
 		statusdata.delete(str(aname))
-		try:
-			self.remove_widget(self.tabs)		
-			#self.clear_widget()
-		except:
-			pass
 		self.planupdate()				
 		
 	def chngIscreen(self):
