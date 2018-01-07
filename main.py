@@ -448,8 +448,9 @@ class ItemScreen(Screen):
 		global topic
 		del selected[:]
 		selected.append(topic)
-		selected.extend(slctid.text.split(", "))
+		selected.extend(self.slctid.text.split(", "))
 		#"selected" is now: (topic), (), list of items...
+		PlanScreen().planupdate()
 		the_screenmanager.current = 'planscreen'
 	def rmv_item(self,slctid):
 		global selected
@@ -457,15 +458,9 @@ class ItemScreen(Screen):
 		global topic
 		del selected[:]
 		selected=slctid.text.split(", ")
-		
-		#now
-		#What is the topic?
 		for i in selected:
 			idata.delete(str(i))
-			for name in newdict:
-				if newdict[name]==str(i):
-					my_dict.pop(str(i), None)
-					#self.newitems.remove(str(i))	
+			del newdict[str(i)]
 		if topic=='Visions':
 			self.vises()
 		if topic=='Missions':
@@ -493,18 +488,6 @@ class ItemScreen(Screen):
 		self.nowpart = 0
 		self.nowtime=0						
 		the_screenmanager.current = 'planscreen'
-
-	def select_screen(self):
-		self.show(self.ids.msspinner.text)
-
-	def show(self, name):
-		global topic
-		if name=='Visions':
-			topic='Visions'
-		if name=='Missions':
-			topic='Missions'
-		if name=='Objectives':
-			topic='Objectives'
 			
 class MFScreen(Screen):
 	global endtime
