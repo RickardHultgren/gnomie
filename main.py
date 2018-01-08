@@ -23,7 +23,6 @@ from functools import partial
 #from kivy.uix.scrollview import ScrollView
 
 #Declaration of global variables:
-selected = list()		
 topic = str('Visions')		
 the_screenmanager = ScreenManager()
 the_screenmanager.transition = FadeTransition()
@@ -34,6 +33,9 @@ statusdict = dict()
 idata = JsonStore('itemdata.json')
 idatacpy = dict(JsonStore('itemdata.json'))
 newdict = dict()
+objstr=str()
+visstr=str()
+misstr=str()
 for key in idatacpy:
 	counting = 0
 	subdict = idatacpy[key]
@@ -246,12 +248,11 @@ class MultiSelectSpinner(Button):
 
 class PlanScreen(Screen):
 	global the_screenmanager #in order to change screen
-	global selected	#in order to select
 	global statuscpy #in order to store "status"
 	
-	objs = StringProperty('') #items to be temporarily stored in a string
-	miss = StringProperty('') #items to be temporarily stored in a string
-	viss = StringProperty('') #items to be temporarily stored in a string
+	objs = StringProperty(objstr) #items to be temporarily stored in a string
+	miss = StringProperty(misstr) #items to be temporarily stored in a string
+	viss = StringProperty(visstr) #items to be temporarily stored in a string
 	#statusname = StringProperty('') #name to be temporarily stored in a string	
 	tabs=TabbedPanel(
 		#size_hint= {1, 0.8},
@@ -263,12 +264,30 @@ class PlanScreen(Screen):
 	)
 	box = BoxLayout(orientation='vertical') #the "box" is the content of the first tab in "tabs"
 	tabs.default_tab_content = box #Description of the relationship between "tabs" and "box"
+	tabs.default_tab_text = "New"
+	box.add_widget(Label(text='Statement name:'))
+	inpttbl=(TextInput(text=''))
+	box.add_widget(inpttbl)
+	box.add_widget(Label(text='if'))
+	objlbl=BoxLayout()
+	box.add_widget(objlbl)
+	box.add_widget(Label(text='then'))
+	mislbl=BoxLayout()
+	box.add_widget(mislbl)
+	box.add_widget(Label(text='so that'))
+	vislbl=BoxLayout()
+	box.add_widget(vislbl)	
+	add_btn = BoxLayout()
+	box.add_widget(add_btn)
+
 	def __init__ (self,**kwargs):
 		super (PlanScreen, self).__init__(**kwargs)
 		self.planupdate()
 		
 	def planupdate(self):
-		global selected
+		global objstr
+		global misstr
+		global visstr
 		global statuscpy
 		#try: #The screen should be cleared before updated
 		#	self.clear_widget(self.box)
@@ -285,31 +304,8 @@ class PlanScreen(Screen):
 		#try: #The screen should be cleared before updated
 		#	self.remove_widget(self.tabs)		
 		#except:
-		#	pass																	
-
-		if len(selected) > 1: #temprarily stored items
-		#if len(selected) > 0: #temprarily stored items
-			if selected[0] == "Objectives":
-				self.objs = ', '.join(list(selected[1:]))
-			if selected[0] == "Missions":
-				self.miss = ', '.join(list(selected[1:]))
-			if selected[0] == "Visions":
-				self.viss = ', '.join(list(selected[1:]))
-		self.tabs.default_tab_text = "New"
-		self.box.add_widget(Label(text='Statement name:'))
-		inpttbl=(TextInput(text=''))
-		self.box.add_widget(inpttbl)
-		self.box.add_widget(Label(text='if'))
-		self.box.add_widget(Label(text=self.objs))
-		self.box.add_widget(Label(text='then'))
-		self.box.add_widget(Label(text=self.miss))
-		self.box.add_widget(Label(text='so that'))
-		self.box.add_widget(Label(text=self.viss))
-		add_btn = Button(text='Add', on_release=lambda add_btn: self.add_status(inpttbl.text))
-		#del_btn.bind(on_release=partial(self.del_status, thename))
-		self.box.add_widget(add_btn)
-		self.tabs.default_tab_content = self.box
-		print "\n\n\n%s\n\n\n"%statuscpy
+		#	pass						
+		
 		for thename in statuscpy: #Go through stored statements
 			thetab = TabbedPanelItem(text=thename)
 			abox = BoxLayout(orientation='vertical') #the "abox" is the content of the tab in question
@@ -340,6 +336,17 @@ class PlanScreen(Screen):
 			abox.add_widget(del_btn)
 			thetab.add_widget(abox)
 			self.tabs.add_widget(thetab)
+		self.objs = objstr
+		self.miss = misstr
+		self.viss = visstr
+		self.add_btn.clear_widgets()
+		self.vislbl.clear_widgets()
+		self.mislbl.clear_widgets()
+		self.objlbl.clear_widgets()
+		self.add_btn.add_widget(Button(text='Add', on_release=lambda add_btn: self.add_status(self.inpttbl.text)))
+		self.vislbl.add_widget(Label(text="%s"%self.viss))
+		self.mislbl.add_widget(Label(text="%s"%self.miss))
+		self.objlbl.add_widget(Label(text="%s"%self.objs))				
 		try:
 			self.add_widget(self.tabs)  #load widget
 		except:
@@ -347,8 +354,6 @@ class PlanScreen(Screen):
 		
 	def add_status(self,status,*arg):
 		global statuscpy
-		print "STATUS:%s"%status
-		#self.statusname = status
 		statusdata.put(str(status), vis=self.viss, mis=self.miss, obj=self.objs)		
 		statuscpy[status] = {'vis':self.viss, 'mis':self.miss, 'obj':self.objs}	
 		self.planupdate()
@@ -364,7 +369,6 @@ class PlanScreen(Screen):
 		the_screenmanager.current = 'itemscreen'
 		
 class ItemScreen(Screen):
-	global selected
 	global the_screenmanager
 	global newdict
 	global topic
@@ -391,11 +395,13 @@ class ItemScreen(Screen):
 				self.newitems.append(thename)
 		if self.newitems == []:
 			self.newitems.append(' ')		
+		self.slctid.text = ''
 		self.slctid.values = self.newitems
 		try:
 			self.ids.msspinner.remove_widget(self.slctid)		
 		except:
 			pass
+		self.slctid.text = ''
 		self.slctid.values = self.newitems
 		self.ids.msspinner.add_widget(self.slctid)
 	def mises(self):
@@ -414,11 +420,13 @@ class ItemScreen(Screen):
 				self.newitems.append(thename)
 		if self.newitems == []:
 			self.newitems.append(' ')		
+		self.slctid.text = ''
 		self.slctid.values = self.newitems
 		try:
 			self.ids.msspinner.remove_widget(self.slctid)		
 		except:
 			pass
+		self.slctid.text = ''
 		self.slctid.values = self.newitems
 		self.ids.msspinner.add_widget(self.slctid)
 	def objes(self):
@@ -440,25 +448,29 @@ class ItemScreen(Screen):
 			self.ids.msspinner.remove_widget(self.slctid)		
 		except:
 			pass
+		self.slctid.text = ''
 		self.slctid.values = self.newitems
 		self.ids.msspinner.add_widget(self.slctid)
 	def slct_item(self,slctid):
 		#slctid is the string representing the items
-		global selected
 		global topic
-		del selected[:]
-		selected.append(topic)
-		selected.extend(self.slctid.text.split(", "))
-		#"selected" is now: (topic), (), list of items...
+		global visstr
+		global misstr
+		global objstr
+		#self.slctid.text = ''
+		#self.slctid.values = self.newitems
+		if topic=='Visions':
+			visstr=slctid.text
+		if topic=='Missions':
+			misstr=slctid.text
+		if topic=='Objectives':
+			objstr=slctid.text
 		PlanScreen().planupdate()
 		the_screenmanager.current = 'planscreen'
 	def rmv_item(self,slctid):
-		global selected
 		global newdict
 		global topic
-		del selected[:]
-		selected=slctid.text.split(", ")
-		for i in selected:
+		for i in slctid.text.split(", "):
 			idata.delete(str(i))
 			del newdict[str(i)]
 		if topic=='Visions':
@@ -467,6 +479,7 @@ class ItemScreen(Screen):
 			self.mises()
 		if topic=='Objectives':
 			self.objes()		
+		
 	def add_item(self, theitem):
 		global newdict
 		global the_screenmanager
@@ -474,6 +487,7 @@ class ItemScreen(Screen):
 		idata.put(str(theitem), itemtype=topic, name=theitem)
 		newdict[theitem] = topic
 		self.ids.msspinner.remove_widget(self.slctid)		
+		self.slctid.text = ''
 		self.slctid.values = self.newitems
 		self.ids.msspinner.add_widget(self.slctid)
 		if topic=='Visions':
@@ -481,7 +495,7 @@ class ItemScreen(Screen):
 		if topic=='Missions':
 			self.mises()
 		if topic=='Objectives':
-			self.objes()						
+			self.objes()				
 
 	def Exit(self):
 		global the_screenmanager
