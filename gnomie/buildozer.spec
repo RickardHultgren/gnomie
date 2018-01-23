@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = gnomie
+title = emadrs
 
 # (str) Package name
-package.name = gnomie
+package.name = emadrs
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = RickardVerner.Hultgren
@@ -13,7 +13,7 @@ package.domain = RickardVerner.Hultgren
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,json,ttf
+source.include_exts = py,png,jpg,kv,atlas,json
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -48,7 +48,7 @@ requirements = plyer,kivy
 #presplash.filename = %(source.dir)s/data/presplash.png
 
 # (str) Icon of the application
-#icon.filename = %(source.dir)s/data/icon.png
+icon.filename = logo.png
 
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = landscape
