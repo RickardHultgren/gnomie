@@ -144,12 +144,10 @@ class MainScreen(Screen):
 		if self.topic != 'mindf' :
 			try:
 				Clock.unschedule(self.planupdate)
+				self.popup1.clear_widgets()
+				self.box.clear_widgets()
 			except:
 				pass
-		try:
-			self.popup.clear_widgets()
-		except:
-			pass	
 		try:
 			self.popup1.dismiss()
 		except:
@@ -167,17 +165,30 @@ class MainScreen(Screen):
 		main_txt.bind(height=main_txt.setter('self.minimum_height'))
 		main_txt.text=str("%s"%self.main_choices[self.topic])
 		
+		self.ids.main_box.add_widget(main_txt)
+		
 		if self.topic == "start":
 			pass
 		if self.topic == "mindf":
 			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
-			main_txt.text=parts[0]
+			main_txt.text=parts[self.mindf_part]
 			mindf_bar=ProgressBar(
-				value=self.mindf_time,
 				max=self.mindf_limit
 				)
+			mindf_bar.value=self.mindf_time
 			self.ids.main_box.add_widget(mindf_bar)
-			if self.mindf_time >= self.mindf_limit and self.mindf_part < 5 and self.mindf_part >= 0:
+			
+			###
+			nxt_bttn=Button(text="next",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*txt_height)),font_name="DejaVuSerif")
+			nxt_bttn.bind(on_release=lambda nxt_bttn: self.nxtb())
+			prv_bttn=Button(text="previous",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*txt_height)),font_name="DejaVuSerif")
+			self.ids.main_box.add_widget(nxt_bttn)
+			prv_bttn.bind(on_release=lambda prv_bttn: self.prevb())
+			self.ids.main_box.add_widget(prv_bttn)
+			exit_bttn=Button(text="exit",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*txt_height)),font_name="DejaVuSerif")
+			exit_bttn.bind(on_release=lambda prv_bttn: self.exitb())
+			self.ids.main_box.add_widget(exit_bttn)			
+			if self.mindf_time == self.mindf_limit and self.mindf_part <= 5:
 				if self.mindf_part == 5:
 					self.mindf_time = 0
 				else:
@@ -185,11 +196,21 @@ class MainScreen(Screen):
 					self.mindf_time = 0
 			elif self.mindf_part != 5:		
 				self.mindf_time+=1
-			###now
-			self.mindf_time+=1
-			print self.mindf_time
-		self.ids.main_box.add_widget(main_txt)
-
+		
+	def prevb(self):
+		if self.mindf_part != 0:
+			self.mindf_part -= 1
+		self.mindf_time = 0
+		
+	def nxtb(self):
+		if self.mindf_part != 5:
+			self.mindf_part += 1
+		self.mindf_time = 0
+			
+	def exitb(self):
+		self.topic="start"
+		self.planupdate()
+			
 	def start(self):
 		self.topic="start"
 		self.planupdate()
@@ -199,17 +220,19 @@ class MainScreen(Screen):
 		self.popup1.title="mindfulness"
 		self.box.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?'))
 		btn2=Button(text = '2 min?',on_release=(lambda btn2: self.bttn2()))
-		btn4=Button(text = '4 min?',on_release=(lambda btn2: self.bttn4()))
+		btn4=Button(text = '4 min?',on_release=(lambda btn4: self.bttn4()))
 		self.box.add_widget(btn2)
 		self.box.add_widget(btn4)
 		self.popup1.open()
 		
 	def bttn2(self):
 		self.mindf_speed=4
+		self.mindf_limit=100
 		Clock.schedule_interval(self.planupdate, 0.2)
 
 	def bttn4(self):
 		self.mindf_speed=4
+		self.mindf_limit=100
 		Clock.schedule_interval(self.planupdate, 0.2)
 		
 	def state(self):
