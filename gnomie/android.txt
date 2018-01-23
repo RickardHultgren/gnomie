@@ -1,0 +1,3 @@
+title=gnomie
+author=Rickard Verner Hultgren
+orientation=landscape
