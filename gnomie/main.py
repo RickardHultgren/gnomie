@@ -71,9 +71,10 @@ Builder.load_string('''
                     title: ''
                     app_icon: 'gnomie.png'
                     with_previous: False
+                    on_release: root.start()
                 ActionGroup:
                     mode: 'spinner'
-                    text: 'tools'
+                    text: 'MENU'
                     font_name: 'DejaVuSerif-Bold'
                     ActionButton:
                         text: 'mindfulness'
@@ -114,9 +115,9 @@ class MainScreen(Screen):
 	line_len=30
 	main_choices = {
 	'start': "\n\nWelcome to my little home!\nI'm Gnomie the gnome.\nWhat choice pleases, when you\nwill pick from the menu?",
-	'mindf': 'Zara',
-	'state': '',
-	'stast': 'First'}
+	'mindf': '\n\n',
+	'state': '\n\n',
+	'stast': '\n\n'}
 	#print "dict['Name']: ", dict['Name']
 	topic='start'
 	def __init__ (self,**kwargs):
@@ -134,23 +135,38 @@ class MainScreen(Screen):
 		if self.fontheight*(len(self.main_choices[self.topic])/self.line_len) > self.fontheight :
 			txt_height=0*self.fontheight+self.fontheight*(len(self.main_choices[self.topic])/self.line_len)
 		else:
-			txt_height=fontheihgt
-		newq=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(txt_height)),font_name="DejaVuSerif")#, font_size=self.fontheight)
-		newq.bind(width=lambda s, w:
+			txt_height=self.fontheight
+		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(txt_height)),font_name="DejaVuSerif")#, font_size=self.fontheight)
+		main_txt.bind(width=lambda s, w:
 			   s.setter('text_size')(s, (self.width-.1*self.ids.main_box.width, None)))
-		newq.bind(height=newq.setter('texture_size[1]'))
-		newq.bind(height=newq.setter('self.minimum_height'))
-		newq.text=str("%s"%self.main_choices[self.topic])
-		self.ids.main_box.add_widget(newq)
+		main_txt.bind(height=main_txt.setter('texture_size[1]'))
+		main_txt.bind(height=main_txt.setter('self.minimum_height'))
+		main_txt.text=str("%s"%self.main_choices[self.topic])
+		self.ids.main_box.add_widget(main_txt)
+		if self.topic == "start":
+			pass
+		if self.topic == "mindf":
+			pass
+		if self.topic == "state":
+			pass
+		if self.topic == "stast":
+			pass
+
+	def start(self):
+		self.topic="start"
+		self.planupdate()
 		
 	def mindf(self):
-		pass
+		self.topic="mindf"
+		self.planupdate()
 
 	def state(self):
-		pass
+		self.topic="state"
+		self.planupdate()
 
 	def stast(self):
-		pass
+		self.topic="stast"
+		self.planupdate()
 	
 class emadrsApp(App):
 	def build(self):
