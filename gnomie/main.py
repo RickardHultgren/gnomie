@@ -16,7 +16,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.label import Label
-#from kivy.clock import Clock
+from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.gridlayout import GridLayout
@@ -91,6 +91,11 @@ Builder.load_string('''
                         font_name: 'DejaVuSerif'
                         on_release: root.stast()
                         background_color:255,0,0,1
+                    ActionButton:
+                        text: 'about'
+                        font_name: 'DejaVuSerif'
+                        on_release: root.about()
+                        background_color:255,0,0,1                        
         ScrollView:
             size: self.size
             GridLayout:
@@ -120,17 +125,36 @@ class MainScreen(Screen):
 	'stast': '\n\n'}
 	#print "dict['Name']: ", dict['Name']
 	topic='start'
+	mindf_time=NumericProperty(0)
+	mindf_part=0
+	mindf_limit=0
+	mindf_speed=0
+	box = BoxLayout(orientation='vertical')
+	popup1 = Popup(content=box, size_hint=(.75, .75))
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
 		self.planupdate()
 	
-	def planupdate(self):
+	def planupdate(self,*args):
 		self.main_height=0
 		try:
 			self.ids.main_box.clear_widgets()
 		except:
 			pass
-		
+		if self.topic != 'mindf' :
+			try:
+				Clock.unschedule(self.planupdate)
+			except:
+				pass
+		try:
+			self.popup.clear_widgets()
+		except:
+			pass	
+		try:
+			self.popup1.dismiss()
+		except:
+			pass	
+			
 		self.ids.main_box.height=self.main_height
 		if self.fontheight*(len(self.main_choices[self.topic])/self.line_len) > self.fontheight :
 			txt_height=0*self.fontheight+self.fontheight*(len(self.main_choices[self.topic])/self.line_len)
@@ -142,15 +166,29 @@ class MainScreen(Screen):
 		main_txt.bind(height=main_txt.setter('texture_size[1]'))
 		main_txt.bind(height=main_txt.setter('self.minimum_height'))
 		main_txt.text=str("%s"%self.main_choices[self.topic])
-		self.ids.main_box.add_widget(main_txt)
+		
 		if self.topic == "start":
 			pass
 		if self.topic == "mindf":
-			pass
-		if self.topic == "state":
-			pass
-		if self.topic == "stast":
-			pass
+			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
+			main_txt.text=parts[0]
+			mindf_bar=ProgressBar(
+				value=self.mindf_time,
+				max=self.mindf_limit
+				)
+			self.ids.main_box.add_widget(mindf_bar)
+			if self.mindf_time >= self.mindf_limit and self.mindf_part < 5 and self.mindf_part >= 0:
+				if self.mindf_part == 5:
+					self.mindf_time = 0
+				else:
+					self.mindf_part+=1
+					self.mindf_time = 0
+			elif self.mindf_part != 5:		
+				self.mindf_time+=1
+			###now
+			self.mindf_time+=1
+			print self.mindf_time
+		self.ids.main_box.add_widget(main_txt)
 
 	def start(self):
 		self.topic="start"
@@ -158,8 +196,22 @@ class MainScreen(Screen):
 		
 	def mindf(self):
 		self.topic="mindf"
-		self.planupdate()
+		self.popup1.title="mindfulness"
+		self.box.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?'))
+		btn2=Button(text = '2 min?',on_release=(lambda btn2: self.bttn2()))
+		btn4=Button(text = '4 min?',on_release=(lambda btn2: self.bttn4()))
+		self.box.add_widget(btn2)
+		self.box.add_widget(btn4)
+		self.popup1.open()
+		
+	def bttn2(self):
+		self.mindf_speed=4
+		Clock.schedule_interval(self.planupdate, 0.2)
 
+	def bttn4(self):
+		self.mindf_speed=4
+		Clock.schedule_interval(self.planupdate, 0.2)
+		
 	def state(self):
 		self.topic="state"
 		self.planupdate()
@@ -167,6 +219,18 @@ class MainScreen(Screen):
 	def stast(self):
 		self.topic="stast"
 		self.planupdate()
+
+	def about(self):
+		box = BoxLayout(orientation='vertical')
+		popup1 = Popup(title='About', content=box, size_hint=(None, None), size=(400, 400))
+		self.add_widget(Label(text='Gnomie is an open source app licensed under\nthe BSD2-license. The founder and principal developer is\nRickard Verner Hultgren'))
+
+		store_btn = Button(text='OK')
+		store_btn.bind(on_release=lambda store_btn: popup1.dismiss())
+		self.add_widget(store_btn)
+		#popup1 = Popup(title='Add goal', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
+		popup1.open()
+
 	
 class emadrsApp(App):
 	def build(self):
