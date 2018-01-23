@@ -144,7 +144,6 @@ class MainScreen(Screen):
 		if self.topic != 'mindf' :
 			try:
 				Clock.unschedule(self.planupdate)
-				self.popup1.clear_widgets()
 				self.box.clear_widgets()
 			except:
 				pass
