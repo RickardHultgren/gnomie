@@ -43,7 +43,7 @@ for font in KIVY_FONTS:
 
 #Declaration of global variables:
 settingdata = JsonStore('settingdata.json')
-
+mindftimers = JsonStore('mindftimers.json')
 Builder.load_string('''
 <MainScreen>:
     name: 'mainscreen'
@@ -246,6 +246,7 @@ class MainScreen(Screen):
 		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?'))
 		btn2=Button(text = '2 min?',on_release=(lambda btn2: self.bttn2()))
 		btn4=Button(text = '4 min?',on_release=(lambda btn4: self.bttn4()))
+		###now
 		self.popbox.add_widget(btn2)
 		self.popbox.add_widget(btn4)
 		
