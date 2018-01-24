@@ -150,6 +150,12 @@ class MainScreen(Screen):
 	
 	popup1 = Popup(content=box, size_hint=(.75, .75))
 	box.add_widget(popscroll)
+	if fontheight*(len(main_choices[topic])/line_len) > fontheight :
+		txt_height=0*fontheight+fontheight*(len(main_choices[topic])/line_len)
+	else:
+		txt_height=fontheight
+
+
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
 		self.planupdate()
@@ -170,11 +176,7 @@ class MainScreen(Screen):
 				pass
 			
 		self.ids.main_box.height=self.main_height
-		if self.fontheight*(len(self.main_choices[self.topic])/self.line_len) > self.fontheight :
-			txt_height=0*self.fontheight+self.fontheight*(len(self.main_choices[self.topic])/self.line_len)
-		else:
-			txt_height=self.fontheight
-		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(txt_height)),font_name="DejaVuSerif")#, font_size=self.fontheight)
+		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")#, font_size=self.fontheight)
 		main_txt.bind(width=lambda s, w:
 			   s.setter('text_size')(s, (self.width-.1*self.ids.main_box.width, None)))
 		main_txt.bind(height=main_txt.setter('texture_size[1]'))
@@ -194,14 +196,13 @@ class MainScreen(Screen):
 			mindf_bar.value=self.mindf_time
 			self.ids.main_box.add_widget(mindf_bar)
 			
-			###
-			nxt_bttn=Button(text="next",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*txt_height)),font_name="DejaVuSerif")
+			nxt_bttn=Button(text="next",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 			nxt_bttn.bind(on_release=lambda nxt_bttn: self.nxtb())
-			prv_bttn=Button(text="previous",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*txt_height)),font_name="DejaVuSerif")
+			prv_bttn=Button(text="previous",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 			self.ids.main_box.add_widget(nxt_bttn)
 			prv_bttn.bind(on_release=lambda prv_bttn: self.prevb())
 			self.ids.main_box.add_widget(prv_bttn)
-			exit_bttn=Button(text="exit",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*txt_height)),font_name="DejaVuSerif")
+			exit_bttn=Button(text="exit",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 			exit_bttn.bind(on_release=lambda prv_bttn: self.exitb())
 			self.ids.main_box.add_widget(exit_bttn)			
 			if self.mindf_time == self.mindf_limit and self.mindf_part <= 5:
@@ -243,10 +244,21 @@ class MainScreen(Screen):
 			pass
 		self.topic="mindf"
 		self.popup1.title="mindfulness"
-		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?'))
+		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?', font_name="DejaVuSerif"))
+		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+		new_box_title = TextInput(text="", multiline=True)
+		new_box_min = TextInput(text="timer name", multiline=True)
+		new_box.add_widget(Label(text = 'min', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
+		new_box_add=Button(text = 'add',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+		new_box.add_widget(new_box_title)
+		new_box.add_widget(new_box_min)
+		new_box.add_widget(new_box_add)
+		###now
+		#mindftimers
 		btn2=Button(text = '2 min?',on_release=(lambda btn2: self.bttn2()))
 		btn4=Button(text = '4 min?',on_release=(lambda btn4: self.bttn4()))
 		###now
+		self.popbox.add_widget(new_box)
 		self.popbox.add_widget(btn2)
 		self.popbox.add_widget(btn4)
 		
