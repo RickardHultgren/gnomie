@@ -23,7 +23,7 @@ from kivy.uix.gridlayout import GridLayout
 from functools import partial
 #from kivy.uix.treeview import TreeView, TreeViewNode
 #from kivy.uix.treeview import TreeViewLabel
-#from kivy.uix.scrollview import ScrollView
+from kivy.uix.scrollview import ScrollView
 try:
 	from plyer import sms
 except:
@@ -130,7 +130,26 @@ class MainScreen(Screen):
 	mindf_limit=0
 	mindf_speed=0
 	box = BoxLayout(orientation='vertical')
+	
+	popscroll=ScrollView(size= box.size, bar_pos_x="top")
+
+	popbox=GridLayout(
+                cols=1,
+                orientation='vertical',
+                #height=self.minimum_height,
+                #height=root.bigheight,
+                #padding= (thescroll.width * 0.02, thescroll.height * 0.02),
+                #spacing= (thescroll.width * 0.02, thescroll.height * 0.02),
+                size_hint_y= None,
+                size_hint_x= 1,
+                do_scroll_x= False,
+                do_scroll_y= True,
+                )
+
+	popscroll.add_widget(popbox)	
+	
 	popup1 = Popup(content=box, size_hint=(.75, .75))
+	box.add_widget(popscroll)
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
 		self.planupdate()
@@ -144,13 +163,11 @@ class MainScreen(Screen):
 		if self.topic != 'mindf' :
 			try:
 				Clock.unschedule(self.planupdate)
-				self.box.clear_widgets()
+				self.popbox.clear_widgets()
+				#self.box.clear_widgets()
+				self.popup1.dismiss()
 			except:
 				pass
-		try:
-			self.popup1.dismiss()
-		except:
-			pass	
 			
 		self.ids.main_box.height=self.main_height
 		if self.fontheight*(len(self.main_choices[self.topic])/self.line_len) > self.fontheight :
@@ -207,6 +224,8 @@ class MainScreen(Screen):
 		self.mindf_time = 0
 			
 	def exitb(self):
+		self.mindf_part = 0
+		self.mindf_time = 0
 		self.topic="start"
 		self.planupdate()
 			
@@ -215,23 +234,39 @@ class MainScreen(Screen):
 		self.planupdate()
 		
 	def mindf(self):
+		try:
+			self.popbox.clear_widgets()
+			
+			#self.box.clear_widgets()
+			self.popup1.dismiss()
+		except:
+			pass
 		self.topic="mindf"
 		self.popup1.title="mindfulness"
-		self.box.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?'))
+		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?'))
 		btn2=Button(text = '2 min?',on_release=(lambda btn2: self.bttn2()))
 		btn4=Button(text = '4 min?',on_release=(lambda btn4: self.bttn4()))
-		self.box.add_widget(btn2)
-		self.box.add_widget(btn4)
+		self.popbox.add_widget(btn2)
+		self.popbox.add_widget(btn4)
+		
 		self.popup1.open()
 		
 	def bttn2(self):
 		self.mindf_speed=4
 		self.mindf_limit=100
+		self.popup1.dismiss()
+		self.mindf_part = 0
+		self.mindf_time = 0
+		Clock.unschedule(self.planupdate)		
 		Clock.schedule_interval(self.planupdate, 0.2)
 
 	def bttn4(self):
 		self.mindf_speed=4
 		self.mindf_limit=100
+		self.popup1.dismiss()
+		self.mindf_part = 0
+		self.mindf_time = 0
+		Clock.unschedule(self.planupdate)		
 		Clock.schedule_interval(self.planupdate, 0.2)
 		
 	def state(self):
