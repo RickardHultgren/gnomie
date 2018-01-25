@@ -42,8 +42,27 @@ for font in KIVY_FONTS:
     LabelBase.register(**font)
 
 #Declaration of global variables:
-settingdata = JsonStore('settingdata.json')
-mindftimers = JsonStore('mindftimers.json')
+mindf_timers = JsonStore('mindf_timers.json')
+temp_timers = dict(JsonStore('mindf_timers.json'))
+mindf_timers_cpy = dict()
+#mindf_timers.put(str(theitem), itemtype=topic, name=theitem)
+
+for key in temp_timers:
+	counting = 0
+	subdict = temp_timers[key]
+	thekey = str()
+	thevalue = str()
+	for subkey in subdict:
+		if counting == 0:
+			thekey = subdict[subkey]
+			counting += 1
+		elif counting == 1:
+			thevalue = subdict[subkey]
+			mindf_timers_cpy[thevalue] = thekey
+			thekey=str()
+			thevalue=str()
+			counting = 0
+
 Builder.load_string('''
 <MainScreen>:
     name: 'mainscreen'
@@ -74,28 +93,14 @@ Builder.load_string('''
                     on_release: root.start()
                 ActionGroup:
                     mode: 'spinner'
-                    text: 'MENU'
+                    text: '?'
                     font_name: 'DejaVuSerif-Bold'
-                    ActionButton:
-                        text: 'mindfulness'
-                        font_name: 'DejaVuSerif'
-                        on_release: root.mindf()
-                        background_color:255,0,0,1
-                    ActionButton:
-                        text: 'statements'
-                        font_name: 'DejaVuSerif'
-                        on_release: root.state()
-                        background_color:255,0,0,1
-                    ActionButton:
-                        text: 'statistics'
-                        font_name: 'DejaVuSerif'
-                        on_release: root.stast()
-                        background_color:255,0,0,1
                     ActionButton:
                         text: 'about'
                         font_name: 'DejaVuSerif'
                         on_release: root.about()
-                        background_color:255,0,0,1                        
+                        background_color:255,0,0,1
+                    
         ScrollView:
             size: self.size
             GridLayout:
@@ -176,7 +181,7 @@ class MainScreen(Screen):
 				pass
 			
 		self.ids.main_box.height=self.main_height
-		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")#, font_size=self.fontheight)
+		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif")#, font_size=self.fontheight)
 		main_txt.bind(width=lambda s, w:
 			   s.setter('text_size')(s, (self.width-.1*self.ids.main_box.width, None)))
 		main_txt.bind(height=main_txt.setter('texture_size[1]'))
@@ -186,7 +191,27 @@ class MainScreen(Screen):
 		self.ids.main_box.add_widget(main_txt)
 		
 		if self.topic == "start":
-			pass
+			start_bttn1=Button(
+				text= 'mindfulness',
+				size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",
+				background_color=(.25, .75, 1.0, 1.0)
+				)
+			start_bttn2=Button(
+				text= 'statements',
+				size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",
+				background_color=(.25, .75, 1.0, 1.0)
+				)
+			start_bttn3=Button(
+				text= 'statistics',
+				size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",
+				background_color=(.25, .75, 1.0, 1.0)
+				)
+			start_bttn1.bind(on_release=lambda start_bttn1: self.mindf())
+			start_bttn2.bind(on_release=lambda start_bttn2: self.state())
+			start_bttn3.bind(on_release=lambda start_bttn3: self.stast())
+			self.ids.main_box.add_widget(start_bttn1)
+			self.ids.main_box.add_widget(start_bttn2)
+			self.ids.main_box.add_widget(start_bttn3)
 		if self.topic == "mindf":
 			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 			main_txt.text=parts[self.mindf_part]
@@ -233,12 +258,32 @@ class MainScreen(Screen):
 	def start(self):
 		self.topic="start"
 		self.planupdate()
+	
+	def about(self):
+		try:
+			self.popbox.clear_widgets()
+		except:
+			pass
+		try:
+			self.popup1.dismiss()
+		except:
+			pass
+		self.popup1.title="about"
+		about_txt=Label(text = 'Gnomie is an open source app licensed under\nthe BSD2-license. The founder and principal developer is\nRickard Verner Hultgren',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif")
+		self.popbox.add_widget(about_txt)
 		
+		exit_bttn=Button(text="OK",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
+		exit_bttn.bind(on_release=lambda prv_bttn: self.popup1.dismiss())
+		self.popbox.add_widget(exit_bttn)			
+
+		self.popup1.open()
+	
 	def mindf(self):
 		try:
 			self.popbox.clear_widgets()
-			
-			#self.box.clear_widgets()
+		except:
+			pass
+		try:
 			self.popup1.dismiss()
 		except:
 			pass
@@ -250,19 +295,38 @@ class MainScreen(Screen):
 		new_box_min = TextInput(text="timer name", multiline=True)
 		new_box.add_widget(Label(text = 'min', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
 		new_box_add=Button(text = 'add',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_min.text))
 		new_box.add_widget(new_box_title)
 		new_box.add_widget(new_box_min)
 		new_box.add_widget(new_box_add)
-		###now
-		#mindftimers
-		btn2=Button(text = '2 min?',on_release=(lambda btn2: self.bttn2()))
-		btn4=Button(text = '4 min?',on_release=(lambda btn4: self.bttn4()))
-		###now
 		self.popbox.add_widget(new_box)
-		self.popbox.add_widget(btn2)
-		self.popbox.add_widget(btn4)
+		
+		###now
+		for timer_item in mindf_timers_cpy: #Go through stored statements
+			
+
+
+			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_title = Label(text=timer_item, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			#timer_box_min = Label(text="%s min"%str(timer_item[mindf_timers_cpy]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_min = Label(text="min", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_add=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			#timer_box_add.bind(on_release=lambda timer_box_add: self.add_new(timer_box_title.text, timer_box_min.text))
+			timer_box.add_widget(timer_box_title)
+			timer_box.add_widget(timer_box_min)
+			timer_box.add_widget(timer_box_add)
+			self.popbox.add_widget(timer_box)
+			#mindf_timers_cpy[timer_item] = {'vis':self.viss, 'mis':self.miss, 'obj':self.objs}	
+			#bind. on_release mindf_timers.put(str(status), vis=self.viss, mis=self.miss, obj=self.objs)		
+		#	timer_button=Button(text = settingdata.get('title')['address'],on_release=(lambda btn2: self.bttn2()))
+		#	mindf_timers.put('title', ###)
 		
 		self.popup1.open()
+
+	def add_new(self,mindf_time,mindf_title):
+		
+		mindf_timers.put(str(mindf_title), title=mindf_title, time=mindf_time)				
+		self.planupdate()
 		
 	def bttn2(self):
 		self.mindf_speed=4
@@ -290,18 +354,6 @@ class MainScreen(Screen):
 		self.topic="stast"
 		self.planupdate()
 
-	def about(self):
-		box = BoxLayout(orientation='vertical')
-		popup1 = Popup(title='About', content=box, size_hint=(None, None), size=(400, 400))
-		self.add_widget(Label(text='Gnomie is an open source app licensed under\nthe BSD2-license. The founder and principal developer is\nRickard Verner Hultgren'))
-
-		store_btn = Button(text='OK')
-		store_btn.bind(on_release=lambda store_btn: popup1.dismiss())
-		self.add_widget(store_btn)
-		#popup1 = Popup(title='Add goal', content=box, auto_dismiss=True, size_hint=(None, None), size=(400, 400))
-		popup1.open()
-
-	
 class emadrsApp(App):
 	def build(self):
 		the_screenmanager = ScreenManager()
