@@ -131,7 +131,7 @@ class MainScreen(Screen):
 	'stast': '\n\n'}
 	main_buttons = {
 	'start': ["mindfulness", "statements", "statistics"],
-	'mindf': '\n\n',
+	'mindf': ["next","previous","exit"],
 	'state': '\n\n',
 	'stast': '\n\n'}
 	#print "dict['Name']: ", dict['Name']
@@ -200,7 +200,28 @@ class MainScreen(Screen):
 		self.ids.main_box.add_widget(main_txt)
 		
 		counting=0
-		data=dict()
+		if self.topic == "mindf":
+			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
+			main_txt.text=parts[self.mindf_part]
+			mindf_bar=ProgressBar(
+				max=self.mindf_limit
+				)
+			mindf_bar.value=self.mindf_time
+			self.ids.main_box.add_widget(mindf_bar)
+			
+			if self.mindf_time == self.mindf_limit and self.mindf_part <= 5:
+				if self.mindf_part == 5:
+					self.mindf_time = 0
+				else:
+					self.mindf_part+=1
+					self.mindf_time = 0
+			elif self.mindf_part != 5:		
+				self.mindf_time+=1
+		counting=0
+		try:
+			data.clear()
+		except:
+			data=dict()
 		for main_button in self.main_buttons[self.topic]:
 			if self.fontheight*(len(main_button)/self.line_len) > self.fontheight :
 				self.txt_height=0*self.fontheight+self.fontheight*(len(main_button)/self.line_len)
@@ -225,32 +246,6 @@ class MainScreen(Screen):
 			self.ids.main_box.add_widget(data["var%s"%counting])
 			counting += 1
 		counting=0
-		if self.topic == "mindf":
-			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
-			main_txt.text=parts[self.mindf_part]
-			mindf_bar=ProgressBar(
-				max=self.mindf_limit
-				)
-			mindf_bar.value=self.mindf_time
-			self.ids.main_box.add_widget(mindf_bar)
-			
-			nxt_bttn=Button(text="next",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
-			nxt_bttn.bind(on_release=lambda nxt_bttn: self.nxtb())
-			prv_bttn=Button(text="previous",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
-			self.ids.main_box.add_widget(nxt_bttn)
-			prv_bttn.bind(on_release=lambda prv_bttn: self.prevb())
-			self.ids.main_box.add_widget(prv_bttn)
-			exit_bttn=Button(text="exit",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
-			exit_bttn.bind(on_release=lambda prv_bttn: self.exitb())
-			self.ids.main_box.add_widget(exit_bttn)			
-			if self.mindf_time == self.mindf_limit and self.mindf_part <= 5:
-				if self.mindf_part == 5:
-					self.mindf_time = 0
-				else:
-					self.mindf_part+=1
-					self.mindf_time = 0
-			elif self.mindf_part != 5:		
-				self.mindf_time+=1
 		
 	def prevb(self):
 		if self.mindf_part != 0:
@@ -367,7 +362,7 @@ class MainScreen(Screen):
 
 	main_funcs = {
 	'start': [mindf, state, stast],
-	'mindf': '\n\n',
+	'mindf': [nxtb, prevb, exitb],
 	'state': '\n\n',
 	'stast': '\n\n'}		
 
