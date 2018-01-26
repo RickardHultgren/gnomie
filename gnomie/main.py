@@ -119,12 +119,18 @@ Builder.load_string('''
 ''')  
 
 class MainScreen(Screen):
+	global mindf_timers_cpy
 	nownr=0
 	main_height=NumericProperty()
 	fontheight=15
 	line_len=30
 	main_choices = {
-	'start': "\n\nWelcome to my little home!\nI'm Gnomie the gnome.\nWhat choice pleases, when you\nwill pick from the menu?",
+	'start': "\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n",
+	'mindf': '\n\n',
+	'state': '\n\n',
+	'stast': '\n\n'}
+	main_buttons = {
+	'start': ["mindfulness", "statements", "statistics"],
 	'mindf': '\n\n',
 	'state': '\n\n',
 	'stast': '\n\n'}
@@ -143,8 +149,8 @@ class MainScreen(Screen):
                 orientation='vertical',
                 #height=self.minimum_height,
                 #height=root.bigheight,
-                #padding= (thescroll.width * 0.02, thescroll.height * 0.02),
-                #spacing= (thescroll.width * 0.02, thescroll.height * 0.02),
+                padding= (popscroll.width * 0.02, popscroll.height * 0.02),
+                spacing= (popscroll.width * 0.02, popscroll.height * 0.02),
                 size_hint_y= None,
                 size_hint_x= 1,
                 do_scroll_x= False,
@@ -155,12 +161,9 @@ class MainScreen(Screen):
 	
 	popup1 = Popup(content=box, size_hint=(.75, .75))
 	box.add_widget(popscroll)
-	if fontheight*(len(main_choices[topic])/line_len) > fontheight :
-		txt_height=0*fontheight+fontheight*(len(main_choices[topic])/line_len)
-	else:
-		txt_height=fontheight
-
-
+	
+	txt_height = 0
+	
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
 		self.planupdate()
@@ -179,6 +182,12 @@ class MainScreen(Screen):
 				self.popup1.dismiss()
 			except:
 				pass
+		
+
+		if self.fontheight*(len(self.main_choices[self.topic])/self.line_len) > self.fontheight :
+			self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_choices[topic])/self.line_len)
+		else:
+			self.txt_height=self.fontheight		
 			
 		self.ids.main_box.height=self.main_height
 		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif")#, font_size=self.fontheight)
@@ -190,28 +199,32 @@ class MainScreen(Screen):
 		
 		self.ids.main_box.add_widget(main_txt)
 		
-		if self.topic == "start":
-			start_bttn1=Button(
-				text= 'mindfulness',
-				size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",
-				background_color=(.25, .75, 1.0, 1.0)
-				)
-			start_bttn2=Button(
-				text= 'statements',
-				size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",
-				background_color=(.25, .75, 1.0, 1.0)
-				)
-			start_bttn3=Button(
-				text= 'statistics',
-				size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",
-				background_color=(.25, .75, 1.0, 1.0)
-				)
-			start_bttn1.bind(on_release=lambda start_bttn1: self.mindf())
-			start_bttn2.bind(on_release=lambda start_bttn2: self.state())
-			start_bttn3.bind(on_release=lambda start_bttn3: self.stast())
-			self.ids.main_box.add_widget(start_bttn1)
-			self.ids.main_box.add_widget(start_bttn2)
-			self.ids.main_box.add_widget(start_bttn3)
+		counting=0
+		data=dict()
+		for main_button in self.main_buttons[self.topic]:
+			if self.fontheight*(len(main_button)/self.line_len) > self.fontheight :
+				self.txt_height=0*self.fontheight+self.fontheight*(len(main_button)/self.line_len)
+			else:
+				self.txt_height=self.fontheight
+			
+#				varName=Button(text="%s"%(main_button), id="main_bttn_%s"%str(counting), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
+#				data[varName] = "var%s"%str(counting)
+
+			bttn = Button(text="%s"%(main_button), id="main_bttn_%s"%str(counting), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
+			varName = "var%s"%str(counting)
+			data[varName]=bttn
+
+
+			counting += 1
+		counting=0
+		for main_func in self.main_funcs[self.topic]:
+			#self.main_funcs['%s'%self.topic]
+			#exit()
+			bttn = data["var%s"%counting]
+			bttn.bind(on_release = lambda bttn : self.main_funcs['%s'%self.topic][counting](self))
+			self.ids.main_box.add_widget(data["var%s"%counting])
+			counting += 1
+		counting=0
 		if self.topic == "mindf":
 			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 			main_txt.text=parts[self.mindf_part]
@@ -279,6 +292,7 @@ class MainScreen(Screen):
 		self.popup1.open()
 	
 	def mindf(self):
+		global mindf_timers_cpy
 		try:
 			self.popbox.clear_widgets()
 		except:
@@ -289,7 +303,7 @@ class MainScreen(Screen):
 			pass
 		self.topic="mindf"
 		self.popup1.title="mindfulness"
-		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?', font_name="DejaVuSerif"))
+		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 		new_box_title = TextInput(text="", multiline=True)
 		new_box_min = TextInput(text="timer name", multiline=True)
@@ -303,29 +317,26 @@ class MainScreen(Screen):
 		
 		###now
 		for timer_item in mindf_timers_cpy: #Go through stored statements
-			
-
-
 			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_title = Label(text=timer_item, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			#timer_box_min = Label(text="%s min"%str(timer_item[mindf_timers_cpy]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_min = Label(text="min", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_title = Label(text=str(mindf_timers_cpy[timer_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_min = Label(text="%s min"%str(timer_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			timer_box_add=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			#timer_box_add.bind(on_release=lambda timer_box_add: self.add_new(timer_box_title.text, timer_box_min.text))
 			timer_box.add_widget(timer_box_title)
 			timer_box.add_widget(timer_box_min)
 			timer_box.add_widget(timer_box_add)
 			self.popbox.add_widget(timer_box)
-			#mindf_timers_cpy[timer_item] = {'vis':self.viss, 'mis':self.miss, 'obj':self.objs}	
-			#bind. on_release mindf_timers.put(str(status), vis=self.viss, mis=self.miss, obj=self.objs)		
-		#	timer_button=Button(text = settingdata.get('title')['address'],on_release=(lambda btn2: self.bttn2()))
-		#	mindf_timers.put('title', ###)
-		
 		self.popup1.open()
 
 	def add_new(self,mindf_time,mindf_title):
-		
-		mindf_timers.put(str(mindf_title), title=mindf_title, time=mindf_time)				
+		global mindf_timers_cpy
+		checking=1
+		for timer_item in mindf_timers_cpy:
+			if mindf_timers_cpy[timer_item] == mindf_title:
+				checking = 0
+				print "hej"
+		if checking == 1:
+			mindf_timers.put(str(mindf_title), title=mindf_title, time=mindf_time)
+			mindf_timers_cpy[mindf_title] = {mindf_title : mindf_time}	
 		self.planupdate()
 		
 	def bttn2(self):
@@ -353,6 +364,13 @@ class MainScreen(Screen):
 	def stast(self):
 		self.topic="stast"
 		self.planupdate()
+
+	main_funcs = {
+	'start': [mindf, state, stast],
+	'mindf': '\n\n',
+	'state': '\n\n',
+	'stast': '\n\n'}		
+
 
 class emadrsApp(App):
 	def build(self):
