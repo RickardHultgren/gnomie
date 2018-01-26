@@ -251,7 +251,7 @@ class MainScreen(Screen):
 		if self.mindf_part != 0:
 			self.mindf_part -= 1
 		self.mindf_time = 0
-		
+
 	def nxtb(self):
 		if self.mindf_part != 5:
 			self.mindf_part += 1
@@ -300,8 +300,9 @@ class MainScreen(Screen):
 		self.popup1.title="mindfulness"
 		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-		new_box_title = TextInput(text="", multiline=True)
-		new_box_min = TextInput(text="timer name", multiline=True)
+###now
+		new_box_title = TextInput(text="", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif")
+		new_box_min = TextInput(text="timer name", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif")
 		new_box.add_widget(Label(text = 'min', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
 		new_box_add=Button(text = 'add',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_min.text))
@@ -310,7 +311,6 @@ class MainScreen(Screen):
 		new_box.add_widget(new_box_add)
 		self.popbox.add_widget(new_box)
 		
-		###now
 		for timer_item in mindf_timers_cpy: #Go through stored statements
 			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			timer_box_title = Label(text=str(mindf_timers_cpy[timer_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
@@ -332,7 +332,7 @@ class MainScreen(Screen):
 		if checking == 1:
 			mindf_timers.put(str(mindf_title), title=mindf_title, time=mindf_time)
 			mindf_timers_cpy[mindf_title] = {mindf_title : mindf_time}	
-		self.planupdate()
+		self.mindf()
 		
 	def bttn2(self):
 		self.mindf_speed=4
