@@ -217,11 +217,13 @@ class MainScreen(Screen):
 					self.mindf_time = 0
 			elif self.mindf_part != 5:		
 				self.mindf_time+=1
-		counting=0
+		
 		try:
 			data.clear()
 		except:
 			data=dict()
+		#timer_list=[self.main_buttons[self.topic].index(x) for x in self.main_buttons[self.topic].values()]
+
 		for main_button in self.main_buttons[self.topic]:
 			if self.fontheight*(len(main_button)/self.line_len) > self.fontheight :
 				self.txt_height=0*self.fontheight+self.fontheight*(len(main_button)/self.line_len)
@@ -230,22 +232,12 @@ class MainScreen(Screen):
 			
 #				varName=Button(text="%s"%(main_button), id="main_bttn_%s"%str(counting), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
 #				data[varName] = "var%s"%str(counting)
-
-			bttn = Button(text="%s"%(main_button), id="main_bttn_%s"%str(counting), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
-			varName = "var%s"%str(counting)
-			data[varName]=bttn
-
-
-			counting += 1
-		counting=0
-		for main_func in self.main_funcs[self.topic]:
-			#self.main_funcs['%s'%self.topic]
-			#exit()
-			bttn = data["var%s"%counting]
-			bttn.bind(on_release = lambda bttn : self.main_funcs['%s'%self.topic][counting](self))
-			self.ids.main_box.add_widget(data["var%s"%counting])
-			counting += 1
-		counting=0
+			#print timer_list.index(main_button)
+			bttn = Button(text="%s"%(main_button), id="main_bttn_%s"%str(self.main_buttons[self.topic].index(main_button)), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
+			place = self.main_buttons[self.topic].index(main_button)
+			funcy = self.main_funcs['%s'%self.topic][place]
+			bttn.bind(on_release = lambda bttn : funcy(self))
+			self.ids.main_box.add_widget(bttn)
 		
 	def prevb(self):
 		if self.mindf_part != 0:
@@ -299,12 +291,12 @@ class MainScreen(Screen):
 		self.topic="mindf"
 		self.popup1.title="mindfulness"
 		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
-		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 ###now
-		new_box_title = TextInput(text="", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif")
-		new_box_min = TextInput(text="timer name", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif")
-		new_box.add_widget(Label(text = 'min', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
-		new_box_add=Button(text = 'add',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+		new_box_title = TextInput(text="", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+		new_box_min = TextInput(text="timer name", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+		new_box.add_widget(Label(text = 'min', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif"))
+		new_box_add=Button(text = 'add',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_min.text))
 		new_box.add_widget(new_box_title)
 		new_box.add_widget(new_box_min)
@@ -312,16 +304,23 @@ class MainScreen(Screen):
 		self.popbox.add_widget(new_box)
 		
 		for timer_item in mindf_timers_cpy: #Go through stored statements
-			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 			timer_box_title = Label(text=str(mindf_timers_cpy[timer_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			timer_box_min = Label(text="%s min"%str(timer_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_add=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_slct.bind(on_release = lambda timer_box_slct : self.start_timer(timer_item))
+			###
 			timer_box.add_widget(timer_box_title)
 			timer_box.add_widget(timer_box_min)
-			timer_box.add_widget(timer_box_add)
+			timer_box.add_widget(timer_box_del)
+			timer_box.add_widget(timer_box_slct)
 			self.popbox.add_widget(timer_box)
 		self.popup1.open()
 
+	def timer_slct(self, thetimer):
+		pass
+		
 	def add_new(self,mindf_time,mindf_title):
 		global mindf_timers_cpy
 		checking=1
@@ -334,24 +333,18 @@ class MainScreen(Screen):
 			mindf_timers_cpy[mindf_title] = {mindf_title : mindf_time}	
 		self.mindf()
 		
-	def bttn2(self):
-		self.mindf_speed=4
+	def start_timer(self, timer_item):
+		#Timer_item is the number of minutes the mindfulness should take.
 		self.mindf_limit=100
-		self.popup1.dismiss()
+		try:
+			self.popup1.dismiss()
+		except:
+			pass
 		self.mindf_part = 0
 		self.mindf_time = 0
 		Clock.unschedule(self.planupdate)		
 		Clock.schedule_interval(self.planupdate, 0.2)
 
-	def bttn4(self):
-		self.mindf_speed=4
-		self.mindf_limit=100
-		self.popup1.dismiss()
-		self.mindf_part = 0
-		self.mindf_time = 0
-		Clock.unschedule(self.planupdate)		
-		Clock.schedule_interval(self.planupdate, 0.2)
-		
 	def state(self):
 		self.topic="state"
 		self.planupdate()
