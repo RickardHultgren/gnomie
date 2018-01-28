@@ -299,13 +299,16 @@ class MainScreen(Screen):
 		self.popbox.add_widget(new_box)
 		
 		for timer_item in mindf_timers_cpy: #Go through stored statements
+			#timer_item is the key/title of the timer
 			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
-			timer_box_title = Label(text=str(mindf_timers_cpy[timer_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_min = Label(text="%s min"%str(timer_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			
+			timer_box_title = Label(text=str(timer_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_min = Label(text="%s min"%str(mindf_timers_cpy[timer_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			timer_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			
 			timer_box_del.bind(on_release = lambda timer_box_del : self.del_timer(timer_item))
 			timer_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_slct.bind(on_release = lambda timer_box_slct : self.start_timer(timer_item))
+			timer_box_slct.bind(on_release = lambda timer_box_slct : self.start_timer(mindf_timers_cpy[timer_item]))
 			###now print the json-dict and the cpy dict and compare
 			
 			timer_box.add_widget(timer_box_title)
@@ -323,7 +326,7 @@ class MainScreen(Screen):
 			if mindf_timers_cpy[timer_item] == mindf_title:
 				checking = 0
 		if checking == 1:
-			mindf_timers.put(str(mindf_title), title=mindf_title, time=mindf_time)
+			mindf_timers.put(str(mindf_title), time=mindf_time, title=mindf_title)
 			mindf_timers_cpy[mindf_title] = mindf_time
 			###hmmm
 		self.mindf()
@@ -335,7 +338,7 @@ class MainScreen(Screen):
 		self.mindf()
 
 
-	def start_timer(self, timer_item):
+	def start_timer(self, timer_item_value):
 		#Timer_item is the number of minutes the mindfulness should take.
 		self.mindf_limit=200
 		try:
@@ -344,7 +347,7 @@ class MainScreen(Screen):
 			pass
 		self.mindf_part = 0
 		self.mindf_time = 0
-		self.mindf_speed = int(timer_item)*200/(0.2*60*5)
+		self.mindf_speed = int(timer_item_value)*200/(0.2*60*5)
 		Clock.unschedule(self.planupdate)		
 		#0.2 * 60 * 5 [sec] / 5 items = 1 [min] / 5 items
 		Clock.schedule_interval(self.planupdate, 0.2)
