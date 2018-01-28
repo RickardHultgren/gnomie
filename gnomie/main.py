@@ -199,7 +199,7 @@ class MainScreen(Screen):
 		
 		self.ids.main_box.add_widget(main_txt)
 		
-		counting=0
+		
 		if self.topic == "mindf":
 			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 			main_txt.text=parts[self.mindf_part]
@@ -223,20 +223,18 @@ class MainScreen(Screen):
 		except:
 			data=dict()
 		#timer_list=[self.main_buttons[self.topic].index(x) for x in self.main_buttons[self.topic].values()]
-
-		for main_button in self.main_buttons[self.topic]:
+		for b_nr in range(len(self.main_buttons[self.topic])):
+		#for main_button in self.main_buttons[self.topic]:
+			print b_nr
+			main_button = self.main_buttons[self.topic][b_nr]
 			if self.fontheight*(len(main_button)/self.line_len) > self.fontheight :
 				self.txt_height=0*self.fontheight+self.fontheight*(len(main_button)/self.line_len)
 			else:
 				self.txt_height=self.fontheight
-			
-#				varName=Button(text="%s"%(main_button), id="main_bttn_%s"%str(counting), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
-#				data[varName] = "var%s"%str(counting)
-			#print timer_list.index(main_button)
-			bttn = Button(text="%s"%(main_button), id="main_bttn_%s"%str(self.main_buttons[self.topic].index(main_button)), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
-			place = self.main_buttons[self.topic].index(main_button)
-			funcy = self.main_funcs['%s'%self.topic][place]
-			bttn.bind(on_release = lambda bttn : funcy(self))
+
+			bttn = Button(text="%s"%(main_button), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
+			funcy = self.main_funcs[self.topic][b_nr].__name__
+			bttn.bind(on_release = partial((eval("self.%s"%(funcy)))))
 			self.ids.main_box.add_widget(bttn)
 		
 	def prevb(self):
@@ -278,7 +276,7 @@ class MainScreen(Screen):
 
 		self.popup1.open()
 	
-	def mindf(self):
+	def mindf(self, *args):
 		global mindf_timers_cpy
 		try:
 			self.popbox.clear_widgets()
