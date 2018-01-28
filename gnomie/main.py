@@ -208,7 +208,6 @@ class MainScreen(Screen):
 				)
 			mindf_bar.value=self.mindf_time
 			self.ids.main_box.add_widget(mindf_bar)
-			print self.mindf_part
 			if self.mindf_time == self.mindf_limit and self.mindf_part <= 5:
 				if self.mindf_part == 5:
 					self.mindf_time = 0
@@ -326,6 +325,7 @@ class MainScreen(Screen):
 		if checking == 1:
 			mindf_timers.put(str(mindf_title), title=mindf_title, time=mindf_time)
 			mindf_timers_cpy[mindf_title] = mindf_time
+			###hmmm
 		self.mindf()
 		
 	def del_timer(self, timer_item):
