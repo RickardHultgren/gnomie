@@ -166,6 +166,7 @@ class MainScreen(Screen):
 	mindf_part=0
 	mindf_limit=0
 	mindf_speed=0
+	state_claim=""
 	box = BoxLayout(orientation='vertical')
 	
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
@@ -249,11 +250,9 @@ class MainScreen(Screen):
 			elif self.mindf_part != 5:		
 				self.mindf_time += self.mindf_speed
 
-		#if self.topic == "state":
-		#	text=
+		if self.topic == "state":
+			main_txt.text=self.state_claim
 	
-			#state_title=
-
 		
 		try:
 			data.clear()
@@ -423,7 +422,8 @@ class MainScreen(Screen):
 		Clock.schedule_interval(self.planupdate, 0.2)
 
 	def show_claim(self, pop_item):
-		pass
+		self.state_claim=pop_item
+		self.planupdate()
 
 	main_funcs = {
 	'start': [mindf, state, stast],
