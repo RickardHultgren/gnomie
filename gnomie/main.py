@@ -125,15 +125,21 @@ class MainScreen(Screen):
 	fontheight=15
 	line_len=30
 	main_choices = {
-	'start': "\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n",
-	'mindf': '\n\n',
-	'state': '\n\n',
-	'stast': '\n\n'}
+	'start' : "\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n",
+	'mindf' : '\n\n',
+	'state' : '\n\n',
+	'stast' : '\n\n'}
+	pop_choices = {
+	'start' : '\n\n',
+	'mindf' : mindf_timers_cpy,
+	'state' : '\n\n',
+	'stast' : '\n\n'}
+	
 	main_buttons = {
-	'start': ["mindfulness", "statements", "statistics"],
-	'mindf': ["next","previous","exit"],
-	'state': '\n\n',
-	'stast': '\n\n'}
+	'start' : ["mindfulness", "statements", "statistics"],
+	'mindf' : ["next","previous","exit"],
+	'state' : '\n\n',
+	'stast' : '\n\n'}
 	#print "dict['Name']: ", dict['Name']
 	topic='start'
 	mindf_time=NumericProperty(0)
@@ -292,18 +298,18 @@ class MainScreen(Screen):
 		new_box.add_widget(new_box_title)
 		new_box.add_widget(new_box_add)
 		self.popbox.add_widget(new_box)
-		for timer_item in mindf_timers_cpy: #Go through stored statements
-			#timer_item is the key/title of the timer
+		for pop_item in self.pop_choices[self.topic]: #Go through stored statements
+			#pop_item is the key/title of the timer
 			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 			
-			timer_box_title = Label(text=str(timer_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_min = Label(text="%s min"%str(mindf_timers_cpy[timer_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			timer_box_min = Label(text="%s min"%str(self.pop_choices[self.topic][pop_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			timer_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			
-			timer_box_del.bind(on_release = lambda timer_box_del : self.del_timer(timer_item))
+			timer_box_del.bind(on_release = lambda timer_box_del : self.del_timer(pop_item))
 			timer_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_slct.bind(on_release = lambda timer_box_slct : self.start_timer(mindf_timers_cpy[timer_item]))
-			###now print the json-dict and the cpy dict and compare
+			predict = self.pop_funcs[self.topic]
+			timer_box_slct.bind(on_release = lambda timer_box_slct : predict(self,self.pop_choices[self.topic][pop_item]))
 			
 			timer_box.add_widget(timer_box_title)
 			timer_box.add_widget(timer_box_min)
@@ -314,7 +320,6 @@ class MainScreen(Screen):
 
 		
 	def mindf(self, *args):
-		global mindf_timers_cpy
 		try:
 			self.popbox.clear_widgets()
 		except:
@@ -341,21 +346,19 @@ class MainScreen(Screen):
 
 
 	def add_new(self,mindf_title,mindf_time):
-		global mindf_timers_cpy
 		checking=1
-		for timer_item in mindf_timers_cpy:
-			if mindf_timers_cpy[timer_item] == mindf_title:
+		for pop_item in self.pop_choices[self.topic]:
+			if self.pop_choices[self.topic][pop_item] == mindf_title:
 				checking = 0
 		if checking == 1:
 			mindf_timers.put(str(mindf_title), time=mindf_time, title=mindf_title,)
-			mindf_timers_cpy[mindf_title] = mindf_time
+			self.pop_choices[self.topic][mindf_title] = mindf_time
 			###hmmm
 		self.mindf()
 		
 	def del_timer(self, timer_item):
-		global mindf_timers_cpy
 		mindf_timers.delete(str("%s"%timer_item))
-		mindf_timers_cpy.pop(timer_item, None)
+		self.pop_choices[self.topic].pop(timer_item, None)
 		self.mindf()
 
 
@@ -387,6 +390,9 @@ class MainScreen(Screen):
 	'state': '\n\n',
 	'stast': '\n\n'}		
 
+	pop_funcs = {
+	'mindf' : start_timer
+	}
 
 class emadrsApp(App):
 	def build(self):
