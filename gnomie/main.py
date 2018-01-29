@@ -42,13 +42,13 @@ for font in KIVY_FONTS:
     LabelBase.register(**font)
 
 #Declaration of global variables:
-mindf_timers = JsonStore('mindf_timers.json')
-state_claims = JsonStore('state_claims.json')
-temp_timers = dict(JsonStore('mindf_timers.json'))
-temp_claims = dict(JsonStore('state_claims.json'))
-mindf_timers_cpy = dict()
-state_claims_cpy = dict()
-#mindf_timers.put(str(theitem), itemtype=topic, name=theitem)
+mindf_things = JsonStore('mindf_things.json')
+state_things = JsonStore('state_things.json')
+temp_timers = dict(JsonStore('mindf_things.json'))
+temp_claims = dict(JsonStore('state_things.json'))
+mindf_things_cpy = dict()
+state_things_cpy = dict()
+#mindf_things.put(str(theitem), itemtype=topic, name=theitem)
 
 for key in temp_timers:
 	counting = 0
@@ -61,7 +61,7 @@ for key in temp_timers:
 			counting += 1
 		elif counting == 1:
 			thevalue = subdict[subkey]
-			mindf_timers_cpy[thevalue] = thekey
+			mindf_things_cpy[thevalue] = thekey
 			thekey=str()
 			thevalue=str()
 			counting = 0
@@ -78,7 +78,7 @@ for key in temp_claims:
 			counting += 1
 		elif counting == 1:
 			thevalue = subdict[subkey]
-			state_claims_cpy[thevalue] = thekey
+			state_things_cpy[thevalue] = thekey
 			thekey=str()
 			thevalue=str()
 			counting = 0
@@ -139,7 +139,7 @@ Builder.load_string('''
 ''')  
 
 class MainScreen(Screen):
-	global mindf_timers_cpy
+	global mindf_things_cpy
 	nownr=0
 	main_height=NumericProperty()
 	fontheight=15
@@ -151,8 +151,8 @@ class MainScreen(Screen):
 	'stast' : '\n\n'}
 	pop_choices = {
 	'start' : '\n\n',
-	'mindf' : mindf_timers_cpy,
-	'state' : state_claims_cpy,
+	'mindf' : mindf_things_cpy,
+	'state' : state_things_cpy,
 	'stast' : '\n\n'}
 	
 	main_buttons = {
@@ -392,16 +392,13 @@ class MainScreen(Screen):
 			if self.pop_choices[self.topic][pop_item] == mindf_title:
 				checking = 0
 		if checking == 1:
-			if self.topic=='mindf':
-				mindf_timers.put(str(mindf_title), time=mindf_time, title=mindf_title,)
-			if self.topic=='state':
-				state_claims.put(str(mindf_title), time=mindf_time, title=mindf_title,)
+			eval("%s_things"%self.topic).put(str(mindf_title), time=mindf_time, title=mindf_title,)
 			self.pop_choices[self.topic][mindf_title] = mindf_time
 			###hmmm
 		eval("self.%s()"%self.topic)
 				
 	def del_pop(self, pop_item):
-		mindf_timers.delete(str("%s"%pop_item))
+		mindf_things.delete(str("%s"%pop_item))
 		self.pop_choices[self.topic].pop(pop_item, None)
 		eval("self.%s()"%self.topic)
 
