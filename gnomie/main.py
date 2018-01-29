@@ -300,22 +300,22 @@ class MainScreen(Screen):
 		self.popbox.add_widget(new_box)
 		for pop_item in self.pop_choices[self.topic]: #Go through stored statements
 			#pop_item is the key/title of the timer
-			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+			popping_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 			
-			timer_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_min = Label(text="%s min"%str(self.pop_choices[self.topic][pop_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			timer_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			popping_box_min = Label(text="%s min"%str(self.pop_choices[self.topic][pop_item]), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			
-			timer_box_del.bind(on_release = lambda timer_box_del : self.del_timer(pop_item))
-			timer_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			popping_box_del.bind(on_release = lambda popping_box_del : self.del_pop(pop_item))
+			popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			predict = self.pop_funcs[self.topic]
-			timer_box_slct.bind(on_release = lambda timer_box_slct : predict(self,self.pop_choices[self.topic][pop_item]))
+			popping_box_slct.bind(on_release = lambda popping_box_slct : predict(self,self.pop_choices[self.topic][pop_item]))
 			
-			timer_box.add_widget(timer_box_title)
-			timer_box.add_widget(timer_box_min)
-			timer_box.add_widget(timer_box_del)
-			timer_box.add_widget(timer_box_slct)
-			self.popbox.add_widget(timer_box)
+			popping_box.add_widget(popping_box_title)
+			popping_box.add_widget(popping_box_min)
+			popping_box.add_widget(popping_box_del)
+			popping_box.add_widget(popping_box_slct)
+			self.popbox.add_widget(popping_box)
 		self.popup1.open()
 
 		
@@ -356,9 +356,9 @@ class MainScreen(Screen):
 			###hmmm
 		self.mindf()
 		
-	def del_timer(self, timer_item):
-		mindf_timers.delete(str("%s"%timer_item))
-		self.pop_choices[self.topic].pop(timer_item, None)
+	def del_pop(self, pop_item):
+		mindf_timers.delete(str("%s"%pop_item))
+		self.pop_choices[self.topic].pop(pop_item, None)
 		self.mindf()
 
 
