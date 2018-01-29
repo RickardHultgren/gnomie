@@ -164,6 +164,12 @@ class MainScreen(Screen):
 	
 	txt_height = 0
 	
+	pop_rubric = ""
+	pop_unit = ""
+	pop_action = ""
+	pop_unit_name = ""
+	pop_title_name = ""
+	
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
 		self.planupdate()
@@ -208,7 +214,7 @@ class MainScreen(Screen):
 				)
 			mindf_bar.value=self.mindf_time
 			self.ids.main_box.add_widget(mindf_bar)
-			if self.mindf_time == self.mindf_limit and self.mindf_part <= 5:
+			if self.mindf_time >= self.mindf_limit and self.mindf_part <= 5:
 				if self.mindf_part == 5:
 					self.mindf_time = 0
 				else:
@@ -274,30 +280,18 @@ class MainScreen(Screen):
 
 		self.popup1.open()
 	
-	def mindf(self, *args):
-		global mindf_timers_cpy
-		try:
-			self.popbox.clear_widgets()
-		except:
-			pass
-#		try:
-#			self.popup1.dismiss()
-#		except:
-#			pass
-		self.topic="mindf"
-		self.popup1.title="mindfulness"
-		self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
+	def popping(self):
+		self.popbox.add_widget(Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
-		new_box_title = TextInput(text="", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
-		new_box_min = TextInput(text="timer name", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
-		new_box.add_widget(Label(text = 'min', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif"))
-		new_box_add=Button(text = 'add',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
-		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_min.text))
+		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+		new_box.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif"))
+		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_unit.text))
+		new_box.add_widget(new_box_unit)
 		new_box.add_widget(new_box_title)
-		new_box.add_widget(new_box_min)
 		new_box.add_widget(new_box_add)
 		self.popbox.add_widget(new_box)
-		
 		for timer_item in mindf_timers_cpy: #Go through stored statements
 			#timer_item is the key/title of the timer
 			timer_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
@@ -318,15 +312,42 @@ class MainScreen(Screen):
 			self.popbox.add_widget(timer_box)
 		self.popup1.open()
 
+		
+	def mindf(self, *args):
+		global mindf_timers_cpy
+		try:
+			self.popbox.clear_widgets()
+		except:
+			pass
+		self.topic="mindf"
+		self.popup1.title="mindfulness"
 
-	def add_new(self,mindf_time,mindf_title):
+		#if self.fontheight*(len(self.main_choices[self.topic])/self.line_len) > self.fontheight :
+		#	self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_choices[topic])/self.line_len)
+		#else:
+		#	self.txt_height=self.fontheight		
+			
+		#original:
+		#self.popbox.add_widget(Label(text = 'For how long time do you want to exercise mindfulness?', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif"))
+		#new:
+		self.pop_rubric = 'For how long time do you want to exercise mindfulness?'
+		self.pop_unit= "min"
+		self.pop_action = "add"
+		self.pop_title_name = "title"
+		self.pop_unit_name = ""
+		
+		self.popping()
+		
+
+
+	def add_new(self,mindf_title,mindf_time):
 		global mindf_timers_cpy
 		checking=1
 		for timer_item in mindf_timers_cpy:
 			if mindf_timers_cpy[timer_item] == mindf_title:
 				checking = 0
 		if checking == 1:
-			mindf_timers.put(str(mindf_title), time=mindf_time, title=mindf_title)
+			mindf_timers.put(str(mindf_title), time=mindf_time, title=mindf_title,)
 			mindf_timers_cpy[mindf_title] = mindf_time
 			###hmmm
 		self.mindf()
@@ -369,6 +390,25 @@ class MainScreen(Screen):
 
 class emadrsApp(App):
 	def build(self):
+		the_screenmanager = ScreenManager()
+		#the_screenmanager.transition = FadeTransition()
+		mainscreen = MainScreen(name='mainscreen')
+		the_screenmanager.add_widget(mainscreen)
+		return the_screenmanager
+
+					
+	def on_pause(self):
+		# Here you can save data if needed
+		return True
+
+	def on_resume(self):
+		the_screenmanager = ScreenManager()
+		#the_screenmanager.transition = FadeTransition()
+		mainscreen = MainScreen(name='mainscreen')
+		the_screenmanager.add_widget(mainscreen)
+		return the_screenmanager
+		
+	def on_start(self):
 		the_screenmanager = ScreenManager()
 		#the_screenmanager.transition = FadeTransition()
 		mainscreen = MainScreen(name='mainscreen')
