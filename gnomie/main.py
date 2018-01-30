@@ -44,10 +44,13 @@ for font in KIVY_FONTS:
 #Declaration of global variables:
 mindf_things = JsonStore('mindf_things.json')
 state_things = JsonStore('state_things.json')
+think_things = JsonStore('think_things.json')
 temp_timers = dict(JsonStore('mindf_things.json'))
 temp_claims = dict(JsonStore('state_things.json'))
+temp_think = dict(JsonStore('think_things.json'))
 mindf_things_cpy = dict()
 state_things_cpy = dict()
+think_things_cpy = dict()
 #mindf_things.put(str(theitem), itemtype=topic, name=theitem)
 
 for key in temp_timers:
@@ -82,6 +85,22 @@ for key in temp_claims:
 			thekey=str()
 			thevalue=str()
 			counting = 0
+
+#for key in temp_think:
+#	counting = 0
+#	subdict = temp_think[key]
+#	thekey = str()
+#	thevalue = str()
+#	for subkey in subdict:
+#		if counting == 0:
+#			thekey = subdict[subkey]
+#			counting += 1
+#		elif counting == 1:
+#			thevalue = subdict[subkey]
+#			think_things_cpy[thevalue] = thekey
+#			thekey=str()
+#			thevalue=str()
+#			counting = 0
 
 Builder.load_string('''
 <MainScreen>:
@@ -140,6 +159,7 @@ Builder.load_string('''
 
 class MainScreen(Screen):
 	global mindf_things_cpy
+	global state_things_cpy
 	nownr=0
 	main_height=NumericProperty()
 	fontheight=15
@@ -151,8 +171,8 @@ class MainScreen(Screen):
 	'stast' : '\n\n'}
 	pop_choices = {
 	'start' : '\n\n',
-	'mindf' : mindf_things_cpy,
-	'state' : state_things_cpy,
+	'mindf' : [mindf_things_cpy],
+	'state' : [state_things_cpy, think_things_cpy],
 	'stast' : '\n\n'}
 	
 	main_buttons = {
@@ -160,7 +180,6 @@ class MainScreen(Screen):
 	'mindf' : ["next","previous","exit"],
 	'state' : ["next","previous","exit"],
 	'stast' : '\n\n'}
-	#print "dict['Name']: ", dict['Name']
 	topic='start'
 	mindf_time=NumericProperty(0)
 	mindf_part=0
@@ -252,8 +271,34 @@ class MainScreen(Screen):
 
 		if self.topic == "state":
 			main_txt.text=self.state_claim
-	
-		
+			state_obj_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
+			state_mis_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
+			state_vis_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
+			self.ids.main_box.add_widget(Label(text="If:", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif"))
+			###
+			for pop_item in self.pop_choices[self.topic][1][self.state_claim]:
+				popping_box=BoxLayout(text=pop_item, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+				self.ids.main_box.add_widget(popping_box)
+				for preNomen in ["obj","mis","vis"]:
+					pop_button=Button(text=pop_item[eval(preNomen)], size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
+					self.ids.main_box.add_widget(pop_button)
+						
+						
+						#popping_box_title = Label(text=str(state_thing), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+						#popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][1][0][state_thing]),self.pop_unit_name), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+						#popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+						#popping_box_del.bind(on_release = lambda popping_box_del : self.del_pop(state_thing))
+						#popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+						#predict = self.pop_funcs[self.topic]
+						#popping_box_slct.bind(on_release = lambda popping_box_slct : predict(self,state_thing))
+						#popping_box.add_widget(popping_box_title)
+						#popping_box.add_widget(popping_box_min)
+						#popping_box.add_widget(popping_box_del)
+						#popping_box.add_widget(popping_box_slct)
+						#self.ids.main_box.add_widget(popping_box)
+
+
+			
 		try:
 			data.clear()
 		except:
@@ -323,18 +368,18 @@ class MainScreen(Screen):
 		new_box.add_widget(new_box_title)
 		new_box.add_widget(new_box_add)
 		self.popbox.add_widget(new_box)
-		for pop_item in self.pop_choices[self.topic]: #Go through stored statements
+		for pop_item in self.pop_choices[self.topic][0]: #Go through stored statements
 			#pop_item is the key/title of the timer
 			popping_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 			
 			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
+			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 			
-			popping_box_del.bind(on_release = lambda popping_box_del : self.del_pop(pop_item))
+			popping_box_del.bind(on_release = partial(self.del_pop, pop_item))
 			popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
-			predict = self.pop_funcs[self.topic]
-			popping_box_slct.bind(on_release = lambda popping_box_slct : predict(self,pop_item))
+			predict = self.pop_funcs[self.topic].__name__
+			popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
 			
 			popping_box.add_widget(popping_box_title)
 			popping_box.add_widget(popping_box_min)
@@ -378,33 +423,40 @@ class MainScreen(Screen):
 		self.pop_action = "add"
 		self.pop_title_name = "title"
 		self.pop_unit_name = ""
-		
 		self.popping()
-
 
 	def stast(self, *args):
 		self.topic="stast"
 		pass
+
+	def add_claim(self,state_obj_inpt, state_mis_inpt, state_vis_inpt):
+		pass
 		
 	def add_new(self,mindf_title,mindf_time):
 		checking=1
-		for pop_item in self.pop_choices[self.topic]:
-			if self.pop_choices[self.topic][pop_item] == mindf_title:
+		for pop_item in self.pop_choices[self.topic][0]:
+			if self.pop_choices[self.topic][0][pop_item] == mindf_title:
 				checking = 0
 		if checking == 1:
-			eval("%s_things"%self.topic).put(str(mindf_title), time=mindf_time, title=mindf_title,)
-			self.pop_choices[self.topic][mindf_title] = mindf_time
-			###hmmm
+			eval("%s_things"%self.topic).put(str(mindf_title), category=mindf_time, title=mindf_title)
+			if self.topic=='state':
+				think_things.put(str(mindf_title), title=str(mindf_title), vis=[], mis=[], obj=[])
+				self.pop_choices[self.topic][1][mindf_title] = {'title':str(mindf_title), 'vis':[], 'mis':[], 'obj':[]}
+				###
+				#print self.pop_choices[self.topic][1][mindf_title]['title']
+			self.pop_choices[self.topic][0][mindf_title] = mindf_time
 		eval("self.%s()"%self.topic)
 				
-	def del_pop(self, pop_item):
-		mindf_things.delete(str("%s"%pop_item))
-		self.pop_choices[self.topic].pop(pop_item, None)
+	def del_pop(self, pop_item, *args):
+		eval("%s_things"%self.topic).delete(str("%s"%pop_item))
+		if self.topic=='state':
+			think_things.delete(str("%s"%pop_item))
+		self.pop_choices[self.topic][0].pop(pop_item, None)
 		eval("self.%s()"%self.topic)
 
 
-	def start_timer(self, pop_item):
-		timer_item_value=self.pop_choices[self.topic][pop_item]
+	def start_timer(self, pop_item, *args):
+		timer_item_value=self.pop_choices[self.topic][0][pop_item]
 		#Timer_item is the number of minutes the mindfulness should take.
 		self.mindf_limit=200
 		try:
@@ -418,7 +470,7 @@ class MainScreen(Screen):
 		#0.2 * 60 * 5 [sec] / 5 items = 1 [min] / 5 items
 		Clock.schedule_interval(self.planupdate, 0.2)
 
-	def show_claim(self, pop_item):
+	def show_claim(self, pop_item, *args):
 		self.state_claim=pop_item
 		self.planupdate()
 
