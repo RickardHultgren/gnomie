@@ -86,21 +86,27 @@ for key in temp_claims:
 			thevalue=str()
 			counting = 0
 
+#value = {'title':str(mindf_title), 'vis':["a"], 'mis':["a"], 'obj':["a"]}
+
+#think_things_cpy = temp_think
 #for key in temp_think:
-#	counting = 0
+counting = 0
 #	subdict = temp_think[key]
-#	thekey = str()
-#	thevalue = str()
-#	for subkey in subdict:
-#		if counting == 0:
-#			thekey = subdict[subkey]
-#			counting += 1
-#		elif counting == 1:
-#			thevalue = subdict[subkey]
-#			think_things_cpy[thevalue] = thekey
-#			thekey=str()
-#			thevalue=str()
-#			counting = 0
+thekey = str()
+thevalue = str()
+for akey in temp_think:
+		#print akey
+		#print temp_think[akey]
+		#exit()
+		if counting == 0:
+			thekey = akey
+			counting += 1
+		elif counting == 1:
+			thevalue = temp_think[akey]
+			think_things_cpy[thekey] = temp_think[akey]
+			thekey=str()
+			thevalue=str()
+			counting = 0
 
 Builder.load_string('''
 <MainScreen>:
@@ -271,19 +277,26 @@ class MainScreen(Screen):
 
 		if self.topic == "state":
 			main_txt.text=self.state_claim
-			state_obj_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
-			state_mis_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
-			state_vis_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
-			self.ids.main_box.add_widget(Label(text="If:", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif"))
-			###
-			for pop_item in self.pop_choices[self.topic][1][self.state_claim]:
-				popping_box=BoxLayout(text=pop_item, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+			#state_obj_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
+			#state_mis_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
+			#state_vis_inpt = TextInput(text="", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
+			#self.ids.main_box.add_widget(Label(text="If:", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif"))
+			for pop_item in self.pop_choices[self.topic][1]:
+				print pop_item
+				print self.pop_choices[self.topic][1][pop_item]
+
+				popping_box=Button(text=pop_item, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 				self.ids.main_box.add_widget(popping_box)
-				for preNomen in ["obj","mis","vis"]:
-					pop_button=Button(text=pop_item[eval(preNomen)], size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
-					self.ids.main_box.add_widget(pop_button)
-						
-						
+#				for preNomen in ["obj","mis","vis"]:
+#						print pop_item[preNomen]
+#						exit()
+#						pop_button=Button(text=pop_item[preNomen], size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)), font_name="DejaVuSerif")
+#						self.ids.main_box.add_widget(pop_button)
+			#for preNomen in ["obj","mis","vis"]:
+			#	nomen = TextInput(text="", multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+			#	nomen.bind(on_release=partial(add_nomen, preNomen, nomen.text))
+			#	self.ids.main_box.add_widget(nomen)
+
 						#popping_box_title = Label(text=str(state_thing), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 						#popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][1][0][state_thing]),self.pop_unit_name), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
 						#popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif")
@@ -316,7 +329,18 @@ class MainScreen(Screen):
 			funcy = self.main_funcs[self.topic][b_nr].__name__
 			bttn.bind(on_release = partial((eval("self.%s"%(funcy)))))
 			self.ids.main_box.add_widget(bttn)
+
+	def add_nomen(self, preNomen, res, *args):
+		#self.pop_choices[self.topic][0].pop(pop_item, None)
+		#self.pop_choices[self.topic][1][mindf_title] = {'title':str(mindf_title), 'vis':[], 'mis':[], 'obj':[]}
 		
+		nomina={"obj":"", "mis":"", "vis":""}
+		nomina[preNomen] = res
+		#for nomen in nomina:
+			
+		think_things.put(str(self.state_claim), title=str(self.state_claim), vis=[], mis=[], obj=[])
+		self.pop_choices[self.topic][1][mindf_title] = {'title':str(mindf_title), 'vis':[], 'mis':[], 'obj':[]}
+				
 	def prevb(self, *args):
 		if self.mindf_part != 0:
 			self.mindf_part -= 1
@@ -441,7 +465,7 @@ class MainScreen(Screen):
 			eval("%s_things"%self.topic).put(str(mindf_title), category=mindf_time, title=mindf_title)
 			if self.topic=='state':
 				think_things.put(str(mindf_title), title=str(mindf_title), vis=[], mis=[], obj=[])
-				self.pop_choices[self.topic][1][mindf_title] = {'title':str(mindf_title), 'vis':[], 'mis':[], 'obj':[]}
+				self.pop_choices[self.topic][1][mindf_title] = {'title':str(mindf_title), 'vis':["a"], 'mis':["a"], 'obj':["a"]}
 				###
 				#print self.pop_choices[self.topic][1][mindf_title]['title']
 			self.pop_choices[self.topic][0][mindf_title] = mindf_time
