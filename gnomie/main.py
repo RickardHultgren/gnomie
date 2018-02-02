@@ -41,13 +41,15 @@ KIVY_FONTS = [
 for font in KIVY_FONTS:
     LabelBase.register(**font)
 
-try:
-	from jnius import autoclass
-	PythonActivity = autoclass('org.kivy.android.PythonActivity')
-	View = autoclass('android.view.View')
-	Params = autoclass('android.view.WindowManager$LayoutParams')
-except:
-	pass
+#https://gist.github.com/kived/4b3c1a78b0104e52b2a1
+#try:
+#	from jnius import autoclass
+#	PythonActivity = autoclass('org.kivy.android.PythonActivity')
+#	View = autoclass('android.view.View')
+#	Params = autoclass('android.view.WindowManager$LayoutParams')
+#	from android.runnable import run_on_ui_thread
+#except:
+#	pass
 
 #Declaration of global variables:
 mindf_things = JsonStore('mindf_things.json')
