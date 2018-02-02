@@ -33,7 +33,7 @@ version = 1
 
 # (list) Application requirements
 # comma seperated e.g. requirements = sqlite3,kivy
-requirements = plyer,kivy
+requirements = kivy
 ###
 #requirements = python3crystax,plyer,kivy
 
