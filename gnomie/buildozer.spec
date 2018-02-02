@@ -1,10 +1,10 @@
 [app]
 
 # (str) Title of your application
-title = emadrs
+title = gnomie
 
 # (str) Package name
-package.name = emadrs
+package.name = gnomie
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = RickardVerner.Hultgren
