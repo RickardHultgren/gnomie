@@ -86,24 +86,10 @@ for key in temp_claims:
 			thevalue=str()
 			counting = 0
 
-
-counting = 0
-
 thekey = str()
 thevalue = str()
-for akey in temp_think:
-		#print akey
-		#print temp_think[akey]
-		#exit()
-		if counting == 0:
-			thekey = akey
-			counting += 1
-		elif counting == 1:
-			thevalue = temp_think[akey]
-			think_things_cpy[thekey] = temp_think[akey]
-			thekey=str()
-			thevalue=str()
-			counting = 0
+for akey in temp_think :
+	think_things_cpy[str(akey)] = temp_think[akey]
 
 Builder.load_string('''
 <MainScreen>:
@@ -278,38 +264,33 @@ class MainScreen(Screen):
 			main_txt.text=self.state_claim
 			for preNomen in ["obj","mis","vis"]:
 				for pop_item in self.pop_choices[self.topic][1]:
-					#try:
 					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
 						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen :
 							
-							
 							res = self.pop_choices[self.topic][1][pop_item]["title"]
-							res_box = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+							res_box = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 							
-							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=1, size=(0.75*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=1, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 							res_box.add_widget(res_lbl)
 							res_box.height += res_lbl.height
+							res_del=Button(text="del", size_hint_y=None, size_hint_x=1, size=(0.25*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 							
-							res_del=Button(text="del", size_hint_y=None, size_hint_x=1, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
-							res_del.bind=partial(self.del_nomen, pop_item)
+							res_del.bind(on_release = partial(self.del_nomen, pop_item))
 							res_box.add_widget(res_del)
 							res_box.height += res_del.height
 							
 							self.ids.main_box.add_widget(res_box)
 							self.ids.main_box.height += res_box.height
-
-					#except:
-					#	pass
 				if preNomen == "obj":
-					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 					self.ids.main_box.add_widget(obj_lbl)
 					self.ids.main_box.height += obj_lbl.height
 				if preNomen == "mis":
-					mis_lbl=Label(text="Then:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+					mis_lbl=Label(text="Then:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 					self.ids.main_box.add_widget(mis_lbl)
 					self.ids.main_box.height += mis_lbl.height
 				if preNomen == "vis":
-					vis_lbl=Label(text="So that:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
+					vis_lbl=Label(text="So that:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
 					self.ids.main_box.add_widget(vis_lbl)
 					self.ids.main_box.height += vis_lbl.height
 				res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
@@ -343,19 +324,41 @@ class MainScreen(Screen):
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
 		index_nr = 0
-		for i in range(len(think_things_cpy)):
-			
-			index_nr += 1
-		think_things.put(index_nr, title=res, state=self.state_claim, nomen=preNomen)
-		think_things_cpy[index_nr]={"title":res, "state":self.state_claim, "nomen":preNomen}
+		maxed=0
+		maxing=[]		
+		for i in sorted(think_things_cpy.keys()):
+				for n in think_things_cpy:
+					maxing.append(int(n))
+				maxed = max(maxing)
+				if maxed == int(i) :
+					index_nr += 1
+					break
+				if int(i) == index_nr :
+					index_nr += 1
+				else:
+					title_var = ""
+					state_var = ""
+					nomen_var = ""
+					for j in ["title","state","nomen"] :
+						if j == "title" :
+							title_var = str(think_things_cpy[str(maxed)][j])
+						if j == "state" :
+							state_var = str(think_things_cpy[str(maxed)][j])
+						if j == "nomen" :
+							nomen_var = str(think_things_cpy[str(maxed)][j])
+					think_things.put("%s"%index_nr, title=title_var, state=state_var, nomen=nomen_var)
+					think_things.delete(str(maxed))
+					think_things_cpy.pop(str(maxed))
+					index_nr += 2
+		maxed=maxed+1
+		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
+		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
 
 	def del_nomen(self, pop_item, *args):
-		eval("%s_things"%self.topic).delete(str("%s"%pop_item))
 		if self.topic=='state':
 			think_things.delete(str("%s"%pop_item))
 		self.pop_choices[self.topic][1].pop(pop_item, None)
-		eval("self.%s()"%self.topic)
 		self.planupdate()
 
 				
