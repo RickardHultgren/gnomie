@@ -149,6 +149,7 @@ Builder.load_string('''
 class MainScreen(Screen):
 	global mindf_things_cpy
 	global state_things_cpy
+	global think_things_cpy
 	nownr=0
 	main_height=NumericProperty()
 	fontheight=15
@@ -217,6 +218,10 @@ class MainScreen(Screen):
 			pass
 		if self.topic != 'mindf' :
 			try:
+				getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			except:
+				pass
+			try:
 				Clock.unschedule(self.planupdate)
 				self.popbox.clear_widgets()
 				#self.box.clear_widgets()
@@ -243,6 +248,7 @@ class MainScreen(Screen):
 		
 		
 		if self.topic == "mindf":
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 			main_txt.text=parts[self.mindf_part]
 			mindf_bar=ProgressBar(
@@ -326,30 +332,41 @@ class MainScreen(Screen):
 		index_nr = 0
 		maxed=0
 		maxing=[]		
-		for i in sorted(think_things_cpy.keys()):
-				for n in think_things_cpy:
-					maxing.append(int(n))
-				maxed = max(maxing)
-				if maxed == int(i) :
-					index_nr += 1
-					break
-				if int(i) == index_nr :
-					index_nr += 1
-				else:
-					title_var = ""
-					state_var = ""
-					nomen_var = ""
-					for j in ["title","state","nomen"] :
-						if j == "title" :
-							title_var = str(think_things_cpy[str(maxed)][j])
-						if j == "state" :
-							state_var = str(think_things_cpy[str(maxed)][j])
-						if j == "nomen" :
-							nomen_var = str(think_things_cpy[str(maxed)][j])
-					think_things.put("%s"%index_nr, title=title_var, state=state_var, nomen=nomen_var)
-					think_things.delete(str(maxed))
-					think_things_cpy.pop(str(maxed))
-					index_nr += 2
+		done=False
+		while done==False:
+			for i in sorted(think_things_cpy.keys()):
+					if int(i) < index_nr : 
+						pass
+					else:
+						for n in think_things_cpy:
+							maxing.append(int(n))
+						maxed = max(maxing)
+						if maxed < index_nr:
+							done=True
+							break
+						if maxed == int(i):
+							index_nr += 1
+							done=True
+							break
+						if int(i) == index_nr :
+							index_nr += 1
+						else:
+							title_var = ""
+							state_var = ""
+							nomen_var = ""
+							for j in ["title","state","nomen"] :
+								if j == "title" :
+									title_var = str(think_things_cpy[i][j])
+								if j == "state" :
+									state_var = str(think_things_cpy[i][j])
+								if j == "nomen" :
+									nomen_var = str(think_things_cpy[i][j])
+							think_things.put("%s"%index_nr, title=title_var, state=state_var, nomen=nomen_var)
+							think_things["%s"%index_nr] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+							think_things.delete(i)
+							think_things_cpy.pop(i)
+							index_nr += 1
+							break
 		maxed=maxed+1
 		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
 		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
@@ -495,8 +512,6 @@ class MainScreen(Screen):
 				
 	def del_pop(self, pop_item, *args):
 		eval("%s_things"%self.topic).delete(str("%s"%pop_item))
-		if self.topic=='state':
-			think_things.delete(str("%s"%pop_item))
 		self.pop_choices[self.topic][0].pop(pop_item, None)
 		eval("self.%s()"%self.topic)
 
