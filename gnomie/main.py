@@ -41,6 +41,8 @@ KIVY_FONTS = [
 for font in KIVY_FONTS:
     LabelBase.register(**font)
 
+###now!
+#https://www.snip2code.com/Snippet/344451/Kivy--Android-keep-screen-on
 #https://gist.github.com/kived/4b3c1a78b0104e52b2a1
 #try:
 #	from jnius import autoclass
