@@ -32,10 +32,10 @@ from kivy.uix.scrollview import ScrollView
 from kivy.core.text import LabelBase  
 KIVY_FONTS = [
     {"name":"DejaVuSerif",  
-                   "fn_regular":"ttf/DejaVuSerif.ttf",
-                   "fn_bold":"ttf/DejaVuSerif-Bold.ttf",
-                   "fn_italic":"ttf/DejaVuSerif-Italic.ttf",
-                   "fn_bolditalic":"ttf/DejaVuSerif-BoldItalic.ttf"
+                   "fn_regular":"DejaVuSerif.ttf",
+                   "fn_bold":"DejaVuSerif-Bold.ttf",
+                   "fn_italic":"DejaVuSerif-Italic.ttf",
+                   "fn_bolditalic":"DejaVuSerif-BoldItalic.ttf"
                    }
                    ]
 for font in KIVY_FONTS:
