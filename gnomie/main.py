@@ -41,6 +41,14 @@ KIVY_FONTS = [
 for font in KIVY_FONTS:
     LabelBase.register(**font)
 
+try:
+	from jnius import autoclass
+	PythonActivity = autoclass('org.kivy.android.PythonActivity')
+	View = autoclass('android.view.View')
+	Params = autoclass('android.view.WindowManager$LayoutParams')
+except:
+	pass
+
 #Declaration of global variables:
 mindf_things = JsonStore('mindf_things.json')
 state_things = JsonStore('state_things.json')
@@ -216,11 +224,11 @@ class MainScreen(Screen):
 			self.ids.main_box.clear_widgets()
 		except:
 			pass
-		if self.topic != 'mindf' :
-			try:
-				getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-			except:
-				pass
+		if self.topic != "mindf" :
+			#try:
+			#	PythonActivity.mActivity.getWindow().clearFlags(Params.FLAG_KEEP_SCREEN_ON)
+			#except:
+			#	pass
 			try:
 				Clock.unschedule(self.planupdate)
 				self.popbox.clear_widgets()
@@ -248,7 +256,10 @@ class MainScreen(Screen):
 		
 		
 		if self.topic == "mindf":
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+			#try:
+			#	PythonActivity.mActivity.getWindow().addFlags(Params.FLAG_KEEP_SCREEN_ON)
+			#except:
+			#	pass
 			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 			main_txt.text=parts[self.mindf_part]
 			mindf_bar=ProgressBar(
@@ -269,6 +280,18 @@ class MainScreen(Screen):
 		if self.topic == "state":
 			main_txt.text=self.state_claim
 			for preNomen in ["obj","mis","vis"]:
+				if preNomen == "obj":
+					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
+					self.ids.main_box.add_widget(obj_lbl)
+					self.ids.main_box.height += obj_lbl.height
+				if preNomen == "mis":
+					mis_lbl=Label(text="Then:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
+					self.ids.main_box.add_widget(mis_lbl)
+					self.ids.main_box.height += mis_lbl.height
+				if preNomen == "vis":
+					vis_lbl=Label(text="So that:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
+					self.ids.main_box.add_widget(vis_lbl)
+					self.ids.main_box.height += vis_lbl.height
 				for pop_item in self.pop_choices[self.topic][1]:
 					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
 						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen :
@@ -287,18 +310,6 @@ class MainScreen(Screen):
 							
 							self.ids.main_box.add_widget(res_box)
 							self.ids.main_box.height += res_box.height
-				if preNomen == "obj":
-					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
-					self.ids.main_box.add_widget(obj_lbl)
-					self.ids.main_box.height += obj_lbl.height
-				if preNomen == "mis":
-					mis_lbl=Label(text="Then:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
-					self.ids.main_box.add_widget(mis_lbl)
-					self.ids.main_box.height += mis_lbl.height
-				if preNomen == "vis":
-					vis_lbl=Label(text="So that:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif")
-					self.ids.main_box.add_widget(vis_lbl)
-					self.ids.main_box.height += vis_lbl.height
 				res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 				res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
 				res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif")
