@@ -24,6 +24,7 @@ from functools import partial
 #from kivy.uix.treeview import TreeView, TreeViewNode
 #from kivy.uix.treeview import TreeViewLabel
 from kivy.uix.scrollview import ScrollView
+from kivy.utils import platform
 #try:
 #	from plyer import sms
 #except:
@@ -158,7 +159,10 @@ Builder.load_string('''
 
 ''')  
 
+paused=True
+
 class MainScreen(Screen):
+	global paused
 	global mindf_things_cpy
 	global state_things_cpy
 	global think_things_cpy
@@ -222,13 +226,14 @@ class MainScreen(Screen):
 		self.planupdate()
 	
 	def planupdate(self,*args):
-		
+		global paused
 		self.main_height=0
 		try:
 			self.ids.main_box.clear_widgets()
 		except:
 			pass
 		if self.topic != "mindf" :
+			paused = True
 			#try:
 			#	PythonActivity.mActivity.getWindow().clearFlags(Params.FLAG_KEEP_SCREEN_ON)
 			#except:
@@ -260,6 +265,8 @@ class MainScreen(Screen):
 		
 		
 		if self.topic == "mindf":
+			if platform == 'android':
+				paused=False
 			#try:
 			#	PythonActivity.mActivity.getWindow().addFlags(Params.FLAG_KEEP_SCREEN_ON)
 			#except:
@@ -557,6 +564,7 @@ class MainScreen(Screen):
 	}
 
 class emadrsApp(App):
+	global paused
 	def build(self):
 		the_screenmanager = ScreenManager()
 		#the_screenmanager.transition = FadeTransition()
@@ -564,10 +572,13 @@ class emadrsApp(App):
 		the_screenmanager.add_widget(mainscreen)
 		return the_screenmanager
 
-					
 	def on_pause(self):
-		# Here you can save data if needed
-		return True
+		global paused
+		if paused == True:
+			# Here you can save data if needed
+			return True
+		else:
+			return False
 
 	def on_resume(self):
 		the_screenmanager = ScreenManager()
