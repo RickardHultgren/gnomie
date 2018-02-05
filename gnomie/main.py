@@ -344,63 +344,43 @@ class MainScreen(Screen):
 
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
-		index_nr = 1
-		maxed=0
-		maxing=[]
-		done=False
-		length = int(len(think_things_cpy)+1)
+		index_nr = 0
+		length = int(len(think_things_cpy))
 		#fixed length:
-		for h in range(length) :
-			if done == True :
-				break
-			#sort keys:
+		for h in range(length-1) :
 			for key in sorted(think_things_cpy, key=think_things_cpy.get):
-			#for key in sorted(think_things_cpy.keys()) :
-					print "the key: %s"%key
-					#spinning the keys till the index_nr:
-					if int(key) < index_nr : 
-						print "spinning till %s"%key
-						pass
-					#if the keys are in sync with index_nr:
-					else:
-						#counting the largest key
-						for n in think_things_cpy:
-							maxing.append(int(n))
-						maxed = max(maxing)
-						#if key is the last key
-						if maxed == int(key):
-							index_nr += 1
-							done = True
-							break
-						#if the key is in sync with index_nr:
-						if int(key) == index_nr :
-							index_nr += 1
-						#if key is bigger then index_nr:
-						else:
-							title_var = ""
-							state_var = ""
-							nomen_var = ""
-							for j in ["title","state","nomen"] :
-								#check if key has a value named "title"
-								if j == "title" :
-									title_var = str(think_things_cpy[key][j])
-								#check if key has a value named "state"
-								if j == "state" :
-									state_var = str(think_things_cpy[key][j])
-								#check if key has a value named "nomen"	
-								if j == "nomen" :
-									nomen_var = str(think_things_cpy[key][j])
-							#make a copy of the key with the index_nr as key
-							think_things.put("%s"%index_nr, title=title_var, state=state_var, nomen=nomen_var)
-							think_things["%s"%index_nr] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-							#delete the old key
-							think_things.delete(key)
-							think_things_cpy.pop(key)
-							index_nr += 1
-							break
-		think_things.put("%s"%index_nr, title=res, state=self.state_claim, nomen=preNomen)
-		think_things_cpy["%s"%index_nr]={"title":res, "state":self.state_claim, "nomen":preNomen}
+				h += 1
+				print key
+				if int(key) > (h) :
+					title_var = ""
+					state_var = ""
+					nomen_var = ""
+					for j in ["title","state","nomen"] :
+						if j == "title" :
+							title_var = str(think_things_cpy[key][j])
+						if j == "state" :
+							state_var = str(think_things_cpy[key][j])
+						if j == "nomen" :
+							nomen_var = str(think_things_cpy[key][j])
+					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
+					think_things["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+					think_things.delete(key)
+					think_things_cpy.pop(key)
+					break						
+				else:
+					continue
+		maxed=0
+		maxing = []
+		for n in think_things_cpy:
+			maxing.append(int(n))
+		try:
+			maxed = max(maxing)+1
+		except:
+			pass
+		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
+		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
+		index_nr = 0
 
 	def del_nomen(self, pop_item, *args):
 		if self.topic=='state':
