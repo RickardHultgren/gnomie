@@ -172,7 +172,7 @@ class MainScreen(Screen):
 	fontheight=15
 	line_len=30
 	main_headline = {
-	'start' : "\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n",
+	'start' : "\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n\n\n",
 	'mindf' : '\n\n',
 	'state' : '\n\n',
 	'stast' : '\n\n'}
@@ -196,7 +196,7 @@ class MainScreen(Screen):
 	box = BoxLayout(orientation='vertical')
 	
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
-
+	
 	popbox=GridLayout(
                 cols=1,
                 orientation='vertical',
@@ -207,10 +207,9 @@ class MainScreen(Screen):
                 size_hint_y= None,
                 size_hint_x= 1,
                 do_scroll_x= False,
-                do_scroll_y= True,
+                do_scroll_y= True
                 )
-	popscroll.add_widget(popbox)	
-	
+	popscroll.add_widget(popbox)
 	popup1 = Popup(content=box, size_hint=(.75, .75))
 	box.add_widget(popscroll)
 	
@@ -335,8 +334,8 @@ class MainScreen(Screen):
 				self.ids.main_box.add_widget(res_box)
 				self.ids.main_box.height += res_box.height
 				self.ids.main_box.height += 1*self.txt_height
-		self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
-
+		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
+		self.ids.main_box.height += 1*self.txt_height + Window.height
 		try:
 			data.clear()
 		except:
@@ -448,17 +447,23 @@ class MainScreen(Screen):
 		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		self.popbox.add_widget(poplbl)
 		self.popbox.height += poplbl.height
+		box1 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box2 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
+		box1.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
+		box1.add_widget(Label(text = self.pop_title_name, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
 		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_unit.text))
 		new_box.add_widget(new_box_unit)
 		new_box.add_widget(new_box_title)
-		new_box.add_widget(new_box_add)
+		box2.add_widget(new_box_add)
+		self.popbox.add_widget(box1)
 		self.popbox.add_widget(new_box)
-		self.popbox.height += new_box.height
+		self.popbox.add_widget(box2)
+		self.popbox.height += box1.height
+		self.popbox.height += box2.height
 		for pop_item in self.pop_choices[self.topic][0]: #Go through stored statements
 			#pop_item is the key/title of the timer
 			popping_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
