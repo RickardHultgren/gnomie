@@ -29,6 +29,7 @@ from kivy.utils import platform
 #	from plyer import sms
 #except:
 #	pass
+from kivy.core.window import Window
 	
 from kivy.core.text import LabelBase  
 KIVY_FONTS = [
@@ -149,8 +150,8 @@ Builder.load_string('''
                 orientation:'vertical'
                 height:self.minimum_height
                 #height:root.main_height
-                padding: root.width * 0.02, root.height * 0.02
-                spacing: root.width * 0.02, root.height * 0.02            
+                #padding: root.width * 0.02, root.height * 0.02
+                #spacing: root.width * 0.02, root.height * 0.02            
                 size_hint_y: None
                 size_hint_x: 1            
                 do_scroll_x: False
@@ -251,8 +252,9 @@ class MainScreen(Screen):
 			self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
 		else:
 			self.txt_height=self.fontheight		
-			
-		self.ids.main_box.spacing = .75*self.txt_height
+		self.ids.main_box.padding=.25*self.txt_height
+		self.ids.main_box.spacing=.25*self.txt_height
+		
 		self.popbox.spacing = .75*self.txt_height
 		self.ids.main_box.height=self.main_height
 		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))#, font_size=self.fontheight)
@@ -264,6 +266,7 @@ class MainScreen(Screen):
 		
 		self.ids.main_box.add_widget(main_txt)
 		self.ids.main_box.height += main_txt.height
+		
 		
 		
 		if self.topic == "mindf":
@@ -331,6 +334,8 @@ class MainScreen(Screen):
 				res_box.add_widget(res_bttn)
 				self.ids.main_box.add_widget(res_box)
 				self.ids.main_box.height += res_box.height
+				self.ids.main_box.height += 1*self.txt_height
+		self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
 
 		try:
 			data.clear()
