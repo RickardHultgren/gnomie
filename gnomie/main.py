@@ -29,7 +29,7 @@ from kivy.utils import platform
 #	from plyer import sms
 #except:
 #	pass
-from kivy.core.window import Window
+#from kivy.core.window import Window
 	
 from kivy.core.text import LabelBase  
 KIVY_FONTS = [
@@ -202,15 +202,15 @@ class MainScreen(Screen):
                 orientation='vertical',
                 #height=self.minimum_height,
                 #height=root.bigheight,
-                padding= (popscroll.width * 0.02, popscroll.height * 0.02),
-                spacing= (popscroll.width * 0.02, popscroll.height * 0.02),
+                padding = (popscroll.width * 0.02, popscroll.height * 0.02),
+                spacing = (popscroll.width * 0.02, popscroll.height * 0.02),
                 size_hint_y= None,
                 size_hint_x= 1,
                 do_scroll_x= False,
                 do_scroll_y= True
                 )
 	popscroll.add_widget(popbox)
-	popup1 = Popup(content=box, size_hint=(.75, .75))
+	popup1 = Popup(content=box, size_hint=(.875, .875))
 	box.add_widget(popscroll)
 	
 	txt_height = 0
@@ -334,8 +334,7 @@ class MainScreen(Screen):
 				self.ids.main_box.add_widget(res_box)
 				self.ids.main_box.height += res_box.height
 				self.ids.main_box.height += 1*self.txt_height
-		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
-		self.ids.main_box.height += 1*self.txt_height + Window.height
+
 		try:
 			data.clear()
 		except:
@@ -354,6 +353,8 @@ class MainScreen(Screen):
 			bttn.bind(on_release = partial((eval("self.%s"%(funcy)))))
 			self.ids.main_box.add_widget(bttn)
 			self.ids.main_box.height += bttn.height
+		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
+		#self.ids.main_box.height += 1*self.txt_height + Window.height
 
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
@@ -448,17 +449,19 @@ class MainScreen(Screen):
 		self.popbox.add_widget(poplbl)
 		self.popbox.height += poplbl.height
 		box1 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		box2 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box2 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box1.add_widget(Label(text = self.pop_title, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
 		box1.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
-		box1.add_widget(Label(text = self.pop_title_name, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
-		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		
+		box1.add_widget(Label(text = "", size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
+		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_unit.text))
 		new_box.add_widget(new_box_unit)
 		new_box.add_widget(new_box_title)
-		box2.add_widget(new_box_add)
+		new_box.add_widget(new_box_add)
 		self.popbox.add_widget(box1)
 		self.popbox.add_widget(new_box)
 		self.popbox.add_widget(box2)
@@ -470,10 +473,10 @@ class MainScreen(Screen):
 			
 			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=None, size=(.125*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			
 			popping_box_del.bind(on_release = partial(self.del_pop, pop_item))
-			popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=None, size=(.125*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			predict = self.pop_funcs[self.topic].__name__
 			popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
 			
@@ -500,8 +503,9 @@ class MainScreen(Screen):
 		self.pop_rubric = 'For how long time do you want to exercise mindfulness?'
 		self.pop_unit= "min"
 		self.pop_action = "add"
-		self.pop_title_name = "title"
-		self.pop_unit_name = "min"
+		self.pop_title = "title"
+		self.pop_title_name = ""
+		self.pop_unit_name = ""
 		self.popping()
 		
 	def state(self, *args):
@@ -518,7 +522,8 @@ class MainScreen(Screen):
 		self.pop_rubric = 'Claims'
 		self.pop_unit = "category"
 		self.pop_action = "add"
-		self.pop_title_name = "title"
+		self.pop_title = "title"
+		self.pop_title_name = ""
 		self.pop_unit_name = ""
 		self.popping()
 
