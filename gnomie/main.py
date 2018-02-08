@@ -459,8 +459,9 @@ class MainScreen(Screen):
 		box1.add_widget(Label(text = "", size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
 		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_unit.text))
-		new_box.add_widget(new_box_unit)
+		
 		new_box.add_widget(new_box_title)
+		new_box.add_widget(new_box_unit)
 		new_box.add_widget(new_box_add)
 		self.popbox.add_widget(box1)
 		self.popbox.add_widget(new_box)
