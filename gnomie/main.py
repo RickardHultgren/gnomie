@@ -393,8 +393,8 @@ class MainScreen(Screen):
 
 	def del_func(self):
 		###now
-		#are you sure to delete:
-		
+		#Are you sure you want to delete this item?:
+		#bubble or popup?
 		try:
 			self.ids.main_box.clear_widgets()
 		except:
