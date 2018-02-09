@@ -24,6 +24,9 @@ from functools import partial
 #from kivy.uix.treeview import TreeView, TreeViewNode
 #from kivy.uix.treeview import TreeViewLabel
 from kivy.uix.scrollview import ScrollView
+
+from kivy.uix.bubble import Bubble
+from kivy.uix.bubble import BubbleButton
 from kivy.utils import platform
 #try:
 #	from plyer import sms
@@ -215,6 +218,8 @@ class MainScreen(Screen):
 	pop_action = ""
 	pop_unit_name = ""
 	pop_title_name = ""
+
+	my_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
@@ -314,7 +319,8 @@ class MainScreen(Screen):
 							res_box.height += res_lbl.height
 							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							
-							res_del.bind(on_release = partial(self.del_nomen, pop_item))
+							res_del.bind(on_release = partial(self.del_func, pop_item))
+							#res_del.bind(on_release = partial(self.del_nomen, pop_item))
 							res_box.add_widget(res_del)
 							res_box.height += res_del.height
 							
@@ -391,17 +397,24 @@ class MainScreen(Screen):
 		self.planupdate()
 		index_nr = 0
 
-	def del_func(self):
+	def del_func(self, pop_item, *args):
 		###now
 		#Are you sure you want to delete this item?:
 		#bubble or popup?
-		try:
-			self.ids.main_box.clear_widgets()
-		except:
-			pass
-		self.popup1.height == None
-		self.popup1.open()
 		
+		self.my_bubble.background_color =(20, 0, 0, .5) 
+		self.my_bubble.border = [50, 50, 50, 10]
+		self.my_bubble.size = (150, 50)
+		self.my_bubble.arrow_pos= 'top_mid'
+		my_bub_lbl=Label(text="Are you sure you want to delete this item?")
+		my_bub_btnY= BubbleButton(text='Yes')
+		my_bub_btnN= BubbleButton(text='No')
+		#my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.my_bubble, my_bub_btn1))
+		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_nomen(pop_item))
+		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
+		self.my_bubble.add_widget(my_bub_btnY)
+		self.my_bubble.add_widget(my_bub_btnN)
+		self.add_widget(self.my_bubble)
 
 	def del_nomen(self, pop_item, *args):
 		if self.topic=='state':
