@@ -172,7 +172,7 @@ class MainScreen(Screen):
 	fontheight=15
 	line_len=30
 	main_headline = {
-	'start' : "\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n\n\n",
+	'start' : "\n\n\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n\n\n\n",
 	'mindf' : '\n\n',
 	'state' : '\n\n',
 	'stast' : '\n\n'}
@@ -181,11 +181,10 @@ class MainScreen(Screen):
 	'mindf' : [mindf_things_cpy],
 	'state' : [state_things_cpy, think_things_cpy],
 	'stast' : '\n\n'}
-	
 	main_buttons = {
 	'start' : ["mindfulness", "statements", "statistics"],
 	'mindf' : ["next","previous","exit"],
-	'state' : ["next","previous","exit"],
+	'state' : ["exit"],
 	'stast' : '\n\n'}
 	topic='start'
 	mindf_time=NumericProperty(0)
@@ -194,9 +193,7 @@ class MainScreen(Screen):
 	mindf_speed=0
 	state_claim=""
 	box = BoxLayout(orientation='vertical')
-	
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
-	
 	popbox=GridLayout(
                 cols=1,
                 orientation='vertical',
@@ -212,9 +209,7 @@ class MainScreen(Screen):
 	popscroll.add_widget(popbox)
 	popup1 = Popup(content=box, size_hint=(.875, .875))
 	box.add_widget(popscroll)
-	
 	txt_height = 0
-	
 	pop_rubric = ""
 	pop_unit = ""
 	pop_action = ""
@@ -358,14 +353,14 @@ class MainScreen(Screen):
 
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
-		index_nr = 0
+		times_matched = 0
 		length = int(len(think_things_cpy))
 		#fixed length:
 		for h in range(length-1) :
 			for key in sorted(think_things_cpy, key=think_things_cpy.get):
-				h += 1
-				print key
-				if int(key) > (h) :
+				if int(key) == h:
+					times_matched += 1
+				if times_matched < h:
 					title_var = ""
 					state_var = ""
 					nomen_var = ""
@@ -401,7 +396,6 @@ class MainScreen(Screen):
 			think_things.delete(str("%s"%pop_item))
 		self.pop_choices[self.topic][1].pop(pop_item, None)
 		self.planupdate()
-
 				
 	def prevb(self, *args):
 		if self.mindf_part != 0:
@@ -573,7 +567,7 @@ class MainScreen(Screen):
 	main_funcs = {
 	'start': [mindf, state, stast],
 	'mindf': [nxtb, prevb, exitb],
-	'state': [nxtb, prevb, exitb],
+	'state': [exitb],
 	'stast': '\n\n'}		
 
 	pop_funcs = {
