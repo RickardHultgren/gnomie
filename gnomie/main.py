@@ -184,7 +184,7 @@ class MainScreen(Screen):
 	main_buttons = {
 	'start' : ["mindfulness", "statements", "statistics"],
 	'mindf' : ["next","previous","exit"],
-	'state' : ["exit"],
+	'state' : ["statements","exit"],
 	'stast' : '\n\n'}
 	topic='start'
 	mindf_time=NumericProperty(0)
@@ -391,6 +391,18 @@ class MainScreen(Screen):
 		self.planupdate()
 		index_nr = 0
 
+	def del_func(self):
+		###now
+		#are you sure to delete:
+		
+		try:
+			self.ids.main_box.clear_widgets()
+		except:
+			pass
+		self.popup1.height == None
+		self.popup1.open()
+		
+
 	def del_nomen(self, pop_item, *args):
 		if self.topic=='state':
 			think_things.delete(str("%s"%pop_item))
@@ -567,7 +579,7 @@ class MainScreen(Screen):
 	main_funcs = {
 	'start': [mindf, state, stast],
 	'mindf': [nxtb, prevb, exitb],
-	'state': [exitb],
+	'state': [state, exitb],
 	'stast': '\n\n'}		
 
 	pop_funcs = {
