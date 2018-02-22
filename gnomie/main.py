@@ -59,6 +59,12 @@ for font in KIVY_FONTS:
 #	pass
 
 #Declaration of global variables:
+#mindf_things = JsonStore('app/mindf_things.json')
+#state_things = JsonStore('app/state_things.json')
+#think_things = JsonStore('app/think_things.json')
+#temp_timers = dict(JsonStore('app/mindf_things.json'))
+#temp_claims = dict(JsonStore('app/state_things.json'))
+#temp_think = dict(JsonStore('app/think_things.json'))
 mindf_things = JsonStore('mindf_things.json')
 state_things = JsonStore('state_things.json')
 think_things = JsonStore('think_things.json')
@@ -220,6 +226,7 @@ class MainScreen(Screen):
 	pop_title_name = ""
 
 	my_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
+	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
@@ -238,6 +245,15 @@ class MainScreen(Screen):
 			#	PythonActivity.mActivity.getWindow().clearFlags(Params.FLAG_KEEP_SCREEN_ON)
 			#except:
 			#	pass
+
+			try:
+				self.my_bubble.clear_widgets()
+			except:
+				pass
+			try:
+				self.pop_bubble.clear_widgets()
+			except:
+				pass				
 			try:
 				Clock.unschedule(self.planupdate)
 				self.popbox.clear_widgets()
@@ -245,7 +261,6 @@ class MainScreen(Screen):
 				self.popup1.dismiss()
 			except:
 				pass
-		
 
 		if self.fontheight*(len(self.main_headline[self.topic])/self.line_len) > self.fontheight :
 			self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
@@ -293,6 +308,7 @@ class MainScreen(Screen):
 				self.mindf_time += self.mindf_speed
 
 		if self.topic == "state":
+
 			main_txt.text=self.state_claim
 			for preNomen in ["obj","mis","vis"]:
 				if preNomen == "obj":
@@ -397,6 +413,9 @@ class MainScreen(Screen):
 		self.planupdate()
 		index_nr = 0
 
+
+
+
 	def del_func(self, pop_item, *args):
 		###now
 		#Are you sure you want to delete this item?:
@@ -414,7 +433,8 @@ class MainScreen(Screen):
 		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
 		self.my_bubble.add_widget(my_bub_btnY)
 		self.my_bubble.add_widget(my_bub_btnN)
-		self.add_widget(self.my_bubble)
+		#self.add_widget(self.my_bubble)
+		self.ids.main_box.add_widget(self.my_bubble)
 
 	def del_nomen(self, pop_item, *args):
 		if self.topic=='state':
@@ -530,6 +550,10 @@ class MainScreen(Screen):
 		
 	def state(self, *args):
 		try:
+			self.pop_bubble.clear_widgets()
+		except:
+			pass		
+		try:
 			self.popbox.clear_widgets()
 		except:
 			pass
@@ -564,10 +588,26 @@ class MainScreen(Screen):
 			self.pop_choices[self.topic][0][mindf_title] = mindf_time
 		eval("self.%s()"%self.topic)
 				
-	def del_pop(self, pop_item, *args):
+	def del_popping(self, pop_item, *args):
 		eval("%s_things"%self.topic).delete(str("%s"%pop_item))
 		self.pop_choices[self.topic][0].pop(pop_item, None)
 		eval("self.%s()"%self.topic)
+
+	def del_pop(self, pop_item, *args):
+		self.pop_bubble.background_color =(20, 0, 0, .5) 
+		self.pop_bubble.border = [50, 50, 50, 10]
+		self.pop_bubble.size = (150, 50)
+		self.pop_bubble.arrow_pos= 'top_mid'
+		my_bub_lbl=Label(text="Are you sure you want to delete this item?")
+		my_bub_btnY= BubbleButton(text='Yes')
+		my_bub_btnN= BubbleButton(text='No')
+		#my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.pop_bubble, my_bub_btn1))
+		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_popping(pop_item))
+		my_bub_btnN.bind(on_release=lambda my_bub_btnN: eval("self.%s()"%self.topic))
+		self.pop_bubble.add_widget(my_bub_btnY)
+		self.pop_bubble.add_widget(my_bub_btnN)
+		#self.add_widget(self.pop_bubble)
+		self.popbox.add_widget(self.pop_bubble)
 
 
 	def start_timer(self, pop_item, *args):
