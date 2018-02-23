@@ -376,13 +376,17 @@ class MainScreen(Screen):
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
 		times_matched = 0
-		length = int(len(think_things_cpy))
+		length = int(len(think_things_cpy)+1)
 		#fixed length:
-		for h in range(length-1) :
-			for key in sorted(think_things_cpy, key=think_things_cpy.get):
+		for h in range(1,length) :
+			keylist=list(think_things_cpy.keys())
+			print sorted(keylist)
+			for key in sorted(keylist):
+				#print "key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
 				if int(key) == h:
 					times_matched += 1
-				if times_matched < h:
+					#break
+				elif times_matched < h and int(key) > h:
 					title_var = ""
 					state_var = ""
 					nomen_var = ""
@@ -393,13 +397,21 @@ class MainScreen(Screen):
 							state_var = str(think_things_cpy[key][j])
 						if j == "nomen" :
 							nomen_var = str(think_things_cpy[key][j])
-					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
-					think_things["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+					#print "key to delete: %s" % key
 					think_things.delete(key)
-					think_things_cpy.pop(key)
-					break						
-				else:
-					continue
+					think_things_cpy.pop(key, None)
+					#times_matched += 1
+					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
+					think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+					#think_things.put("%s"%(times_matched), title=title_var, state=state_var, nomen=nomen_var)
+					#think_things["%s"%(times_matched)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+					times_matched += 1
+
+					
+					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
+					
+					#break
+					#continue
 		maxed=0
 		maxing = []
 		for n in think_things_cpy:
@@ -435,6 +447,7 @@ class MainScreen(Screen):
 		self.my_bubble.add_widget(my_bub_btnN)
 		#self.add_widget(self.my_bubble)
 		self.ids.main_box.add_widget(self.my_bubble)
+		
 
 	def del_nomen(self, pop_item, *args):
 		if self.topic=='state':
