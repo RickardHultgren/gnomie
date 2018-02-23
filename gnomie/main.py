@@ -225,7 +225,26 @@ class MainScreen(Screen):
 	pop_unit_name = ""
 	pop_title_name = ""
 
-	my_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
+	###now
+	#main_x_scroll= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
+	delbox = BoxLayout(orientation='vertical')
+	main_x_scroll=ScrollView(size= delbox.size, bar_pos_x="top")
+	main_x_box=GridLayout(
+                cols=1,
+                orientation='vertical',
+                #height=self.minimum_height,
+                #height=root.bigheight,
+                padding = (popscroll.width * 0.02, popscroll.height * 0.02),
+                spacing = (popscroll.width * 0.02, popscroll.height * 0.02),
+                size_hint_y= None,
+                size_hint_x= 1,
+                do_scroll_x= False,
+                do_scroll_y= True
+                )
+	main_x_scroll.add_widget(main_x_box)
+	popup2 = Popup(content=delbox, size_hint=(.875, .875))
+	delbox.add_widget(main_x_scroll)
+
 	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	
 	def __init__ (self,**kwargs):
@@ -245,9 +264,8 @@ class MainScreen(Screen):
 			#	PythonActivity.mActivity.getWindow().clearFlags(Params.FLAG_KEEP_SCREEN_ON)
 			#except:
 			#	pass
-
 			try:
-				self.my_bubble.clear_widgets()
+				self.main_x_scroll.clear_widgets()
 			except:
 				pass
 			try:
@@ -261,6 +279,12 @@ class MainScreen(Screen):
 				self.popup1.dismiss()
 			except:
 				pass
+
+			try:
+				self.popup2.dismiss()
+			except:
+				pass
+
 
 		if self.fontheight*(len(self.main_headline[self.topic])/self.line_len) > self.fontheight :
 			self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
@@ -432,22 +456,33 @@ class MainScreen(Screen):
 		###now
 		#Are you sure you want to delete this item?:
 		#bubble or popup?
-		
-		self.my_bubble.background_color =(20, 0, 0, .5) 
-		self.my_bubble.border = [50, 50, 50, 10]
-		self.my_bubble.size = (150, 50)
-		self.my_bubble.arrow_pos= 'top_mid'
-		my_bub_lbl=Label(text="Are you sure you want to delete this item?")
-		my_bub_btnY= BubbleButton(text='Yes')
-		my_bub_btnN= BubbleButton(text='No')
-		#my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.my_bubble, my_bub_btn1))
+
+		try:
+			self.popbox.clear_widgets()
+		except:
+			pass
+		try:
+			self.popup2.dismiss()
+		except:
+			pass
+		try:
+			self.popup1.dismiss()
+		except:
+			pass			
+		self.popup2.title="delete?"
+	
+		#my_bub_lbl=Label(text="Are you sure you want to delete this item?")
+		my_bub_btnY= Button(text='Yes')
+		my_bub_btnN= Button(text='No')
+		##my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.main_x_box, my_bub_btn1))
 		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_nomen(pop_item))
 		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
-		self.my_bubble.add_widget(my_bub_btnY)
-		self.my_bubble.add_widget(my_bub_btnN)
-		#self.add_widget(self.my_bubble)
-		self.ids.main_box.add_widget(self.my_bubble)
-		
+		self.main_x_box.add_widget(my_bub_btnY)
+		self.main_x_box.add_widget(my_bub_btnN)
+		#self.main_x_box.height += exit_bttn.height
+		#self.add_widget(self.main_x_scroll)
+		#self.main_x_box.add_widget(self.main_x_scroll)
+		self.popup2.open()
 
 	def del_nomen(self, pop_item, *args):
 		if self.topic=='state':
