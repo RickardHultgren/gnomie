@@ -265,13 +265,10 @@ class MainScreen(Screen):
 			#except:
 			#	pass
 			try:
-				self.main_x_scroll.clear_widgets()
+				self.main_x_box.clear_widgets()
+				self.popup2.dismiss()
 			except:
 				pass
-			try:
-				self.pop_bubble.clear_widgets()
-			except:
-				pass				
 			try:
 				Clock.unschedule(self.planupdate)
 				self.popbox.clear_widgets()
@@ -279,13 +276,6 @@ class MainScreen(Screen):
 				self.popup1.dismiss()
 			except:
 				pass
-
-			try:
-				self.popup2.dismiss()
-			except:
-				pass
-
-
 		if self.fontheight*(len(self.main_headline[self.topic])/self.line_len) > self.fontheight :
 			self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
 		else:
@@ -304,8 +294,6 @@ class MainScreen(Screen):
 		
 		self.ids.main_box.add_widget(main_txt)
 		self.ids.main_box.height += main_txt.height
-		
-		
 		
 		if self.topic == "mindf":
 			if platform == 'android':
@@ -462,6 +450,10 @@ class MainScreen(Screen):
 		except:
 			pass
 		try:
+			self.main_x_box.clear_widgets()
+		except:
+			pass			
+		try:
 			self.popup2.dismiss()
 		except:
 			pass
@@ -470,18 +462,17 @@ class MainScreen(Screen):
 		except:
 			pass			
 		self.popup2.title="delete?"
-	
-		#my_bub_lbl=Label(text="Are you sure you want to delete this item?")
-		my_bub_btnY= Button(text='Yes')
-		my_bub_btnN= Button(text='No')
+		my_bub_lbl=Label(text="Are you sure you want to delete this item?")
+		my_bub_btnY=Button(text='Yes')
+		my_bub_btnN=Button(text='No')
 		##my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.main_x_box, my_bub_btn1))
+		###now
+		self.main_x_box.add_widget(my_bub_lbl)
+		#self.popbox.add_widget(box2)
 		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_nomen(pop_item))
 		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
 		self.main_x_box.add_widget(my_bub_btnY)
 		self.main_x_box.add_widget(my_bub_btnN)
-		#self.main_x_box.height += exit_bttn.height
-		#self.add_widget(self.main_x_scroll)
-		#self.main_x_box.add_widget(self.main_x_scroll)
 		self.popup2.open()
 
 	def del_nomen(self, pop_item, *args):
