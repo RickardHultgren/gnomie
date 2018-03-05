@@ -28,11 +28,11 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.bubble import Bubble
 from kivy.uix.bubble import BubbleButton
 from kivy.utils import platform
-#try:
-#	from plyer import sms
-#except:
-#	pass
-#from kivy.core.window import Window
+try:
+	from plyer import sms
+except:
+	pass
+from kivy.core.window import Window
 	
 from kivy.core.text import LabelBase  
 KIVY_FONTS = [
@@ -247,6 +247,8 @@ class MainScreen(Screen):
 
 	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	
+	parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
+	
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
 		self.planupdate()
@@ -298,12 +300,13 @@ class MainScreen(Screen):
 		if self.topic == "mindf":
 			if platform == 'android':
 				paused=False
+				vibrate(2)
 			#try:
 			#	PythonActivity.mActivity.getWindow().addFlags(Params.FLAG_KEEP_SCREEN_ON)
 			#except:
 			#	pass
-			parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
-			main_txt.text=parts[self.mindf_part]
+			#self.parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
+			main_txt.text=self.parts[self.mindf_part]
 			mindf_bar=ProgressBar(
 				max=self.mindf_limit
 				)
@@ -659,9 +662,13 @@ class MainScreen(Screen):
 			pass
 		self.mindf_part = 0
 		self.mindf_time = 0
-		self.mindf_speed = int(timer_item_value)*200/(0.2*60*5)
+		print int(timer_item_value)
+		#300 * int(timer_item_value) [0.2 sec] / len(self.parts)[items] = 200 [points] / 1 [items]
+		#(300 * int(timer_item_value)) / (len(self.parts)) = 200[points]/[0.2 sec]
+		#(300 * int(timer_item_value))[0.2 sec] / (200*len(self.parts))[points] = 1
+		#(200*len(self.parts))[points] / (300 * int(timer_item_value))[0.2 sec] = 1
+		self.mindf_speed = (self.mindf_limit * len(self.parts)) / (int(timer_item_value) * 300)
 		Clock.unschedule(self.planupdate)		
-		#0.2 * 60 * 5 [sec] / 5 items = 1 [min] / 5 items
 		Clock.schedule_interval(self.planupdate, 0.2)
 
 	def show_claim(self, pop_item, *args):
