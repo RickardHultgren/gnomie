@@ -16,7 +16,7 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.label import Label
-from kivy.clock import Clock
+#from kivy.clock import Clock
 from kivy.uix.progressbar import ProgressBar
 from kivy.storage.jsonstore import JsonStore
 from kivy.uix.gridlayout import GridLayout
@@ -24,698 +24,374 @@ from functools import partial
 #from kivy.uix.treeview import TreeView, TreeViewNode
 #from kivy.uix.treeview import TreeViewLabel
 from kivy.uix.scrollview import ScrollView
-
-from kivy.uix.bubble import Bubble
-from kivy.uix.bubble import BubbleButton
-from kivy.utils import platform
 try:
-	from plyer import sms
+	from plyer.vibrator import vibrate
 except:
 	pass
-from kivy.core.window import Window
-	
-from kivy.core.text import LabelBase  
-KIVY_FONTS = [
-    {"name":"DejaVuSerif",  
-                   "fn_regular":"DejaVuSerif.ttf",
-                   "fn_bold":"DejaVuSerif-Bold.ttf",
-                   "fn_italic":"DejaVuSerif-Italic.ttf",
-                   "fn_bolditalic":"DejaVuSerif-BoldItalic.ttf"
-                   }
-                   ]
-for font in KIVY_FONTS:
-    LabelBase.register(**font)
-
-###now!
-#https://www.snip2code.com/Snippet/344451/Kivy--Android-keep-screen-on
-#https://gist.github.com/kived/4b3c1a78b0104e52b2a1
-#try:
-#	from jnius import autoclass
-#	PythonActivity = autoclass('org.kivy.android.PythonActivity')
-#	View = autoclass('android.view.View')
-#	Params = autoclass('android.view.WindowManager$LayoutParams')
-#	from android.runnable import run_on_ui_thread
-#except:
-#	pass
-
 #Declaration of global variables:
-#mindf_things = JsonStore('app/mindf_things.json')
-#state_things = JsonStore('app/state_things.json')
-#think_things = JsonStore('app/think_things.json')
-#temp_timers = dict(JsonStore('app/mindf_things.json'))
-#temp_claims = dict(JsonStore('app/state_things.json'))
-#temp_think = dict(JsonStore('app/think_things.json'))
-mindf_things = JsonStore('mindf_things.json')
-state_things = JsonStore('state_things.json')
-think_things = JsonStore('think_things.json')
-temp_timers = dict(JsonStore('mindf_things.json'))
-temp_claims = dict(JsonStore('state_things.json'))
-temp_think = dict(JsonStore('think_things.json'))
-mindf_things_cpy = dict()
-state_things_cpy = dict()
-think_things_cpy = dict()
-#mindf_things.put(str(theitem), itemtype=topic, name=theitem)
-
-for key in temp_timers:
-	counting = 0
-	subdict = temp_timers[key]
-	thekey = str()
-	thevalue = str()
-	for subkey in subdict:
-		if counting == 0:
-			thekey = subdict[subkey]
-			counting += 1
-		elif counting == 1:
-			thevalue = subdict[subkey]
-			mindf_things_cpy[thevalue] = thekey
-			thekey=str()
-			thevalue=str()
-			counting = 0
-
-
-for key in temp_claims:
-	counting = 0
-	subdict = temp_claims[key]
-	thekey = str()
-	thevalue = str()
-	for subkey in subdict:
-		if counting == 0:
-			thekey = subdict[subkey]
-			counting += 1
-		elif counting == 1:
-			thevalue = subdict[subkey]
-			state_things_cpy[thevalue] = thekey
-			thekey=str()
-			thevalue=str()
-			counting = 0
-
-thekey = str()
-thevalue = str()
-for akey in temp_think :
-	think_things_cpy[str(akey)] = temp_think[akey]
+settingdata = JsonStore('settingdata.json')
 
 Builder.load_string('''
 <MainScreen>:
     name: 'mainscreen'
     canvas.before:
         Color:
-            rgba: 0, .125, .125, 1
+            rgba: 1, 1, 1, 1
         Rectangle:
             pos: self.pos
             size: self.size
     GridLayout:
-    
         row_default_height:root.height / 8
 		cols:1
         orientation: 'vertical'
         ActionBar:
-            
             width:root.width
             height:root.height / 8
-            background_color:255,0,0,.5
+            background_color:125,125,125,1,1
             pos_hint: {'top':1}
             ActionView:
                 use_separator: True
                 ActionPrevious:
-                    #title: 'gnomie'
+                    app_icon: 'emadrs.png'
                     title: ''
-                    app_icon: 'gnomie.png'
                     with_previous: False
-                    on_release: root.start()
                 ActionGroup:
                     mode: 'spinner'
-                    text: '?'
-                    font_name: 'DejaVuSerif-Bold'
+                    text: 'Meny'
+                    #color: 0,0,0,1
                     ActionButton:
-                        text: 'about'
-                        font_name: 'DejaVuSerif'
-                        on_release: root.about()
-                        background_color:255,0,0,1
-                    
-        ScrollView:
-            size: self.size
-            GridLayout:
-                cols:1
-                orientation:'vertical'
-                height:self.minimum_height
-                #height:root.main_height
-                #padding: root.width * 0.02, root.height * 0.02
-                #spacing: root.width * 0.02, root.height * 0.02            
-                size_hint_y: None
-                size_hint_x: 1            
-                do_scroll_x: False
-                do_scroll_y: True
-                id: main_box
-
+                        text: 'SMS-nr'
+                        on_release: root.settings()
+        GridLayout:
+			cols:1
+			id: megabox
+        BoxLayout:
+            #width:root.width
+            #height:root.height / 8
+            orientation: 'horizontal'
+            size_hint: None,None
+            size:root.width, .1*root.height
+            id:checkboxes
 ''')  
 
-paused=True
-
 class MainScreen(Screen):
-	global paused
-	global mindf_things_cpy
-	global state_things_cpy
-	global think_things_cpy
 	nownr=0
-	main_height=NumericProperty()
+	qlist=(
+	"Här ber vi dig beskriva din sinnesstämning, om du känner dig ledsen, tungsint eller dyster till mods. Tänk efter hur du har känt dig de senaste tre dagarna, om du har skiftat i humöret eller om det har varit i stort sett detsamma hela tiden, och försök särskilt komma ihåg om du har känt dig lättare till sinnes om det har hänt något positivt.",
+	"Här ber vi dig markera i vilken utsträckning du haft känslor av inre spänning, olust och ångest eller odefinierad rädsla under de senaste tre dagarna. Tänk särskilt på hur intensiva känslorna varit, och om de kommit och gått eller funnits hela tiden.",
+	"Här ber vi Dig beskriva hur bra du sover. Tänk efter hur länge du sovit och hur god sömnen varit under de senaste tre nätterna. Bedömningen skall avse hur du faktiskt sovit, oavsett om du tagit sömnmedel eller ej. Om du sover mer än vanligt, sätt din markering vid 0.",
+	"Här ber vi dig ta ställning till hur din aptit är, och tänka efter om den på något sätt skilt sig från vad som är normalt för dig. Om du skulle ha bättre aptit än normalt, markera då det på 0.",
+	"Här ber vi dig ta ställning till din förmåga att hålla tankarna samlade och koncentrera dig på olika aktiviteter. Tänk igenom hur du fungerar vid olika sysslor som kräver olika grad av koncentrationsförmåga, t ex läsning av komplicerad text, lätt tidningstext och TV-tittande.",
+	"Här ber vid dig försöka värdera din handlingskraft. Frågan gäller om du har lätt eller svårt för att komma igång med sådant du tycker du bör göra, och i vilken utsträckning du måste över vinna ett inre motstånd när du skall ta itu med något.",
+	"Här ber vi dig ta ställning till hur du upplever ditt intresse för omvärlden och för andra människor, och för sådana aktiviteter som brukar bereda dig nöje och glädje.",
+	"Frågan gäller hur du ser på din egen framtid och hur du uppfattar ditt eget värde. Tänk efter i vilken utsträckning du ger dig självförebråelser, om du plågas av skuldkänslor, och om du oroat dig oftare än vanligt för t ex din ekonomi eller din hälsa.",
+	"Frågan gäller din livslust, och om du känt livsleda. Har du tankar på självmord, och i så fall, i vilken utsträckning upplever du detta som en verklig utväg?"
+	)
+	dscrptn=(
+		(
+			"0 Jag kan känna mig glad eller ledsen, allt efter omständigheterna.",
+			"1",
+			"2 Jag känner mig nedstämd för det mesta, men ibland kan det kännas lättare.",
+			"3",
+			"4 Jag känner mig genomgående nedstämd och dyster. Jag kan inte glädja mig åt sådant som vanligen skulle göra mig glad.",
+			"5",
+			"6 Jag är totalt nedstämd och olycklig att jag inte kan tänka mig värre."
+		),
+		(
+			"0 Jag känner mig mestadels lugn.",
+			"1",
+			"2 Ibland har jag obehagliga känslor av inre oro.",
+			"3",
+			"4 Jag har ofta en känsla av inre oro som ibland kan bli mycket stark, och som jag måste anstränga mig för att bemästra.",
+			"5",
+			"6 Jag har fruktansvärda, långvariga eller outhärdliga ångestkänslor.",
+		),
+		(
+			"0 Jag sover lugnt och bra och tillräckligt länge för mina behov. Jag har inga särskilda svårigheter att somna.",
+			"1",
+			"2 Jag har vissa sömnsvårigheter. Ibland har jag svårt att somna eller sover ytligare eller oroligare än vanligt.",
+			"3",
+			"4 Jag sover minst två timmar mindre per natt än normalt. Jag vaknar ofta under natten, även om jag inte blir störd.",
+			"5",
+			"6 Jag sover mycket dåligt, inte mer än 2-3 timmar per natt."
+		),
+		(
+			"0 Min aptit är som den brukar vara.",
+			"1",
+			"2 Min aptit är sämre än vanligt.",
+			"3",
+			"4 Jag har påtagligt svårt att koncentrera mig på sådant som normalt inte kräver någon ansträngning från min sida (t ex läsning eller samtal med andra människor).",
+			"5",
+			"6 Jag kan överhuvudtaget inte koncentrera mig på någonting."
+		),
+		(
+			"0 Jag har inga koncentrationssvårigheter.",
+			"1",
+			"2 Jag har tillfälligt svårt att hålla tankarna samlade på sådant som normalt skulle fånga min uppmärksamhet (t ex läsning eller TV-tittande).",
+			"3",
+			"4 Jag har påtagligt svårt att koncentrera mig på sådant som normalt inte kräver någon ansträngning från min sida (t ex läsning eller samtal med andra människor).",
+			"5",
+			"6 Jag kan överhuvudtaget inte koncentrera mig på någonting."
+		),
+		(
+			"0 Jag har inga svårigheter med att ta itu med nya uppgifter.",
+			"1",
+			"2 När jag skall ta itu med något, tar det emot på ett sätt som inte är normalt för mig.",
+			"3",
+			"4 Det krävs en stor ansträngning för mig att ens komma igång med enkla uppgifter som jag vanligtvis utför mer eller mindre rutinmässigt.",
+			"5",
+			"6 Jag kan inte förmå mig att ta itu med de enklaste vardagssysslor."
+		),
+		(
+			"0 Jag är intresserad av omvärlden och engagerar mig i den, och det bereder mig både nöje och glädje.",
+			"1",
+			"2 Jag känner mindre starkt för sådant som brukar engagera mig. Jag har svårare än vanligt att bli glad eller svårare att bli arg när det är befogat.",
+			"3",
+			"4 Jag kan inte känna något intresse för omvärlden, inte ens för vänner och bekanta.",
+			"5",
+			"6 Jag har slutat uppleva några känslor. Jag känner mig smärtsamt likgiltig även för mina närmaste."
+		),
+		(
+			"0 Jag ser på framtiden med tillförsikt. Jag är på det hela taget ganska nöjd med mig själv.",
+			"1",
+			"2 Ibland klandrar jag mig själv och tycker att jag är mindre värd än andra.",
+			"3",
+			"4 Jag grubblar ofta över mina misslyckanden och känner mig mindervärdig eller dålig, även om andra tycker annorlunda.",
+			"5",
+			"6 Jag ser allting i svart och kan inte se någon ljusning. Det känns som om jag var en alltigenom dålig människa, och som om jag aldrig skulle kunna få någon förlåtelse för det hemska jag gjort."
+		),
+		(
+			"0 Jag har normal aptit på livet.",
+			"1",
+			"2 Livet känns inte särskilt meningsfullt men jag önskar ändå inte att jag vore död.",
+			"3",
+			"4 Jag tycker ofta det vore bättre att vara död, och trots att jag egentligen inte önskar det, kan självmord ibland kännas som en möjlig utväg.",
+			"5",
+			"6 Jag är egentligen övertygad om att min enda utväg är att dö, och jag tänker mycket på hur jag bäst skall gå tillväga för att ta mitt eget liv."
+		)
+	)
+	valuetuple=(0,0,0,0,0,0,0,0,0)
+	bttns=(0,0,0,0,0,0,0,0,0)
+	bigheight=NumericProperty()
 	fontheight=15
-	line_len=30
-	main_headline = {
-	'start' : "\n\n\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n\n\n\n",
-	'mindf' : '\n\n',
-	'state' : '\n\n',
-	'stast' : '\n\n'}
-	pop_choices = {
-	'start' : '\n\n',
-	'mindf' : [mindf_things_cpy],
-	'state' : [state_things_cpy, think_things_cpy],
-	'stast' : '\n\n'}
-	main_buttons = {
-	'start' : ["mindfulness", "statements", "statistics"],
-	'mindf' : ["next","previous","exit"],
-	'state' : ["statements","exit"],
-	'stast' : '\n\n'}
-	topic='start'
-	mindf_time=NumericProperty(0)
-	mindf_part=0
-	mindf_limit=0
-	mindf_speed=0
-	state_claim=""
-	box = BoxLayout(orientation='vertical')
-	popscroll=ScrollView(size= box.size, bar_pos_x="top")
-	popbox=GridLayout(
-                cols=1,
-                orientation='vertical',
-                #height=self.minimum_height,
-                #height=root.bigheight,
-                padding = (popscroll.width * 0.02, popscroll.height * 0.02),
-                spacing = (popscroll.width * 0.02, popscroll.height * 0.02),
-                size_hint_y= None,
-                size_hint_x= 1,
-                do_scroll_x= False,
-                do_scroll_y= True
-                )
-	popscroll.add_widget(popbox)
-	popup1 = Popup(content=box, size_hint=(.875, .875))
-	box.add_widget(popscroll)
-	txt_height = 0
-	pop_rubric = ""
-	pop_unit = ""
-	pop_action = ""
-	pop_unit_name = ""
-	pop_title_name = ""
-
-	###now
-	#main_x_scroll= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
-	delbox = BoxLayout(orientation='vertical')
-	main_x_scroll=ScrollView(size= delbox.size, bar_pos_x="top")
-	main_x_box=GridLayout(
-                cols=1,
-                orientation='vertical',
-                #height=self.minimum_height,
-                #height=root.bigheight,
-                padding = (popscroll.width * 0.02, popscroll.height * 0.02),
-                spacing = (popscroll.width * 0.02, popscroll.height * 0.02),
-                size_hint_y= None,
-                size_hint_x= 1,
-                do_scroll_x= False,
-                do_scroll_y= True
-                )
-	main_x_scroll.add_widget(main_x_box)
-	popup2 = Popup(content=delbox, size_hint=(.875, .875))
-	delbox.add_widget(main_x_scroll)
-
-	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
-	
-	parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
-	
+	linelen=30
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
 		self.planupdate()
-	
-	def planupdate(self,*args):
-		global paused
-		self.main_height=0
+		
+	def planupdate(self):
+		self.bigheight=0
+		thescroll=ScrollView(size= self.size, bar_pos_x="top")
+		bigbox=GridLayout(
+                cols=1,
+                orientation='vertical',
+                #height=self.minimum_height,
+                #height=root.bigheight,
+                #padding= (thescroll.width * 0.02, thescroll.height * 0.02),
+                #spacing= (thescroll.width * 0.02, thescroll.height * 0.02),
+                size_hint_y= None,
+                size_hint_x= 1,
+                do_scroll_x= False,
+                do_scroll_y= True,
+                )
+		#self.linelen=self.ids.bigbox.width/sp(self.fontheight)
 		try:
-			self.ids.main_box.clear_widgets()
+			self.ids.checkboxes.clear_widgets()
+			self.ids.megabox.clear_widgets()
 		except:
 			pass
-		if self.topic != "mindf" :
-			paused = True
-			#try:
-			#	PythonActivity.mActivity.getWindow().clearFlags(Params.FLAG_KEEP_SCREEN_ON)
-			#except:
-			#	pass
-			try:
-				self.main_x_box.clear_widgets()
-				self.popup2.dismiss()
-			except:
-				pass
-			try:
-				Clock.unschedule(self.planupdate)
-				self.popbox.clear_widgets()
-				#self.box.clear_widgets()
-				self.popup1.dismiss()
-			except:
-				pass
-		if self.fontheight*(len(self.main_headline[self.topic])/self.line_len) > self.fontheight :
-			self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
-		else:
-			self.txt_height=self.fontheight		
-		self.ids.main_box.padding=.25*self.txt_height
-		self.ids.main_box.spacing=.25*self.txt_height
-		
-		self.popbox.spacing = .75*self.txt_height
-		self.ids.main_box.height=self.main_height
-		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))#, font_size=self.fontheight)
-		main_txt.bind(width=lambda s, w:
-			   s.setter('text_size')(s, (self.width-.1*self.ids.main_box.width, None)))
-		main_txt.bind(height=main_txt.setter('texture_size[1]'))
-		main_txt.bind(height=main_txt.setter('self.minimum_height'))
-		main_txt.text=str("%s"%self.main_headline[self.topic])
-		
-		self.ids.main_box.add_widget(main_txt)
-		self.ids.main_box.height += main_txt.height
-		
-		if self.topic == "mindf":
-			if platform == 'android':
-				paused=False
-				vibrate(2)
-			#try:
-			#	PythonActivity.mActivity.getWindow().addFlags(Params.FLAG_KEEP_SCREEN_ON)
-			#except:
-			#	pass
-			#self.parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
-			main_txt.text=self.parts[self.mindf_part]
-			mindf_bar=ProgressBar(
-				max=self.mindf_limit
-				)
-			mindf_bar.value=self.mindf_time
-			self.ids.main_box.add_widget(mindf_bar)
-			self.ids.main_box.height += mindf_bar.height
-			if self.mindf_time >= self.mindf_limit and self.mindf_part <= 5:
-				if self.mindf_part == 5:
-					self.mindf_time = 0
-				else:
-					self.mindf_part+=1
-					self.mindf_time = 0
-			elif self.mindf_part != 5:		
-				self.mindf_time += self.mindf_speed
-
-		if self.topic == "state":
-
-			main_txt.text=self.state_claim
-			for preNomen in ["obj","mis","vis"]:
-				if preNomen == "obj":
-					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-					self.ids.main_box.add_widget(obj_lbl)
-					self.ids.main_box.height += obj_lbl.height
-				if preNomen == "mis":
-					mis_lbl=Label(text="Then:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-					self.ids.main_box.add_widget(mis_lbl)
-					self.ids.main_box.height += mis_lbl.height
-				if preNomen == "vis":
-					vis_lbl=Label(text="So that:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-					self.ids.main_box.add_widget(vis_lbl)
-					self.ids.main_box.height += vis_lbl.height
-				for pop_item in self.pop_choices[self.topic][1]:
-					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
-						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen :
-							
-							res = self.pop_choices[self.topic][1][pop_item]["title"]
-							res_box = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-							
-							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-							res_box.add_widget(res_lbl)
-							res_box.height += res_lbl.height
-							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-							
-							res_del.bind(on_release = partial(self.del_func, pop_item))
-							#res_del.bind(on_release = partial(self.del_nomen, pop_item))
-							res_box.add_widget(res_del)
-							res_box.height += res_del.height
-							
-							self.ids.main_box.add_widget(res_box)
-							self.ids.main_box.height += res_box.height
-				res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_bttn.bind(on_release=partial(self.add_nomen, preNomen, res_inpt))
-				res_box.add_widget(res_inpt)
-				res_box.add_widget(res_bttn)
-				self.ids.main_box.add_widget(res_box)
-				self.ids.main_box.height += res_box.height
-				self.ids.main_box.height += 1*self.txt_height
-
-		try:
-			data.clear()
-		except:
-			data=dict()
-		#timer_list=[self.main_buttons[self.topic].index(x) for x in self.main_buttons[self.topic].values()]
-		for b_nr in range(len(self.main_buttons[self.topic])):
-		#for main_button in self.main_buttons[self.topic]:
-			main_button = self.main_buttons[self.topic][b_nr]
-			if self.fontheight*(len(main_button)/self.line_len) > self.fontheight :
-				self.txt_height=0*self.fontheight+self.fontheight*(len(main_button)/self.line_len)
+		for i in range(0,9):
+			if self.fontheight*(len(self.qlist[i])/self.linelen) > self.fontheight :
+				qheight=0*self.fontheight+self.fontheight*(len(self.qlist[i])/self.linelen)
 			else:
-				self.txt_height=self.fontheight
-
-			bttn = Button(text="%s"%(main_button), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
-			funcy = self.main_funcs[self.topic][b_nr].__name__
-			bttn.bind(on_release = partial((eval("self.%s"%(funcy)))))
-			self.ids.main_box.add_widget(bttn)
-			self.ids.main_box.height += bttn.height
-		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
-		#self.ids.main_box.height += 1*self.txt_height + Window.height
-
-	def add_nomen(self, preNomen, res, *args):
-		res = res.text
-		times_matched = 0
-		length = int(len(think_things_cpy)+1)
-		#fixed length:
-		for h in range(1,length) :
-			keylist=list(think_things_cpy.keys())
-			print sorted(keylist)
-			for key in sorted(keylist):
-				#print "key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
-				if int(key) == h:
-					times_matched += 1
-					#break
-				elif times_matched < h and int(key) > h:
-					title_var = ""
-					state_var = ""
-					nomen_var = ""
-					for j in ["title","state","nomen"] :
-						if j == "title" :
-							title_var = str(think_things_cpy[key][j])
-						if j == "state" :
-							state_var = str(think_things_cpy[key][j])
-						if j == "nomen" :
-							nomen_var = str(think_things_cpy[key][j])
-					#print "key to delete: %s" % key
-					think_things.delete(key)
-					think_things_cpy.pop(key, None)
-					#times_matched += 1
-					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
-					think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-					#think_things.put("%s"%(times_matched), title=title_var, state=state_var, nomen=nomen_var)
-					#think_things["%s"%(times_matched)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-					times_matched += 1
-
-					
-					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
-					
-					#break
-					#continue
-		maxed=0
-		maxing = []
-		for n in think_things_cpy:
-			maxing.append(int(n))
-		try:
-			maxed = max(maxing)+1
-		except:
-			pass
-		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
-		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
+				qheight=self.fontheight
+			newq=Label(color=(0,0,0,1), size_hint_y=None, size_hint_x=1, size=(bigbox.width, "%ssp"%str(qheight)))#, font_size=self.fontheight)
+			newq.bind(width=lambda s, w:
+				   s.setter('text_size')(s, (self.width, None)))
+			newq.bind(height=newq.setter('texture_size[1]')) 
+			newq.bind(height=newq.setter('self.minimum_height'))	
+			newbox=Button(id="box%s"%str(i))
+			txt=''
+			if self.bttns[i]==1:
+				txt=str(self.valuetuple[i])
+				newbox.color=(1,1,1,1)
+			elif self.bttns[i]==0:
+				txt="*"
+				newbox.color=(0,0,0,1)
+			newbox.text=txt
+			if i==self.nownr:
+				newbox.background_color= (.25, .75, 1.0, 1.0)
+				newq.text=str("%s"%self.qlist[i])
+				self.bigheight=self.bigheight+2*newq.height
+				bigbox.add_widget(newq)
+				for j in range(0,7):
+					if self.fontheight*(len(self.dscrptn[i][j])/self.linelen) > 3*self.fontheight :
+						bttnheight=2*self.fontheight+self.fontheight*(len(self.dscrptn[i][j])/self.linelen)
+					else:
+						bttnheight=3*self.fontheight
+					smallLabel=Button(text="%s"%self.dscrptn[i][j],size_hint=(1,None), height="%ssp"%str(bttnheight))#, font_size=self.fontheight)
+					smallLabel.bind(width=lambda s, w:
+						s.setter('text_size')(s, (self.width-100, None)))
+					smallLabel.bind(height=smallLabel.setter('texture_size[1]'))
+					smallLabel.bind(height=smallLabel.setter('self.minimum_height'))
+					smallLabel.bind(on_press=partial(self.radiobox, i, j))
+					if self.valuetuple[i] == j and self.bttns[i]==1:
+						smallLabel.background_color = (.25, .75, 1.0, 1.0)
+					else:
+						smallLabel.background_color = (1.0, 1.0, 1.0, 1.0)
+					bigbox.add_widget(smallLabel)
+					self.bigheight=self.bigheight+smallLabel.height
+		
+			newbox.bind(on_release=partial(self.chng_bttn, i))
+			self.ids.checkboxes.add_widget(newbox)
+		
+		bigbox.height=self.bigheight
+		
+		thescroll.bar_pos_x="top"
+		thescroll.add_widget(bigbox)
+		self.ids.megabox.add_widget(thescroll)
+		
+		sendbox=Button(id="sendbox", text=">>")
+		sendbox.bind(on_release=(lambda store_btn: self.Submit()))
+		self.ids.checkboxes.add_widget(sendbox)
+		
+		
+	def	radiobox(self, i,j,*args):
+		listV = list(self.valuetuple)
+		listV[i]=j
+		listB = list(self.bttns)
+		listB[i]=1
+		#self.ids.eval("chckbx%set%s"%(str(i),str(j)))
+		#myCheckBox1.value = True
+		self.valuetuple = tuple(listV)
+		self.bttns = tuple(listB)
+		maxloops=2*len(self.bttns)-1
+		loops=0
+		number=i
+		while self.bttns[number] == 1 :
+			loops += 1
+			if number == len(self.bttns)-1:
+				number=0
+			if loops==maxloops:
+				self.nownr=i
+				break
+			number += 1
+			self.nownr=number
 		self.planupdate()
-		index_nr = 0
-
-
-
-
-	def del_func(self, pop_item, *args):
-		###now
-		#Are you sure you want to delete this item?:
-		#bubble or popup?
-
-		try:
-			self.popbox.clear_widgets()
-		except:
-			pass
-		try:
-			self.main_x_box.clear_widgets()
-		except:
-			pass			
-		try:
-			self.popup2.dismiss()
-		except:
-			pass
-		try:
-			self.popup1.dismiss()
-		except:
-			pass			
-		self.popup2.title="delete?"
-		my_bub_lbl=Label(text="Are you sure you want to delete this item?")
-		my_bub_btnY=Button(text='Yes')
-		my_bub_btnN=Button(text='No')
-		##my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.main_x_box, my_bub_btn1))
-		###now
-		self.main_x_box.add_widget(my_bub_lbl)
-		#self.popbox.add_widget(box2)
-		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_nomen(pop_item))
-		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
-		self.main_x_box.add_widget(my_bub_btnY)
-		self.main_x_box.add_widget(my_bub_btnN)
-		self.popup2.open()
-
-	def del_nomen(self, pop_item, *args):
-		if self.topic=='state':
-			think_things.delete(str("%s"%pop_item))
-		self.pop_choices[self.topic][1].pop(pop_item, None)
+		
+	def chng_bttn(self,number, *args):
+		self.nownr=number
 		self.planupdate()
-				
-	def prevb(self, *args):
-		if self.mindf_part != 0:
-			self.mindf_part -= 1
-		self.mindf_time = 0
+		
+	def settings(self):
+		box = BoxLayout(orientation='vertical')
+		popup1 = Popup(title='SMS-nr', content=box, size_hint=(.90, .90))
+		biggerbox=BoxLayout(orientation='horizontal')
+		biggerbox.add_widget(Label(text='SMS-mottagarens nummer:'))
+		try:
+			inpt=TextInput(text=settingdata.get('email')['address'], multiline=False)
+		except:
+			inpt=TextInput(text="")
+		biggerbox.add_widget(inpt)
+		store_btn = Button(text='OK')
+		store_btn.bind(on_release=(lambda store_btn: self.change_mail(inpt.text, popup1)))
+		#store_btn.bind(on_press = lambda *args: popup1.dismiss())
+		
+		box.add_widget(biggerbox)
+		box.add_widget(store_btn)
+		popup1.open()
 
-	def nxtb(self, *args):
-		if self.mindf_part != 5:
-			self.mindf_part += 1
-		self.mindf_time = 0
-			
-	def exitb(self, *args):
-		self.mindf_part = 0
-		self.mindf_time = 0
-		self.topic="start"
-		self.planupdate()
-			
-	def start(self):
-		self.topic="start"
-		self.planupdate()
+	def Submit(self):
+		filled = 1
+		for i in self.bttns :
+			if i == 0 :
+				filled=0
+		if filled==0 :
+			box = BoxLayout(orientation='vertical')
+			popup1 = Popup(title='', content=box, size_hint=(.75, .75))
+			box.add_widget(Label(text='Var god och svara på alla frågor.'))
+			store_btn = Button(text='OK')
+			store_btn.bind(on_press = lambda *args: popup1.dismiss())
+			box.add_widget(store_btn)
+			popup1.open()
+		else:
+			summa=sum(self.valuetuple)
+			box = BoxLayout(orientation='vertical')
+			popup1 = Popup(title='', content=box, size_hint=(.75, .75))
+			if summa < 13:
+				themessage='MADRS-S-score: %s\nIngen eller mycket lätt depression.'%(summa)
+			if summa >= 13 and summa <= 19:
+				themessage='MADRS-S-score: %s\nLätt depression.'%(summa)
+			if summa >= 20 and summa <= 34:
+				themessage='MADRS-S-score: %s\nMåttlig depression.'%(summa)
+			if summa >= 35 :
+				themessage='MADRS-S-score: %s\nSvår depression.'%(summa)
+			box.add_widget(Label(text=themessage))	
+			store_btn = Button(text='OK')
+			store_btn.bind(on_press = lambda store_btn: self.send_mail(themessage, popup1))
+			box.add_widget(store_btn)
+			popup1.open()
 	
-	def about(self):
+	def change_mail(self, theaddress, popup1):
+		popup1.dismiss()
+		settingdata.put('email', address=theaddress)
+
+	def send_mail(self, themessage, popup1):
+		popup1.dismiss()
+		box = BoxLayout(orientation='vertical')
+		tried=0
 		try:
-			self.popbox.clear_widgets()
+			to_nr = str(settingdata.get('email')['address'])
+			mess = str(themessage)
+			sms.send(recipient=to_nr, message=mess)
+#			email.send(recipient=StringProperty(str(settingdata.get('email')['address'])),
+#				subject=StringProperty('MADRS-S'),
+#				text=StringProperty('%s'%themessage)
+				#,create_chooser=BooleanProperty()
+#				)
+			box.add_widget(Label(text='SMS skickat till: %s'%settingdata.get('email')['address']))
+			#box.add_widget(Label(text='Email sent to:%s'%settingdata.get('email')['address']))
+			tried=1
 		except:
-			pass
-		try:
-			self.popup1.dismiss()
-		except:
-			pass
-		self.popup1.title="about"
-		about_txt=Label(text = 'Gnomie is an open source app licensed under\nthe BSD2-license. The founder and principal developer is\nRickard Verner Hultgren',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		self.popbox.add_widget(about_txt)
-		self.popbox.height += about_txt.height
+			#box.add_widget(Label(text='Couldn\'t send e-mail'))
+			box.add_widget(Label(text='Kunde inte skicka SMS'))
 		
-		exit_bttn=Button(text="OK",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		exit_bttn.bind(on_release=lambda prv_bttn: self.popup1.dismiss())
-		self.popbox.add_widget(exit_bttn)			
-		self.popbox.height += exit_bttn.height
-
-		self.popup1.open()
-	
-	def popping(self):
-		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		self.popbox.add_widget(poplbl)
-		self.popbox.height += poplbl.height
-		box1 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		box2 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		box1.add_widget(Label(text = self.pop_title, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
-		box1.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
-		
-		box1.add_widget(Label(text = "", size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
-		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_unit.text))
-		
-		new_box.add_widget(new_box_title)
-		new_box.add_widget(new_box_unit)
-		new_box.add_widget(new_box_add)
-		self.popbox.add_widget(box1)
-		self.popbox.add_widget(new_box)
-		self.popbox.add_widget(box2)
-		self.popbox.height += box1.height
-		self.popbox.height += box2.height
-		for pop_item in self.pop_choices[self.topic][0]: #Go through stored statements
-			#pop_item is the key/title of the timer
-			popping_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			
-			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			
-			popping_box_del.bind(on_release = partial(self.del_pop, pop_item))
-			popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			predict = self.pop_funcs[self.topic].__name__
-			popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
-			
-			popping_box.add_widget(popping_box_title)
-			popping_box.add_widget(popping_box_min)
-			popping_box.add_widget(popping_box_del)
-			popping_box.add_widget(popping_box_slct)
-			self.popbox.add_widget(popping_box)
-			self.popbox.height += popping_box.height
-		self.popup1.open()
-
-		
-	def mindf(self, *args):
-		try:
-			self.popbox.clear_widgets()
-		except:
-			pass
-		self.topic="mindf"
-		self.popup1.title="mindfulness"
-		#if self.fontheight*(len(self.main_headline[self.topic])/self.line_len) > self.fontheight :
-		#	self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
-		#else:
-		#	self.txt_height=self.fontheight		
-		self.pop_rubric = 'For how long time do you want to exercise mindfulness?'
-		self.pop_unit= "min"
-		self.pop_action = "add"
-		self.pop_title = "title"
-		self.pop_title_name = ""
-		self.pop_unit_name = ""
-		self.popping()
-		
-	def state(self, *args):
-		try:
-			self.pop_bubble.clear_widgets()
-		except:
-			pass		
-		try:
-			self.popbox.clear_widgets()
-		except:
-			pass
-		self.topic = "state"
-		self.popup1.title = "claims"
-		#if self.fontheight*(len(self.main_headline[self.topic])/self.line_len) > self.fontheight :
-		#	self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
-		#else:
-		#	self.txt_height=self.fontheight		
-		self.pop_rubric = 'Claims'
-		self.pop_unit = "category"
-		self.pop_action = "add"
-		self.pop_title = "title"
-		self.pop_title_name = ""
-		self.pop_unit_name = ""
-		self.popping()
-
-	def stast(self, *args):
-		self.topic="stast"
-		pass
-
-	def add_claim(self,state_obj_inpt, state_mis_inpt, state_vis_inpt):
-		pass
-		
-	def add_new(self,mindf_title,mindf_time):
-		checking=1
-		for pop_item in self.pop_choices[self.topic][0]:
-			if self.pop_choices[self.topic][0][pop_item] == mindf_title:
-				checking = 0
-		if checking == 1:
-			eval("%s_things"%self.topic).put(str(mindf_title), category=mindf_time, title=mindf_title)
-			self.pop_choices[self.topic][0][mindf_title] = mindf_time
-		eval("self.%s()"%self.topic)
-				
-	def del_popping(self, pop_item, *args):
-		eval("%s_things"%self.topic).delete(str("%s"%pop_item))
-		self.pop_choices[self.topic][0].pop(pop_item, None)
-		eval("self.%s()"%self.topic)
-
-	def del_pop(self, pop_item, *args):
-		self.pop_bubble.background_color =(20, 0, 0, .5) 
-		self.pop_bubble.border = [50, 50, 50, 10]
-		self.pop_bubble.size = (150, 50)
-		self.pop_bubble.arrow_pos= 'top_mid'
-		my_bub_lbl=Label(text="Are you sure you want to delete this item?")
-		my_bub_btnY= BubbleButton(text='Yes')
-		my_bub_btnN= BubbleButton(text='No')
-		#my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.pop_bubble, my_bub_btn1))
-		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_popping(pop_item))
-		my_bub_btnN.bind(on_release=lambda my_bub_btnN: eval("self.%s()"%self.topic))
-		self.pop_bubble.add_widget(my_bub_btnY)
-		self.pop_bubble.add_widget(my_bub_btnN)
-		#self.add_widget(self.pop_bubble)
-		self.popbox.add_widget(self.pop_bubble)
+		popup2 = Popup(title='Settings', content=box, size_hint=(.75, .75))
+		store_btn = Button(text='OK')
+		store_btn.bind(on_press = lambda *args: popup2.dismiss())
+		box.add_widget(store_btn)
+		popup2.open()
 
 
-	def start_timer(self, pop_item, *args):
-		timer_item_value=self.pop_choices[self.topic][0][pop_item]
-		#Timer_item is the number of minutes the mindfulness should take.
-		self.mindf_limit=200
-		try:
-			self.popup1.dismiss()
-		except:
-			pass
-		self.mindf_part = 0
-		self.mindf_time = 0
-		print int(timer_item_value)
-		#300 * int(timer_item_value) [0.2 sec] / len(self.parts)[items] = 200 [points] / 1 [items]
-		#(300 * int(timer_item_value)) / (len(self.parts)) = 200[points]/[0.2 sec]
-		#(300 * int(timer_item_value))[0.2 sec] / (200*len(self.parts))[points] = 1
-		#(200*len(self.parts))[points] / (300 * int(timer_item_value))[0.2 sec] = 1
-		self.mindf_speed = (self.mindf_limit * len(self.parts)) / (int(timer_item_value) * 300)
-		Clock.unschedule(self.planupdate)		
-		Clock.schedule_interval(self.planupdate, 0.2)
-
-	def show_claim(self, pop_item, *args):
-		self.state_claim=pop_item
-		self.planupdate()
-
-	main_funcs = {
-	'start': [mindf, state, stast],
-	'mindf': [nxtb, prevb, exitb],
-	'state': [state, exitb],
-	'stast': '\n\n'}		
-
-	pop_funcs = {
-	'mindf' : start_timer,
-	'state' : show_claim
-	}
 
 class emadrsApp(App):
-	global paused
 	def build(self):
-		the_screenmanager = ScreenManager()
-		#the_screenmanager.transition = FadeTransition()
-		mainscreen = MainScreen(name='mainscreen')
-		the_screenmanager.add_widget(mainscreen)
-		return the_screenmanager
-
+			the_screenmanager = ScreenManager()
+			#the_screenmanager.transition = FadeTransition()
+			mainscreen = MainScreen(name='mainscreen')
+			the_screenmanager.add_widget(mainscreen)
+			return the_screenmanager
+					
 	def on_pause(self):
-		global paused
-		if paused == True:
 			# Here you can save data if needed
 			return True
-		else:
-			return False
 
 	def on_resume(self):
-		the_screenmanager = ScreenManager()
-		#the_screenmanager.transition = FadeTransition()
-		mainscreen = MainScreen(name='mainscreen')
-		the_screenmanager.add_widget(mainscreen)
-		return the_screenmanager
+			the_screenmanager = ScreenManager()
+			#the_screenmanager.transition = FadeTransition()
+			mainscreen = MainScreen(name='mainscreen')
+			the_screenmanager.add_widget(mainscreen)
+			return the_screenmanager
 		
 	def on_start(self):
-		the_screenmanager = ScreenManager()
-		#the_screenmanager.transition = FadeTransition()
-		mainscreen = MainScreen(name='mainscreen')
-		the_screenmanager.add_widget(mainscreen)
-		return the_screenmanager
-		
+			the_screenmanager = ScreenManager()
+			#the_screenmanager.transition = FadeTransition()
+			mainscreen = MainScreen(name='mainscreen')
+			the_screenmanager.add_widget(mainscreen)
+			return the_screenmanager
+
+	def on_stop(self):
+		pass
+
 if __name__ == '__main__':
 	emadrsApp().run()
