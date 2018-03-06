@@ -309,6 +309,7 @@ class MainScreen(Screen):
 				paused=False
 			try:
 				vibrator.vibrate(2)
+				vibrator.cancel()
 			except:
 				pass
 				
