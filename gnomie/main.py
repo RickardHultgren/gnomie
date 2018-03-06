@@ -305,19 +305,21 @@ class MainScreen(Screen):
 		self.ids.main_box.height += main_txt.height
 		
 		if self.topic == "mindf":
-			if platform == 'android':
-				paused=False
-			try:
-				vibrator.vibrate(2)
-				vibrator.cancel()
-			except:
-				pass
-				
-			try:
-				tts.speak(self.parts[self.mindf_part])
-			except NotImplementedError:
-				popup = ErrorPopup()
-				popup.open()				
+			#if platform == 'android':
+			#	if paused==True:
+			if paused==True:
+					try:
+						vibrator.vibrate(0.5)
+						#vibrator.cancel()
+					except:
+						pass
+						
+					try:
+						tts.speak(self.parts[self.mindf_part])
+					except NotImplementedError:
+						popup = ErrorPopup()
+						popup.open()									
+					paused=False
 				
 			#try:
 			#	PythonActivity.mActivity.getWindow().addFlags(Params.FLAG_KEEP_SCREEN_ON)
@@ -337,6 +339,7 @@ class MainScreen(Screen):
 				else:
 					self.mindf_part+=1
 					self.mindf_time = 0
+					paused=True
 			elif self.mindf_part != 5:		
 				self.mindf_time += self.mindf_speed
 
