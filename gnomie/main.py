@@ -28,10 +28,17 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.bubble import Bubble
 from kivy.uix.bubble import BubbleButton
 from kivy.utils import platform
+
 try:
-	from plyer import sms
+	from plyer import tts
 except:
 	pass
+
+try:
+	from plyer import vibrator
+except:
+	pass
+
 from kivy.core.window import Window
 	
 from kivy.core.text import LabelBase  
@@ -300,7 +307,17 @@ class MainScreen(Screen):
 		if self.topic == "mindf":
 			if platform == 'android':
 				paused=False
-				vibrate(2)
+			try:
+				vibrator.vibrate(2)
+			except:
+				pass
+				
+			try:
+				tts.speak(self.parts[self.mindf_part])
+			except NotImplementedError:
+				popup = ErrorPopup()
+				popup.open()				
+				
 			#try:
 			#	PythonActivity.mActivity.getWindow().addFlags(Params.FLAG_KEEP_SCREEN_ON)
 			#except:
