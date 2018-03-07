@@ -53,7 +53,6 @@ KIVY_FONTS = [
 for font in KIVY_FONTS:
     LabelBase.register(**font)
 
-###now!
 #https://www.snip2code.com/Snippet/344451/Kivy--Android-keep-screen-on
 #https://gist.github.com/kived/4b3c1a78b0104e52b2a1
 #try:
@@ -257,7 +256,7 @@ class MainScreen(Screen):
 
 	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	
-	parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
+	parts = ["Relax and breath calmly","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 	
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
@@ -280,35 +279,6 @@ class MainScreen(Screen):
 			#try:
 			#	PythonActivity.mActivity.getWindow().clearFlags(Params.FLAG_KEEP_SCREEN_ON)
 			#except:# coding:utf-8
-import kivy
-kivy.require('1.7.2') # replace with your current kivy version !
-from kivy.app import App
-from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
-from kivy.properties import ListProperty, ObjectProperty, StringProperty, NumericProperty
-from kivy.factory import Factory
-from kivy.uix.button import Button
-from kivy.uix.tabbedpanel import TabbedPanel, TabbedPanelItem
-from kivy.uix.spinner import Spinner
-from kivy.uix.dropdown import DropDown
-from kivy.uix.checkbox import CheckBox
-from kivy.lang import Builder
-from kivy.uix.popup import Popup
-from kivy.uix.textinput import TextInput
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.stacklayout import StackLayout
-from kivy.uix.label import Label
-from kivy.clock import Clock
-from kivy.uix.progressbar import ProgressBar
-from kivy.storage.jsonstore import JsonStore
-from kivy.uix.gridlayout import GridLayout
-from functools import partial
-#from kivy.uix.treeview import TreeView, TreeViewNode
-#from kivy.uix.treeview import TreeViewLabel
-from kivy.uix.scrollview import ScrollView
-
-from kivy.uix.bubble import Bubble
-from kivy.uix.bubble import BubbleButton
-from kivy.utils import platform
 
 try:
 	from plyer import tts
@@ -538,7 +508,8 @@ class MainScreen(Screen):
 
 	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	
-	parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
+	parts = ["Relax and breathe calmly","Feel how you breath in and out","Feel the muscles of the head and neck","of the the arms","of the chest and abdomen","of the legs","Feel the organs of the pelvis and abdomen","Feel the organs of the chest","Feel the sensations of light","smell","taste","sound","touch","Feel inner state and mood","Feel your inner awareness","End of mindfulness"]
+	#parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 	
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
@@ -626,14 +597,14 @@ class MainScreen(Screen):
 			mindf_bar.value=self.mindf_time
 			self.ids.main_box.add_widget(mindf_bar)
 			self.ids.main_box.height += mindf_bar.height
-			if self.mindf_time >= self.mindf_limit and self.mindf_part <= 5:
-				if self.mindf_part == 5:
+			if self.mindf_time >= self.mindf_limit and self.mindf_part <= len(self.parts)-1:
+				if self.mindf_part == len(self.parts)-1:
 					self.mindf_time = 0
 				else:
 					self.mindf_part+=1
 					self.mindf_time = 0
 					paused=True
-			elif self.mindf_part != 5:		
+			elif self.mindf_part != len(self.parts)-1:		
 				self.mindf_time += self.mindf_speed
 
 		if self.topic == "state":
