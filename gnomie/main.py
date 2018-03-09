@@ -237,6 +237,8 @@ class MainScreen(Screen):
 	act_ttsvar = False
 	box = BoxLayout(orientation='vertical')
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
+###now
+	poptop=BoxLayout(orientation='horizontal')
 	popbox=GridLayout(
                 cols=1,
                 orientation='vertical',
@@ -251,7 +253,9 @@ class MainScreen(Screen):
                 )
 	popscroll.add_widget(popbox)
 	popup1 = Popup(content=box, size_hint=(.875, .875))
+	box.add_widget(poptop)
 	box.add_widget(popscroll)
+	
 	txt_height = 0
 	pop_rubric = ""
 	pop_unit = ""
@@ -268,8 +272,8 @@ class MainScreen(Screen):
                 orientation='vertical',
                 #height=self.minimum_height,
                 #height=root.bigheight,
-                padding = (popscroll.width * 0.02, popscroll.height * 0.02),
-                spacing = (popscroll.width * 0.02, popscroll.height * 0.02),
+                padding = (main_x_scroll.width * 0.02, main_x_scroll.height * 0.02),
+                spacing = (main_x_scroll.width * 0.02, main_x_scroll.height * 0.02),
                 size_hint_y= None,
                 size_hint_x= 1,
                 do_scroll_x= False,
@@ -315,6 +319,7 @@ class MainScreen(Screen):
 			try:
 				Clock.unschedule(self.planupdate)
 				self.popbox.clear_widgets()
+				self.poptop.clear_widgets()
 				#self.box.clear_widgets()
 				self.popup1.dismiss()
 			except:
@@ -529,6 +534,7 @@ class MainScreen(Screen):
 
 		try:
 			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
 		except:
 			pass
 		try:
@@ -586,6 +592,7 @@ class MainScreen(Screen):
 	def about(self):
 		try:
 			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
 		except:
 			pass
 		try:
@@ -610,8 +617,10 @@ class MainScreen(Screen):
 	
 	def popping(self):
 		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		self.popbox.add_widget(poplbl)
-		self.popbox.height += poplbl.height
+		#self.popbox.add_widget(poplbl)
+		self.poptop.add_widget(poplbl)
+		#self.popbox.height += poplbl.height
+		self.poptop.height += poplbl.height
 		box1 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		box2 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -627,11 +636,19 @@ class MainScreen(Screen):
 		new_box.add_widget(new_box_title)
 		new_box.add_widget(new_box_unit)
 		new_box.add_widget(new_box_add)
-		self.popbox.add_widget(box1)
-		self.popbox.add_widget(new_box)
-		self.popbox.add_widget(box2)
-		self.popbox.height += box1.height
-		self.popbox.height += box2.height
+		#self.popbox.add_widget(box1)
+		#self.popbox.add_widget(new_box)
+		#self.popbox.add_widget(box2)
+		#self.popbox.height += box1.height
+		#self.popbox.height += box2.height
+			
+		self.poptop.add_widget(box1)
+		self.poptop.add_widget(new_box)
+		self.poptop.add_widget(box2)
+		self.poptop.height += box1.height
+		self.poptop.height += box2.height
+			
+	
 		for pop_item in self.pop_choices[self.topic][0]: #Go through stored statements
 			#pop_item is the key/title of the timer
 			popping_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
