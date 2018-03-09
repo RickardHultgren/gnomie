@@ -697,6 +697,7 @@ class MainScreen(Screen):
 			pass		
 		try:
 			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
 		except:
 			pass
 		self.topic = "state"
@@ -734,6 +735,7 @@ class MainScreen(Screen):
 
 		try:
 			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()			
 		except:
 			pass
 		try:
@@ -760,6 +762,7 @@ class MainScreen(Screen):
 
 		try:
 			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
 		except:
 			pass
 		try:
