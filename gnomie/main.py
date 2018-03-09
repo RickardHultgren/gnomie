@@ -146,19 +146,28 @@ Builder.load_string('''
                 use_separator: True
                 ActionPrevious:
                     #title: 'gnomie'
-                    title: ''
+                    #title: ''
                     app_icon: 'gnomie.png'
                     with_previous: False
-                    on_release: root.start()
+                    #on_release: root.start()
+                    #on_press: root.start()
+                    #background_normal: ''
+                    #background_color: 1, .3, .4, .85
                 ActionGroup:
                     mode: 'spinner'
-                    text: '?'
+                    font_size: "32"
+                    text: '≡'
                     font_name: 'DejaVuSerif-Bold'
                     ActionButton:
                         text: 'about'
                         font_name: 'DejaVuSerif'
                         on_release: root.about()
                         background_color:255,0,0,1
+                    ActionButton:
+                        text: 'settings'
+                        font_name: 'DejaVuSerif'
+                        on_release: root.settings()
+                        background_color:255,0,0,1                        
                     
         ScrollView:
             size: self.size
@@ -190,16 +199,19 @@ class MainScreen(Screen):
 	fontheight=15
 	line_len=30
 	main_headline = {
+	'settings' : "Settings",
 	'start' : "\n\n\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n\n\n\n",
 	'mindf' : '\n\n',
 	'state' : '\n\n',
 	'stast' : '\n\n'}
 	pop_choices = {
+	'settings' : '\n\n',
 	'start' : '\n\n',
 	'mindf' : [mindf_things_cpy],
 	'state' : [state_things_cpy, think_things_cpy],
 	'stast' : '\n\n'}
 	main_buttons = {
+	'settings' : ["exit"],
 	'start' : ["mindfulness", "statements", "statistics"],
 	'mindf' : ["next","previous","exit"],
 	'state' : ["statements","exit"],
@@ -270,259 +282,7 @@ class MainScreen(Screen):
 			self.ids.main_box.clear_widgets()
 		except:
 			pass
-		if self.topic != "mindf" :
-			paused = True
-			#try:
-			#	the_screenmanager.on_pause()=False
-			#except:
-			#	pass
-			#try:
-			#	PythonActivity.mActivity.getWindow().clearFlags(Params.FLAG_KEEP_SCREEN_ON)
-			#except:# coding:utf-8
 
-try:
-	from plyer import tts
-except:
-	pass
-
-try:
-	from plyer import vibrator
-except:
-	pass
-
-from kivy.core.window import Window
-	
-from kivy.core.text import LabelBase  
-KIVY_FONTS = [
-    {"name":"DejaVuSerif",  
-                   "fn_regular":"DejaVuSerif.ttf",
-                   "fn_bold":"DejaVuSerif-Bold.ttf",
-                   "fn_italic":"DejaVuSerif-Italic.ttf",
-                   "fn_bolditalic":"DejaVuSerif-BoldItalic.ttf"
-                   }
-                   ]
-for font in KIVY_FONTS:
-    LabelBase.register(**font)
-
-###now!
-#https://www.snip2code.com/Snippet/344451/Kivy--Android-keep-screen-on
-#https://gist.github.com/kived/4b3c1a78b0104e52b2a1
-#try:
-#	from jnius import autoclass
-#	PythonActivity = autoclass('org.kivy.android.PythonActivity')
-#	View = autoclass('android.view.View')
-#	Params = autoclass('android.view.WindowManager$LayoutParams')
-#	from android.runnable import run_on_ui_thread
-#except:
-#	pass
-
-#Declaration of global variables:
-#mindf_things = JsonStore('app/mindf_things.json')
-#state_things = JsonStore('app/state_things.json')
-#think_things = JsonStore('app/think_things.json')
-#temp_timers = dict(JsonStore('app/mindf_things.json'))
-#temp_claims = dict(JsonStore('app/state_things.json'))
-#temp_think = dict(JsonStore('app/think_things.json'))
-mindf_things = JsonStore('mindf_things.json')
-state_things = JsonStore('state_things.json')
-think_things = JsonStore('think_things.json')
-temp_timers = dict(JsonStore('mindf_things.json'))
-temp_claims = dict(JsonStore('state_things.json'))
-temp_think = dict(JsonStore('think_things.json'))
-mindf_things_cpy = dict()
-state_things_cpy = dict()
-think_things_cpy = dict()
-#mindf_things.put(str(theitem), itemtype=topic, name=theitem)
-
-the_screenmanager = ScreenManager()
-
-for key in temp_timers:
-	counting = 0
-	subdict = temp_timers[key]
-	thekey = str()
-	thevalue = str()
-	for subkey in subdict:
-		if counting == 0:
-			thekey = subdict[subkey]
-			counting += 1
-		elif counting == 1:
-			thevalue = subdict[subkey]
-			mindf_things_cpy[thevalue] = thekey
-			thekey=str()
-			thevalue=str()
-			counting = 0
-
-
-for key in temp_claims:
-	counting = 0
-	subdict = temp_claims[key]
-	thekey = str()
-	thevalue = str()
-	for subkey in subdict:
-		if counting == 0:
-			thekey = subdict[subkey]
-			counting += 1
-		elif counting == 1:
-			thevalue = subdict[subkey]
-			state_things_cpy[thevalue] = thekey
-			thekey=str()
-			thevalue=str()
-			counting = 0
-
-thekey = str()
-thevalue = str()
-for akey in temp_think :
-	think_things_cpy[str(akey)] = temp_think[akey]
-
-Builder.load_string('''
-<MainScreen>:
-    name: 'mainscreen'
-    canvas.before:
-        Color:
-            rgba: 0, .125, .125, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-    GridLayout:
-    
-        row_default_height:root.height / 8
-		cols:1
-        orientation: 'vertical'
-        ActionBar:
-            
-            width:root.width
-            height:root.height / 8
-            background_color:255,0,0,.5
-            pos_hint: {'top':1}
-            ActionView:
-                use_separator: True
-                ActionPrevious:
-                    #title: 'gnomie'
-                    title: ''
-                    app_icon: 'gnomie.png'
-                    with_previous: False
-                    on_release: root.start()
-                ActionGroup:
-                    mode: 'spinner'
-                    text: '?'
-                    font_name: 'DejaVuSerif-Bold'
-                    ActionButton:
-                        text: 'about'
-                        font_name: 'DejaVuSerif'
-                        on_release: root.about()
-                        background_color:255,0,0,1
-                    
-        ScrollView:
-            size: self.size
-            GridLayout:
-                cols:1
-                orientation:'vertical'
-                height:self.minimum_height
-                #height:root.main_height
-                #padding: root.width * 0.02, root.height * 0.02
-                #spacing: root.width * 0.02, root.height * 0.02            
-                size_hint_y: None
-                size_hint_x: 1            
-                do_scroll_x: False
-                do_scroll_y: True
-                id: main_box
-
-''')  
-
-paused=True
-
-class MainScreen(Screen):
-	#global the_screenmanager
-	global paused
-	global mindf_things_cpy
-	global state_things_cpy
-	global think_things_cpy
-	nownr=0
-	main_height=NumericProperty()
-	fontheight=15
-	line_len=30
-	main_headline = {
-	'start' : "\n\n\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n\n\n\n",
-	'mindf' : '\n\n',
-	'state' : '\n\n',
-	'stast' : '\n\n'}
-	pop_choices = {
-	'start' : '\n\n',
-	'mindf' : [mindf_things_cpy],
-	'state' : [state_things_cpy, think_things_cpy],
-	'stast' : '\n\n'}
-	main_buttons = {
-	'start' : ["mindfulness", "statements", "statistics"],
-	'mindf' : ["next","previous","exit"],
-	'state' : ["statements","exit"],
-	'stast' : '\n\n'}
-	topic='start'
-	mindf_time=NumericProperty(0)
-	mindf_part=0
-	mindf_limit=0
-	mindf_speed=0
-	state_claim=""
-	box = BoxLayout(orientation='vertical')
-	popscroll=ScrollView(size= box.size, bar_pos_x="top")
-	popbox=GridLayout(
-                cols=1,
-                orientation='vertical',
-                #height=self.minimum_height,
-                #height=root.bigheight,
-                padding = (popscroll.width * 0.02, popscroll.height * 0.02),
-                spacing = (popscroll.width * 0.02, popscroll.height * 0.02),
-                size_hint_y= None,
-                size_hint_x= 1,
-                do_scroll_x= False,
-                do_scroll_y= True
-                )
-	popscroll.add_widget(popbox)
-	popup1 = Popup(content=box, size_hint=(.875, .875))
-	box.add_widget(popscroll)
-	txt_height = 0
-	pop_rubric = ""
-	pop_unit = ""
-	pop_action = ""
-	pop_unit_name = ""
-	pop_title_name = ""
-
-	###now
-	#main_x_scroll= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
-	delbox = BoxLayout(orientation='vertical')
-	main_x_scroll=ScrollView(size= delbox.size, bar_pos_x="top")
-	main_x_box=GridLayout(
-                cols=1,
-                orientation='vertical',
-                #height=self.minimum_height,
-                #height=root.bigheight,
-                padding = (popscroll.width * 0.02, popscroll.height * 0.02),
-                spacing = (popscroll.width * 0.02, popscroll.height * 0.02),
-                size_hint_y= None,
-                size_hint_x= 1,
-                do_scroll_x= False,
-                do_scroll_y= True
-                )
-	main_x_scroll.add_widget(main_x_box)
-	popup2 = Popup(content=delbox, size_hint=(.875, .875))
-	delbox.add_widget(main_x_scroll)
-
-	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
-	
-	parts = ["Relax and breathe calmly","breathe in and out","Feel the muscles of the head and neck","of the the arms","of the chest and abdomen","of the legs","Feel the organs of the pelvis and abdomen","Feel the organs of the chest","Feel the sensations of light","smell","taste","sound","touch","Feel inner state and mood","Try to name the mood you feel","Try to feel all the feelings all at once","End of mindfulness"]
-	#parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
-	
-	def __init__ (self,**kwargs):
-		super (MainScreen, self).__init__(**kwargs)
-		self.planupdate()
-	
-	def planupdate(self,*args):
-		#global the_screenmanager
-		global paused
-		self.main_height=0
-		try:
-			self.ids.main_box.clear_widgets()
-		except:
-			pass
 		if self.topic != "mindf" :
 			paused = True
 			try:
@@ -563,6 +323,14 @@ class MainScreen(Screen):
 		
 		self.ids.main_box.add_widget(main_txt)
 		self.ids.main_box.height += main_txt.height
+
+		if self.topic == "settings":
+			#main_txt.text="settings settings"
+			#self.ids.main_box.add_widget(Label(text="Settings:"))
+			#if platform == 'android':
+			#	if paused==True:
+			pass
+
 		
 		if self.topic == "mindf":
 			#if platform == 'android':
@@ -809,6 +577,10 @@ class MainScreen(Screen):
 		self.popbox.height += exit_bttn.height
 
 		self.popup1.open()
+
+	def settings(self):
+		self.topic="settings"
+		self.planupdate()
 	
 	def popping(self):
 		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -916,11 +688,50 @@ class MainScreen(Screen):
 		eval("self.%s()"%self.topic)
 				
 	def del_popping(self, pop_item, *args):
+
+		try:
+			self.popbox.clear_widgets()
+		except:
+			pass
+		try:
+			self.main_x_box.clear_widgets()
+		except:
+			pass			
+		try:
+			self.popup2.dismiss()
+		except:
+			pass
+		try:
+			self.popup1.dismiss()
+		except:
+			pass			
+
 		eval("%s_things"%self.topic).delete(str("%s"%pop_item))
 		self.pop_choices[self.topic][0].pop(pop_item, None)
 		eval("self.%s()"%self.topic)
 
 	def del_pop(self, pop_item, *args):
+		###now
+		#Are you sure you want to delete this item?:
+		#bubble or popup?
+
+		try:
+			self.popbox.clear_widgets()
+		except:
+			pass
+		try:
+			self.main_x_box.clear_widgets()
+		except:
+			pass			
+		try:
+			self.popup2.dismiss()
+		except:
+			pass
+		try:
+			self.popup1.dismiss()
+		except:
+			pass			
+		
 		self.pop_bubble.background_color =(20, 0, 0, .5) 
 		self.pop_bubble.border = [50, 50, 50, 10]
 		self.pop_bubble.size = (150, 50)
@@ -930,11 +741,21 @@ class MainScreen(Screen):
 		my_bub_btnN= BubbleButton(text='No')
 		#my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.pop_bubble, my_bub_btn1))
 		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_popping(pop_item))
-		my_bub_btnN.bind(on_release=lambda my_bub_btnN: eval("self.%s()"%self.topic))
-		self.pop_bubble.add_widget(my_bub_btnY)
-		self.pop_bubble.add_widget(my_bub_btnN)
+		#my_bub_btnN.bind(on_release=lambda my_bub_btnN: eval("self.%s()"%self.topic))
+		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.del_pop_N())
+		#self.pop_bubble.add_widget(my_bub_btnY)
+		#self.pop_bubble.add_widget(my_bub_btnN)
 		#self.add_widget(self.pop_bubble)
-		self.popbox.add_widget(self.pop_bubble)
+		#self.popbox.add_widget(self.pop_bubble)
+		self.main_x_box.add_widget(my_bub_lbl)
+		self.main_x_box.add_widget(my_bub_btnY)
+		self.main_x_box.add_widget(my_bub_btnN)
+		self.popup2.open()
+
+	def del_pop_N(self):
+		self.popup2.dismiss()
+		eval("self.%s()"%self.topic)
+		#self.popup1.open()
 
 
 	def start_timer(self, pop_item, *args):
@@ -961,6 +782,7 @@ class MainScreen(Screen):
 		self.planupdate()
 
 	main_funcs = {
+	'settings': [exitb],
 	'start': [mindf, state, stast],
 	'mindf': [nxtb, prevb, exitb],
 	'state': [state, exitb],
