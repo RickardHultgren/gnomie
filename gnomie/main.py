@@ -137,11 +137,20 @@ Builder.load_string('''
 		cols:1
         orientation: 'vertical'
         ActionBar:
-            
-            width:root.width
+
             height:root.height / 8
+            width:root.width
             background_color:255,0,0,.5
-            pos_hint: {'top':1}
+            pos_hint: {'top':1}            
+            padding: '2ssp'
+            canvas:
+                Color:
+                    rgba: self.background_color
+                BorderImage:
+                    pos: self.pos
+                    size: self.size
+                    source: "gnomie.png"
+                    
             ActionView:
                 use_separator: True
                 ActionPrevious:
@@ -154,10 +163,12 @@ Builder.load_string('''
                     #background_normal: ''
                     #background_color: 1, .3, .4, .85
                 ActionGroup:
+                    #orientation: 'horizontal'
                     mode: 'spinner'
-                    font_size: "32"
-                    text: '≡'
-                    font_name: 'DejaVuSerif-Bold'
+                    background_normal: './menu.png'
+                    background_down: './menu.png'
+                    background_disabled_normal: './menu.png'
+                    border: 30, 30, 3, 3                    
                     ActionButton:
                         text: 'about'
                         font_name: 'DejaVuSerif'
@@ -167,7 +178,8 @@ Builder.load_string('''
                         text: 'settings'
                         font_name: 'DejaVuSerif'
                         on_release: root.settings()
-                        background_color:255,0,0,1                        
+                        background_color:255,0,0,1                    
+
                     
         ScrollView:
             size: self.size
@@ -222,6 +234,7 @@ class MainScreen(Screen):
 	mindf_limit=0
 	mindf_speed=0
 	state_claim=""
+	act_ttsvar = False
 	box = BoxLayout(orientation='vertical')
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
 	popbox=GridLayout(
@@ -330,7 +343,13 @@ class MainScreen(Screen):
 			#self.ids.main_box.add_widget(Label(text="Settings:"))
 			#if platform == 'android':
 			#	if paused==True:
-			pass
+			smallbar=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			chk1=CheckBox()
+			chk1.bind(active=self.act_tts)
+			#chk1.bind(passive=self.act_tts)
+			smallbar.add_widget(chk1)
+			smallbar.add_widget(Label(text="text2voice"))
+			self.ids.main_box.add_widget(smallbar)
 
 		
 		if self.topic == "mindf":
@@ -342,12 +361,12 @@ class MainScreen(Screen):
 						#vibrator.cancel()
 					except:
 						pass
-						
-					try:
-						tts.speak(self.parts[self.mindf_part])
-					except NotImplementedError:
-						popup = ErrorPopup()
-						popup.open()									
+					if self.act_ttsvar == True:	
+						try:
+							tts.speak(self.parts[self.mindf_part])
+						except NotImplementedError:
+							popup = ErrorPopup()
+							popup.open()									
 					paused=False
 					try:
 						the_screenmanager.on_pause=False
@@ -441,6 +460,12 @@ class MainScreen(Screen):
 			self.ids.main_box.height += bttn.height
 		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
 		#self.ids.main_box.height += 1*self.txt_height + Window.height
+
+	def act_tts(self, checkbox, value):
+		if value:
+			self.act_ttsvar = True
+		else:
+			self.act_ttsvar = False
 
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
@@ -735,7 +760,7 @@ class MainScreen(Screen):
 		
 		self.pop_bubble.background_color =(20, 0, 0, .5) 
 		self.pop_bubble.border = [50, 50, 50, 10]
-		self.pop_bubble.size = (150, 50)
+		#self.pop_bubble.size = (150, 50)
 		self.pop_bubble.arrow_pos= 'top_mid'
 		my_bub_lbl=Label(text="Are you sure you want to delete this item?")
 		my_bub_btnY= BubbleButton(text='Yes')
