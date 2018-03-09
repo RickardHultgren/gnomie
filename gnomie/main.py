@@ -268,7 +268,8 @@ class MainScreen(Screen):
 
 	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	
-	parts = ["Relax and breath calmly","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
+	parts = ["Relax and breathe calmly","breathe in and out","Feel the muscles of the head and neck","of the the arms","of the chest and abdomen","of the legs","Feel the organs of the pelvis and abdomen","Feel the organs of the chest","Feel the sensations of light","smell","taste","sound","touch","Feel inner state and mood","Try to name the mood you feel","Try to feel all the feelings all at once","End of mindfulness"]
+	#parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 	
 	def __init__ (self,**kwargs):
 		super (MainScreen, self).__init__(**kwargs)
