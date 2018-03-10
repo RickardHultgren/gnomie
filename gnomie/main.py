@@ -243,7 +243,7 @@ class MainScreen(Screen):
 	main_buttons = {
 	'settings' : ["exit"],
 	'start' : ["mindfulness", "statements", "statistics"],
-	'mindf' : ["next","previous","exit"],
+	'mindf' : ["previous","next","exit"],
 	#'mindf' : [["next","previous","exit"],['mindf' : ["next","previous","exit"],].['mindf' : ["next","previous","exit"]]],
 	'state' : ["statements","exit"],
 	'stast' : '\n\n'}
@@ -429,7 +429,7 @@ class MainScreen(Screen):
 					paused=True
 			elif self.mindf_part != len(self.parts)-1:		
 				self.mindf_time += self.mindf_speed
-
+			
 		if self.topic == "state":
 
 			main_txt.text=self.state_claim
@@ -491,6 +491,14 @@ class MainScreen(Screen):
 			bttn = Button(text="%s"%(main_button), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
 			funcy = self.main_funcs[self.topic][b_nr].__name__
 			bttn.bind(on_release = partial((eval("self.%s"%(funcy)))))
+
+			if self.topic=="mindf":
+				#if self.mindf_part == 0 and b_nr==0:
+					#bttn.color=(1,1,1,.5)
+				if self.mindf_part == len(self.parts)-1 and b_nr==1:
+					bttn.text = "again?"
+					#bttn.color=(1,1,1,.5)
+
 			self.ids.main_box.add_widget(bttn)
 			self.ids.main_box.height += bttn.height
 		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
@@ -612,8 +620,10 @@ class MainScreen(Screen):
 		self.mindf_time = 0
 
 	def nxtb(self, *args):
-		if self.mindf_part != 5:
+		if self.mindf_part != len(self.parts)-1:
 			self.mindf_part += 1
+		else:
+			self.mindf_part = 0
 		self.mindf_time = 0
 			
 	def exitb(self, *args):
@@ -867,7 +877,7 @@ class MainScreen(Screen):
 	main_funcs = {
 	'settings': [exitb],
 	'start': [mindf, state, stast],
-	'mindf': [nxtb, prevb, exitb],
+	'mindf': [prevb, nxtb, exitb],
 	'state': [state, exitb],
 	'stast': '\n\n'}		
 
