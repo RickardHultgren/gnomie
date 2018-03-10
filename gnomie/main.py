@@ -74,12 +74,15 @@ for font in KIVY_FONTS:
 mindf_things = JsonStore('mindf_things.json')
 state_things = JsonStore('state_things.json')
 think_things = JsonStore('think_things.json')
+setting_things = JsonStore('settings.json')
 temp_timers = dict(JsonStore('mindf_things.json'))
 temp_claims = dict(JsonStore('state_things.json'))
 temp_think = dict(JsonStore('think_things.json'))
+temp_set = dict(JsonStore('settings.json'))
 mindf_things_cpy = dict()
 state_things_cpy = dict()
 think_things_cpy = dict()
+temp_set_cpy = dict()
 #mindf_things.put(str(theitem), itemtype=topic, name=theitem)
 
 #the_screenmanager = ScreenManager()
@@ -116,6 +119,21 @@ for key in temp_claims:
 			thekey=str()
 			thevalue=str()
 			counting = 0
+print temp_set
+
+for key in temp_set:
+	counting = 0
+	subdict = temp_set[key]
+	thekey = str()
+	thevalue = str()
+	for subkey in subdict:
+		thekey = subkey
+		thevalue = subdict[subkey]
+		temp_set_cpy[thekey] = thevalue
+		thekey=str()
+		thevalue=str()
+		counting = 0
+print temp_set_cpy
 
 thekey = str()
 thevalue = str()
@@ -226,6 +244,7 @@ class MainScreen(Screen):
 	'settings' : ["exit"],
 	'start' : ["mindfulness", "statements", "statistics"],
 	'mindf' : ["next","previous","exit"],
+	#'mindf' : [["next","previous","exit"],['mindf' : ["next","previous","exit"],].['mindf' : ["next","previous","exit"]]],
 	'state' : ["statements","exit"],
 	'stast' : '\n\n'}
 	topic='start'
@@ -234,7 +253,7 @@ class MainScreen(Screen):
 	mindf_limit=0
 	mindf_speed=0
 	state_claim=""
-	act_ttsvar = False
+	#act_ttsvar = False
 	box = BoxLayout(orientation='vertical')
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
 ###now
@@ -350,6 +369,15 @@ class MainScreen(Screen):
 			#	if paused==True:
 			smallbar=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			chk1=CheckBox()
+			try:
+				if temp_set_cpy['tts'] == "True":
+					chk1.active=True
+				else:
+					chk1.active=False
+			except:
+				chk1.active=True
+				temp_set_cpy['tts'] = "True"
+				setting_things.put("tts", tts="True")
 			chk1.bind(active=self.act_tts)
 			#chk1.bind(passive=self.act_tts)
 			smallbar.add_widget(chk1)
@@ -366,7 +394,9 @@ class MainScreen(Screen):
 						#vibrator.cancel()
 					except:
 						pass
-					if self.act_ttsvar == True:	
+					if temp_set_cpy['tts'] == "True":
+						#print "tts: " + temp_set_cpy['tts']
+					#if self.act_ttsvar == True:	
 						try:
 							tts.speak(self.parts[self.mindf_part])
 						except NotImplementedError:
@@ -468,10 +498,17 @@ class MainScreen(Screen):
 
 	def act_tts(self, checkbox, value):
 		if value:
-			self.act_ttsvar = True
+			#self.act_ttsvar = True
+			
+			#set_things_cpy.pop("tts", None)
+			#set_things.delete("tts")
+			temp_set_cpy['tts'] = "True"
+			setting_things.put("tts", tts="True")
 		else:
-			self.act_ttsvar = False
-
+			#self.act_ttsvar = False
+			temp_set_cpy['tts'] = "False"
+			setting_things.put("tts", tts="False")
+			
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
 		times_matched = 0
@@ -479,7 +516,7 @@ class MainScreen(Screen):
 		#fixed length:
 		for h in range(1,length) :
 			keylist=list(think_things_cpy.keys())
-			print sorted(keylist)
+			#print sorted(keylist)
 			for key in sorted(keylist):
 				#print "key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
 				if int(key) == h:
@@ -814,7 +851,7 @@ class MainScreen(Screen):
 			pass
 		self.mindf_part = 0
 		self.mindf_time = 0
-		print int(timer_item_value)
+		#print int(timer_item_value)
 		#300 * int(timer_item_value) [0.2 sec] / len(self.parts)[items] = 200 [points] / 1 [items]
 		#(300 * int(timer_item_value)) / (len(self.parts)) = 200[points]/[0.2 sec]
 		#(300 * int(timer_item_value))[0.2 sec] / (200*len(self.parts))[points] = 1
