@@ -708,7 +708,7 @@ class MainScreen(Screen):
 			
 			#min_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 
-			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=.31, size=(.31*self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			#popping_box_title.size_hint_y= None
 			#popping_box_title.width=.31*self.ids.main_box.width
 			#popping_box_title.text_size=(self.width, None)
@@ -720,7 +720,7 @@ class MainScreen(Screen):
 			popping_box_title.bind(height=popping_box_title.setter('self.minimum_height'))
 
 
-			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=.31, size=(.31*self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			#popping_box_min.size_hint_y= None
 			#popping_box_min.width=.31*self.ids.main_box.width
 			#popping_box_min.text_size=(self.width, None)
