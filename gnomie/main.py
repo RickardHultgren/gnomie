@@ -257,7 +257,7 @@ class MainScreen(Screen):
 	box = BoxLayout(orientation='vertical')
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
 ###now
-	poptop=BoxLayout(orientation='horizontal')
+	poptop=BoxLayout(orientation='vertical',size_hint_y=.4, size_hint_x=1)
 	popbox=GridLayout(
                 cols=1,
                 orientation='vertical',
@@ -668,13 +668,16 @@ class MainScreen(Screen):
 		self.poptop.add_widget(poplbl)
 		#self.popbox.height += poplbl.height
 		self.poptop.height += poplbl.height
-		box1 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		box2 = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		
+		box1 = BoxLayout(orientation='horizontal', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box2 = BoxLayout(orientation='horizontal', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		box1.add_widget(Label(text = self.pop_title, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
-		box1.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
+		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=None, size=(.31*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=None, size=(.31*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		if self.topic=="mindf":
+			new_box_unit.input_type='number'
+		box1.add_widget(Label(text = self.pop_title, size_hint_y=None, size_hint_x=None, size=(.31*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
+		box1.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=None, size=(.31*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
 		
 		box1.add_widget(Label(text = "", size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
 		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -698,10 +701,37 @@ class MainScreen(Screen):
 	
 		for pop_item in self.pop_choices[self.topic][0]: #Go through stored statements
 			#pop_item is the key/title of the timer
-			popping_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box=BoxLayout(size_hint_y=None, size_hint_x=1, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#popping_box=GridLayout(cols=4,size_hint_y=None, size_hint_x=1, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#horizontal boxing
+			#title_box=BoxLayout(size_hint_y=None, size_hint_x=1,size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			
-			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#min_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+
+			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=.31, size=(.31*self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#popping_box_title.size_hint_y= None
+			#popping_box_title.width=.31*self.ids.main_box.width
+			#popping_box_title.text_size=(self.width, None)
+			#popping_box_title.height=popping_box_title.texture_size[1]
+			#popping_box_title.pos_hint={'left': 0, 'center_y': .5}
+			popping_box_title.bind(width=lambda s, w:
+				   s.setter('text_size')(s, (self.width, None)))
+			popping_box_title.bind(height=popping_box_title.setter('texture_size[1]'))
+			popping_box_title.bind(height=popping_box_title.setter('self.minimum_height'))
+
+
+			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=.31, size=(.31*self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#popping_box_min.size_hint_y= None
+			#popping_box_min.width=.31*self.ids.main_box.width
+			#popping_box_min.text_size=(self.width, None)
+			#popping_box_min.height=popping_box_min.texture_size[1]
+			#popping_box_min.pos_hint={'left': 0, 'center_y': .5}
+			popping_box_min.bind(width=lambda s, w:
+				   s.setter('text_size')(s, (self.width, None)))
+			popping_box_min.bind(height=popping_box_min.setter('texture_size[1]')) 
+			popping_box_min.bind(height=popping_box_min.setter('self.minimum_height'))	
+
+			
 			popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			
 			popping_box_del.bind(on_release = partial(self.del_pop, pop_item))
@@ -709,8 +739,28 @@ class MainScreen(Screen):
 			predict = self.pop_funcs[self.topic].__name__
 			popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
 			
+			if popping_box_min.height>popping_box_title.height:
+				#popping_box.height=self.txt_height * 0.2
+				popping_box.height=2*popping_box_min.height
+				popping_box_del.height=2*popping_box_min.height
+				popping_box_slct.height=2*popping_box_min.height
+			else:
+				#popping_box.height=self.txt_height * 0.2
+				popping_box.height=2*popping_box_title.height
+				popping_box_del.height=2*popping_box_title.height
+				popping_box_slct.height=2*popping_box_title.height
+			#popping_box.minimum_height="2ssp"
+			#popping_box.width=self.ids.main_box.width
+			popping_box.size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height))
+						
+			
 			popping_box.add_widget(popping_box_title)
 			popping_box.add_widget(popping_box_min)
+			#title_box.add_widget(popping_box_title)
+			#min_box.add_widget(popping_box_min)
+			#popping_box.add_widget(title_box)
+			#popping_box.add_widget(min_box)
+			
 			popping_box.add_widget(popping_box_del)
 			popping_box.add_widget(popping_box_slct)
 			self.popbox.add_widget(popping_box)
@@ -721,6 +771,7 @@ class MainScreen(Screen):
 	def mindf(self, *args):
 		try:
 			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
 		except:
 			pass
 		self.topic="mindf"
@@ -866,7 +917,7 @@ class MainScreen(Screen):
 		#(300 * int(timer_item_value)) / (len(self.parts)) = 200[points]/[0.2 sec]
 		#(300 * int(timer_item_value))[0.2 sec] / (200*len(self.parts))[points] = 1
 		#(200*len(self.parts))[points] / (300 * int(timer_item_value))[0.2 sec] = 1
-		self.mindf_speed = (self.mindf_limit * len(self.parts)) / (int(timer_item_value) * 300)
+		self.mindf_speed = (self.mindf_limit * len(self.parts)) / (float(timer_item_value) * 300)
 		Clock.unschedule(self.planupdate)		
 		Clock.schedule_interval(self.planupdate, 0.2)
 
