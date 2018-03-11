@@ -470,6 +470,13 @@ class MainScreen(Screen):
 			rubric_box.add_widget(vis_btn)
 			self.ids.main_box.add_widget(rubric_box)
 			#self.state_topic='objectives'
+			res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
+			res_box.add_widget(res_inpt)
+			res_box.add_widget(res_bttn)
+			self.ids.main_box.add_widget(res_box)
 			for preNomen in ["obj","mis","vis"]:
 				if preNomen == "obj" and self.state_topic=="obj":
 					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -502,13 +509,13 @@ class MainScreen(Screen):
 							
 							self.ids.main_box.add_widget(res_box)
 							self.ids.main_box.height += res_box.height
-				res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_bttn.bind(on_release=partial(self.add_nomen, preNomen, res_inpt))
-				res_box.add_widget(res_inpt)
-				res_box.add_widget(res_bttn)
-				self.ids.main_box.add_widget(res_box)
+				#res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				#res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				#res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				#res_bttn.bind(on_release=partial(self.add_nomen, preNomen, res_inpt))
+				#res_box.add_widget(res_inpt)
+				#res_box.add_widget(res_bttn)
+				#self.ids.main_box.add_widget(res_box)
 				self.ids.main_box.height += res_box.height
 				self.ids.main_box.height += 1*self.txt_height
 
