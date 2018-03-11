@@ -272,6 +272,7 @@ class MainScreen(Screen):
 	'state' : ["statements","exit"],
 	'stast' : '\n\n'}
 	topic='start'
+	state_topic='objectives'
 	mindf_time=NumericProperty(0)
 	mindf_part=0
 	mindf_limit=0
@@ -457,6 +458,18 @@ class MainScreen(Screen):
 		if self.topic == "state":
 
 			main_txt.text=self.state_claim
+			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
+			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			mis_btn.bind(on_release=lambda mis_btn: self.chng_mis())
+			vis_btn=Button(text="Vissions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			vis_btn.bind(on_release=lambda vis_btn: self.chng_vis())
+			rubric_box.add_widget(obj_btn)
+			rubric_box.add_widget(mis_btn)
+			rubric_box.add_widget(vis_btn)
+			self.ids.main_box.add_widget(rubric_box)
+			#state_topic='objectives'
 			for preNomen in ["obj","mis","vis"]:
 				if preNomen == "obj":
 					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -527,6 +540,15 @@ class MainScreen(Screen):
 			self.ids.main_box.height += bttn.height
 		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
 		#self.ids.main_box.height += 1*self.txt_height + Window.height
+
+	def chng_obj(self):
+		pass
+		
+	def chng_mis(self):
+		pass		
+		
+	def chng_vis(self):
+		pass
 
 	def act_tts(self, checkbox, value):
 		if value:
