@@ -41,24 +41,12 @@ except:
 
 ####
 try:
-	System = autoclass ('java.lang.System')
-	Context = autoclass('android.content.Context') 
-	Intent = autoclass('android.content.Intent')  
-	PendingIntent = autoclass('android.app.PendingIntent')  
-	Calendar = autoclass('java.util.Calendar') 
-	AlarmManager = autoclass('android.app.AlarmManager')  
-	activity = autoclass('org.renpy.android.PythonActivity').mActivity
-	#PENDING_INTENT_REQUEST_CODE = 889754
+    from jnius import autoclass
+    Calendar = autoclass('java.util.Calendar')
 
-	#calendar = Calendar.getInstance()
-	#calendar.setTimeInMillis(System.currentTimeMillis())
-	#calendar.add(Calendar.SECOND, 20)
-	#alarm = activity.getSystemService(Context.ALARM_SERVICE)
-
-	#intent = Intent(self.alarm_callback)
-					   
-	#pending_intent = PendingIntent.getBroadcast(activity, 0, intent, 0)
-	#alarm.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 1000 * 20, pending_intent)
+    c = Calendar.getInstance()
+    #c.setTimeInMillis(1480103863835)
+    #Logger.info(c.getTimeInMillis()) //  -1659853285
 except:
 	pass
 ####
@@ -459,12 +447,13 @@ class MainScreen(Screen):
 
 			main_txt.text=self.state_claim
 			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
-			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			mis_btn.bind(on_release=lambda mis_btn: self.chng_mis())
-			vis_btn=Button(text="Vissions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			vis_btn=Button(text="Vissions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			vis_btn.bind(on_release=lambda vis_btn: self.chng_vis())
+			eval("%s_btn"%self.state_topic).background_color= (.75, .25, 0, 1.0)
 			rubric_box.add_widget(obj_btn)
 			rubric_box.add_widget(mis_btn)
 			rubric_box.add_widget(vis_btn)
