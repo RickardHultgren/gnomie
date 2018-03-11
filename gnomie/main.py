@@ -272,7 +272,7 @@ class MainScreen(Screen):
 	'state' : ["statements","exit"],
 	'stast' : '\n\n'}
 	topic='start'
-	state_topic='objectives'
+	state_topic='obj'
 	mindf_time=NumericProperty(0)
 	mindf_part=0
 	mindf_limit=0
@@ -469,23 +469,23 @@ class MainScreen(Screen):
 			rubric_box.add_widget(mis_btn)
 			rubric_box.add_widget(vis_btn)
 			self.ids.main_box.add_widget(rubric_box)
-			#state_topic='objectives'
+			#self.state_topic='objectives'
 			for preNomen in ["obj","mis","vis"]:
-				if preNomen == "obj":
+				if preNomen == "obj" and self.state_topic=="obj":
 					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 					self.ids.main_box.add_widget(obj_lbl)
 					self.ids.main_box.height += obj_lbl.height
-				if preNomen == "mis":
+				if preNomen == "mis" and self.state_topic=="mis":
 					mis_lbl=Label(text="Then:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 					self.ids.main_box.add_widget(mis_lbl)
 					self.ids.main_box.height += mis_lbl.height
-				if preNomen == "vis":
+				if preNomen == "vis" and self.state_topic=="vis":
 					vis_lbl=Label(text="So that:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 					self.ids.main_box.add_widget(vis_lbl)
 					self.ids.main_box.height += vis_lbl.height
 				for pop_item in self.pop_choices[self.topic][1]:
 					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
-						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen :
+						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen and self.state_topic==preNomen:
 							
 							res = self.pop_choices[self.topic][1][pop_item]["title"]
 							res_box = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -542,14 +542,17 @@ class MainScreen(Screen):
 		#self.ids.main_box.height += 1*self.txt_height + Window.height
 
 	def chng_obj(self):
-		pass
+		self.state_topic="obj"
+		self.planupdate()
 		
 	def chng_mis(self):
-		pass		
+		self.state_topic="mis"
+		self.planupdate()
 		
 	def chng_vis(self):
-		pass
-
+		self.state_topic="vis"
+		self.planupdate()
+		
 	def act_tts(self, checkbox, value):
 		if value:
 			#self.act_ttsvar = True
