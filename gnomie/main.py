@@ -459,35 +459,61 @@ class MainScreen(Screen):
 			rubric_box.add_widget(vis_btn)
 			self.ids.main_box.add_widget(rubric_box)
 			#self.state_topic='objectives'
-			res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#res_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_box.add_widget(Label(text="name"))
 			res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			res_box.add_widget(res_inpt)
-			res_box.add_widget(res_bttn)
+			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_bttn.padding = (self.ids.main_box.width * 0.2, self.ids.main_box.height * 0.2)
+            #res_bttn.spacing = "10ssp"
+			if self.state_topic=="obj":
+				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				res_box.add_widget(Label(text="begin date, time"))
+				res_box.add_widget(data_begin)
+				res_box.add_widget(Label(text="end date, time"))
+				res_box.add_widget(data_end)
+				res_box.height= "%ssp"%str(8*self.txt_height)
+				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_begin, data_end))
+			else:
+				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			self.ids.main_box.add_widget(res_box)
+			self.ids.main_box.add_widget(res_bttn)
+			
 			for preNomen in ["obj","mis","vis"]:
 				if preNomen == "obj" and self.state_topic=="obj":
-					obj_lbl=Label(text="If:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+					obj_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 					self.ids.main_box.add_widget(obj_lbl)
 					self.ids.main_box.height += obj_lbl.height
 				if preNomen == "mis" and self.state_topic=="mis":
-					mis_lbl=Label(text="Then:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+					mis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 					self.ids.main_box.add_widget(mis_lbl)
 					self.ids.main_box.height += mis_lbl.height
 				if preNomen == "vis" and self.state_topic=="vis":
-					vis_lbl=Label(text="So that:",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+					vis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 					self.ids.main_box.add_widget(vis_lbl)
 					self.ids.main_box.height += vis_lbl.height
 				for pop_item in self.pop_choices[self.topic][1]:
 					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
 						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen and self.state_topic==preNomen:
 							
+							res_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res = self.pop_choices[self.topic][1][pop_item]["title"]
-							res_box = BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-							
 							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res_box.add_widget(res_lbl)
+							try:
+								beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
+								begin_lbl=Label(text=beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								res_box.add_widget(begin_lbl)
+							except:
+								pass
+							try:
+								ending = self.pop_choices[self.topic][1][pop_item]["end"]
+								end_lbl=Label(text=ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								res_box.add_widget(end_lbl)
+							except:
+								pass
 							res_box.height += res_lbl.height
 							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							
@@ -579,22 +605,39 @@ class MainScreen(Screen):
 					title_var = ""
 					state_var = ""
 					nomen_var = ""
-					for j in ["title","state","nomen"] :
+					begin_var = ""
+					end_var = ""
+					for j in ["title","state","nomen","begin","end"] :
 						if j == "title" :
 							title_var = str(think_things_cpy[key][j])
 						if j == "state" :
 							state_var = str(think_things_cpy[key][j])
 						if j == "nomen" :
 							nomen_var = str(think_things_cpy[key][j])
+						if j == "begin" :
+							try:
+								begin_var = str(think_things_cpy[key][j])
+							except:
+								pass
+						if j == "end" :
+							try:
+								end_var = str(think_things_cpy[key][j])
+							except:
+								pass						
 					#print "key to delete: %s" % key
 					think_things.delete(key)
 					think_things_cpy.pop(key, None)
 					#times_matched += 1
-					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
-					think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+					if begin_var == "" and end_var == "":
+						think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
+						think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+					else:
+						think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var, begin=begin_var, end=end_var)
+						think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var, "begin":begin_var, "end":end_var}
 					#think_things.put("%s"%(times_matched), title=title_var, state=state_var, nomen=nomen_var)
 					#think_things["%s"%(times_matched)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
 					times_matched += 1
+					print "hoi"
 
 					
 					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
@@ -609,8 +652,13 @@ class MainScreen(Screen):
 			maxed = max(maxing)+1
 		except:
 			pass
-		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
-		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
+		
+		if len(args)>4:
+			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=args[4], end=args[5])
+			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":args[4], "end":args[5]}
+		else:
+			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen )
+			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
 		index_nr = 0
 
