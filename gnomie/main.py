@@ -464,8 +464,10 @@ class MainScreen(Screen):
 			res_box.add_widget(Label(text="name"))
 			res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(res_inpt)
+			bttn_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_bttn.padding = (self.ids.main_box.width * 0.2, self.ids.main_box.height * 0.2)
+			bttn_box.add_widget(res_bttn)
             #res_bttn.spacing = "10ssp"
 			if self.state_topic=="obj":
 				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -479,7 +481,7 @@ class MainScreen(Screen):
 			else:
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			self.ids.main_box.add_widget(res_box)
-			self.ids.main_box.add_widget(res_bttn)
+			self.ids.main_box.add_widget(bttn_box)
 			
 			for preNomen in ["obj","mis","vis"]:
 				if preNomen == "obj" and self.state_topic=="obj":
@@ -502,18 +504,6 @@ class MainScreen(Screen):
 							res = self.pop_choices[self.topic][1][pop_item]["title"]
 							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res_box.add_widget(res_lbl)
-							try:
-								beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
-								begin_lbl=Label(text=beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-								res_box.add_widget(begin_lbl)
-							except:
-								pass
-							try:
-								ending = self.pop_choices[self.topic][1][pop_item]["end"]
-								end_lbl=Label(text=ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-								res_box.add_widget(end_lbl)
-							except:
-								pass
 							res_box.height += res_lbl.height
 							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							
@@ -521,7 +511,23 @@ class MainScreen(Screen):
 							#res_del.bind(on_release = partial(self.del_nomen, pop_item))
 							res_box.add_widget(res_del)
 							res_box.height += res_del.height
-							
+							try:
+								begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
+								begin_lbl=Label(text=beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								begin_box.add_widget(begin_lbl)
+								self.ids.main_box.add_widget(begin_box)
+							except:
+								pass
+							try:
+								end_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								ending = self.pop_choices[self.topic][1][pop_item]["end"]
+								end_lbl=Label(text=ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								end_box.add_widget(end_lbl)
+								self.ids.main_box.add_widget(end_box)
+							except:
+								pass
+						
 							self.ids.main_box.add_widget(res_box)
 							self.ids.main_box.height += res_box.height
 				#res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
