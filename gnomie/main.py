@@ -444,6 +444,15 @@ class MainScreen(Screen):
 		if self.topic == "state":
 
 			main_txt.text=self.state_claim
+			
+			res_lbl=Button(text=str(self.state_claim), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
+			cat_lbl = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][self.state_claim]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			cat_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
+			
+			self.ids.main_box.add_widget(res_lbl)
+			self.ids.main_box.add_widget(cat_lbl)
+			
 			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
