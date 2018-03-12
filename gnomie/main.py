@@ -801,7 +801,7 @@ class MainScreen(Screen):
 
 			#popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			popping_box_title = Button(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			popping_box_title.bind(on_release = partial(self.edit_pop, pop_item))
+			popping_box_title.bind(on_release = partial(self.edit_pop, pop_item, str(self.pop_choices[self.topic][0][pop_item])))
 			#popping_box_title.size_hint_y= None
 			#popping_box_title.width=.31*self.popbox.width
 			#popping_box_title.text_size=(self.width, None)
@@ -815,7 +815,7 @@ class MainScreen(Screen):
 
 			#popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			popping_box_min = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			popping_box_min.bind(on_release = partial(self.edit_pop, pop_item))
+			popping_box_min.bind(on_release = partial(self.edit_pop, pop_item, str(self.pop_choices[self.topic][0][pop_item])))
 			#popping_box_min.size_hint_y= None
 			#popping_box_min.width=.31*self.popbox.width
 			#popping_box_min.text_size=(self.width, None)
@@ -862,7 +862,7 @@ class MainScreen(Screen):
 			self.popbox.height += popping_box.height
 		self.popup1.open()
 
-	def edit_pop(self, pop_item, *args):
+	def edit_pop(self, pop_item, cat, *args):
 		try:
 			self.popbox.clear_widgets()
 			self.poptop.clear_widgets()
@@ -887,101 +887,69 @@ class MainScreen(Screen):
 		#self.pop_bubble.size = (150, 50)
 		self.pop_bubble.arrow_pos= 'top_mid'
 		my_bub_lbl=Label(text="Edit %s"%pop_item)
-		my_bub_inpt=TextInput(text="%s"%pop_item)
+		my_bub_title=TextInput(text="%s"%pop_item, multiline=False, size_hint_x=1, size_hint_y="%ssp"%str(.5*self.txt_height), size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		my_bub_cat=TextInput(text="%s"%cat, multiline=False, size_hint_x=1, size_hint_y="%ssp"%str(.5*self.txt_height), size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		my_bub_bttn=BubbleButton(text="change")
-		my_bub_bttn.bind(on_release=partial(self.chng_edit, pop_item, my_bub_inpt))
+		my_bub_bttn.bind(on_release=partial(self.chng_edit, pop_item, my_bub_title, my_bub_cat))
 		my_bub_btnN=BubbleButton(text="cancel")
 		my_bub_btnN.bind(on_release=partial(eval("self.%s"%(self.topic) )))
 			
 		self.main_x_box.add_widget(my_bub_lbl)
-		self.main_x_box.add_widget(my_bub_inpt)
+		self.main_x_box.add_widget(my_bub_title)
+		self.main_x_box.add_widget(my_bub_cat)
 		self.main_x_box.add_widget(my_bub_bttn)
 		self.main_x_box.add_widget(my_bub_btnN)
 		
 		self.popup2.open()
 
 
-	def chng_edit(self, res, new_res):
+	def chng_edit(self, res, new_res, cat, *args):
+		cat=cat.text
 		new_res=new_res.text
 		times_matched = 0
 		length = int(len(think_things_cpy)+1)
 
-		#fixed length:
-		for h in range(1,length) :
-			keylist=list(think_things_cpy.keys())
-			#print sorted(keylist)
-			for key in sorted(keylist):
-				#print "key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
-				if int(key) == h:
-					times_matched += 1
-					#break
-				elif times_matched < h and int(key) > h:
-					title_var = ""
-					state_var = ""
-					nomen_var = ""
-					begin_var = ""
-					end_var = ""
-					for j in ["title","state","nomen","begin","end"] :
-						if j == "title" :
-							title_var = str(think_things_cpy[key][j])
-						if j == "state" :
-							state_var = str(think_things_cpy[key][j])
-						if j == "nomen" :
-							nomen_var = str(think_things_cpy[key][j])
-						if j == "begin" :
-							try:
-								begin_var = str(think_things_cpy[key][j])
-							except:
-								pass
-						if j == "end" :
-							try:
-								end_var = str(think_things_cpy[key][j])
-							except:
-								pass						
-					#print "key to delete: %s" % key
+		keylist=list(think_things_cpy.keys())
+		for key in sorted(keylist):
+			if str(think_things_cpy[key][j]) == res:
+				title_var = ""
+				state_var = ""
+				#nomen_var = ""
+				begin_var = ""
+				end_var = ""
+				#for j in ["title","state","nomen","begin","end"] :
+				for j in ["title","state","begin","end"] :
+					if j == "title" :
+						title_var = str(think_things_cpy[key][j])
+					if j == "state" :
+						state_var = str(think_things_cpy[key][j])
+					#if j == "nomen" :
+					#	nomen_var = str(think_things_cpy[key][j])
+					if j == "begin" :
+						try:
+							begin_var = str(think_things_cpy[key][j])
+						except:
+							pass
+					if j == "end" :
+						try:
+							end_var = str(think_things_cpy[key][j])
+						except:
+							pass						
 					think_things.delete(key)
 					think_things_cpy.pop(key, None)
-					#times_matched += 1
 					if begin_var == "" and end_var == "":
-						think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
-						think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+						think_things.put("%s"%(key), title=title_var, state=state_var, nomen=new_res)
+						think_things_cpy["%s"%(key)] = {"title":title_var, "state":state_var, "nomen":new_res}
 					else:
-						think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var, begin=begin_var, end=end_var)
-						think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var, "begin":begin_var, "end":end_var}
-					#think_things.put("%s"%(times_matched), title=title_var, state=state_var, nomen=nomen_var)
-					#think_things["%s"%(times_matched)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-					times_matched += 1
-					
-					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
-					
-					#break
-					#continue
-		maxed=0
-		maxing = []
-		for n in think_things_cpy:
-			maxing.append(int(n))
-		try:
-			maxed = max(maxing)+1
-		except:
-			pass
+						think_things.put("%s"%(key), title=title_var, state=state_var, nomen=new_res, begin=begin_var, end=end_var)
+						think_things_cpy["%s"%(key)] = {"title":title_var, "state":state_var, "nomen":new_res, "begin":begin_var, "end":end_var}
+
+
+		eval("%s_things"%self.topic).delete(res)
+		eval("%s_things_cpy"%self.topic).pop(res, None)
+		eval("%s_things"%self.topic).put(str(res), category=cat, title=res)
+		self.pop_choices[self.topic][0][res] = cat
 		
-		if len(args)>2:
-			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=str(args[0].text), end=str(args[1].text))
-			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":str(args[0].text), "end":str(args[1].text)}
-		else:
-			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen )
-			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
-		self.planupdate()
-		index_nr = 0
-
-
-		checking=1
-		for pop_item in self.pop_choices[self.topic][0]:
-			if self.pop_choices[self.topic][0][pop_item] == mindf_title:
-				checking = 0
-		if checking == 1:
-			eval("%s_things"%self.topic).put(str(mindf_title), category=mindf_time, title=mindf_title)
-			self.pop_choices[self.topic][0][mindf_title] = mindf_time
 		eval("self.%s()"%self.topic)
 
 
