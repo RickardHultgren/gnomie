@@ -269,7 +269,6 @@ class MainScreen(Screen):
 	#act_ttsvar = False
 	box = BoxLayout(orientation='vertical')
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
-###now
 	poptop=BoxLayout(orientation='vertical',size_hint_y=.4, size_hint_x=1)
 	popbox=GridLayout(
                 cols=1,
@@ -295,7 +294,6 @@ class MainScreen(Screen):
 	pop_unit_name = ""
 	pop_title_name = ""
 
-	###now
 	#main_x_scroll= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	delbox = BoxLayout(orientation='vertical')
 	main_x_scroll=ScrollView(size= delbox.size, bar_pos_x="top")
@@ -514,7 +512,7 @@ class MainScreen(Screen):
 							try:
 								begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
-								begin_lbl=Label(text=beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								begin_lbl=Label(text="begin: %s"%beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								begin_box.add_widget(begin_lbl)
 								self.ids.main_box.add_widget(begin_box)
 							except:
@@ -522,7 +520,7 @@ class MainScreen(Screen):
 							try:
 								end_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								ending = self.pop_choices[self.topic][1][pop_item]["end"]
-								end_lbl=Label(text=ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								end_lbl=Label(text="end: %s"%ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								end_box.add_widget(end_lbl)
 								self.ids.main_box.add_widget(end_box)
 							except:
@@ -598,6 +596,9 @@ class MainScreen(Screen):
 		res = res.text
 		times_matched = 0
 		length = int(len(think_things_cpy)+1)
+
+		
+
 		#fixed length:
 		for h in range(1,length) :
 			keylist=list(think_things_cpy.keys())
@@ -643,8 +644,6 @@ class MainScreen(Screen):
 					#think_things.put("%s"%(times_matched), title=title_var, state=state_var, nomen=nomen_var)
 					#think_things["%s"%(times_matched)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
 					times_matched += 1
-					print "hoi"
-
 					
 					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
 					
@@ -659,23 +658,17 @@ class MainScreen(Screen):
 		except:
 			pass
 		
-		if len(args)>4:
-			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=args[4], end=args[5])
-			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":args[4], "end":args[5]}
+		if len(args)>2:
+			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=str(args[0].text), end=str(args[1].text))
+			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":str(args[0].text), "end":str(args[1].text)}
 		else:
 			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen )
 			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
 		index_nr = 0
 
-
-
-
 	def del_func(self, pop_item, *args):
-		###now
-		#Are you sure you want to delete this item?:
-		#bubble or popup?
-
+		
 		try:
 			self.popbox.clear_widgets()
 			self.poptop.clear_widgets()
@@ -698,7 +691,6 @@ class MainScreen(Screen):
 		my_bub_btnY=Button(text='Yes')
 		my_bub_btnN=Button(text='No')
 		##my_bub_btn1.bind(on_release=lambda my_bub_btn1: self.Update(1, self.main_x_box, my_bub_btn1))
-		###now
 		self.main_x_box.add_widget(my_bub_lbl)
 		#self.popbox.add_widget(box2)
 		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_nomen(pop_item))
@@ -807,7 +799,9 @@ class MainScreen(Screen):
 			
 			#min_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 
-			popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_title = Button(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_title.bind(on_release = partial(self.edit_pop, pop_item))
 			#popping_box_title.size_hint_y= None
 			#popping_box_title.width=.31*self.popbox.width
 			#popping_box_title.text_size=(self.width, None)
@@ -819,8 +813,9 @@ class MainScreen(Screen):
 			popping_box_title.bind(height=popping_box_title.setter('texture_size[1]'))
 			popping_box_title.bind(height=popping_box_title.setter('self.minimum_height'))
 
-
-			popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_min = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_min.bind(on_release = partial(self.edit_pop, pop_item))
 			#popping_box_min.size_hint_y= None
 			#popping_box_min.width=.31*self.popbox.width
 			#popping_box_min.text_size=(self.width, None)
@@ -839,7 +834,6 @@ class MainScreen(Screen):
 			popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			predict = self.pop_funcs[self.topic].__name__
 			popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
-			
 			if popping_box_min.height>popping_box_title.height:
 				#popping_box.height=self.txt_height * 0.2
 				popping_box.height=2*popping_box_min.height
@@ -867,6 +861,130 @@ class MainScreen(Screen):
 			self.popbox.add_widget(popping_box)
 			self.popbox.height += popping_box.height
 		self.popup1.open()
+
+	def edit_pop(self, pop_item, *args):
+		try:
+			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
+		except:
+			pass
+		try:
+			self.main_x_box.clear_widgets()
+		except:
+			pass			
+		try:
+			self.popup2.dismiss()
+		except:
+			pass
+		try:
+			self.popup1.dismiss()
+		except:
+			pass			
+
+
+		self.pop_bubble.background_color =(20, 0, 0, .5) 
+		self.pop_bubble.border = [50, 50, 50, 10]
+		#self.pop_bubble.size = (150, 50)
+		self.pop_bubble.arrow_pos= 'top_mid'
+		my_bub_lbl=Label(text="Edit %s"%pop_item)
+		my_bub_inpt=TextInput(text="%s"%pop_item)
+		my_bub_bttn=BubbleButton(text="change")
+		my_bub_bttn.bind(on_release=partial(self.chng_edit, pop_item, my_bub_inpt))
+		my_bub_btnN=BubbleButton(text="cancel")
+		my_bub_btnN.bind(on_release=partial(eval("self.%s"%(self.topic) )))
+			
+		self.main_x_box.add_widget(my_bub_lbl)
+		self.main_x_box.add_widget(my_bub_inpt)
+		self.main_x_box.add_widget(my_bub_bttn)
+		self.main_x_box.add_widget(my_bub_btnN)
+		
+		self.popup2.open()
+
+
+	def chng_edit(self, res, new_res):
+		new_res=new_res.text
+		times_matched = 0
+		length = int(len(think_things_cpy)+1)
+
+		#fixed length:
+		for h in range(1,length) :
+			keylist=list(think_things_cpy.keys())
+			#print sorted(keylist)
+			for key in sorted(keylist):
+				#print "key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
+				if int(key) == h:
+					times_matched += 1
+					#break
+				elif times_matched < h and int(key) > h:
+					title_var = ""
+					state_var = ""
+					nomen_var = ""
+					begin_var = ""
+					end_var = ""
+					for j in ["title","state","nomen","begin","end"] :
+						if j == "title" :
+							title_var = str(think_things_cpy[key][j])
+						if j == "state" :
+							state_var = str(think_things_cpy[key][j])
+						if j == "nomen" :
+							nomen_var = str(think_things_cpy[key][j])
+						if j == "begin" :
+							try:
+								begin_var = str(think_things_cpy[key][j])
+							except:
+								pass
+						if j == "end" :
+							try:
+								end_var = str(think_things_cpy[key][j])
+							except:
+								pass						
+					#print "key to delete: %s" % key
+					think_things.delete(key)
+					think_things_cpy.pop(key, None)
+					#times_matched += 1
+					if begin_var == "" and end_var == "":
+						think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
+						think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+					else:
+						think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var, begin=begin_var, end=end_var)
+						think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var, "begin":begin_var, "end":end_var}
+					#think_things.put("%s"%(times_matched), title=title_var, state=state_var, nomen=nomen_var)
+					#think_things["%s"%(times_matched)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+					times_matched += 1
+					
+					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
+					
+					#break
+					#continue
+		maxed=0
+		maxing = []
+		for n in think_things_cpy:
+			maxing.append(int(n))
+		try:
+			maxed = max(maxing)+1
+		except:
+			pass
+		
+		if len(args)>2:
+			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=str(args[0].text), end=str(args[1].text))
+			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":str(args[0].text), "end":str(args[1].text)}
+		else:
+			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen )
+			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
+		self.planupdate()
+		index_nr = 0
+
+
+		checking=1
+		for pop_item in self.pop_choices[self.topic][0]:
+			if self.pop_choices[self.topic][0][pop_item] == mindf_title:
+				checking = 0
+		if checking == 1:
+			eval("%s_things"%self.topic).put(str(mindf_title), category=mindf_time, title=mindf_title)
+			self.pop_choices[self.topic][0][mindf_title] = mindf_time
+		eval("self.%s()"%self.topic)
+
+
 
 		
 	def mindf(self, *args):
@@ -955,10 +1073,6 @@ class MainScreen(Screen):
 		eval("self.%s()"%self.topic)
 
 	def del_pop(self, pop_item, *args):
-		###now
-		#Are you sure you want to delete this item?:
-		#bubble or popup?
-
 		try:
 			self.popbox.clear_widgets()
 			self.poptop.clear_widgets()
