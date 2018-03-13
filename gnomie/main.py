@@ -529,15 +529,16 @@ class MainScreen(Screen):
 							res_box.add_widget(res_del)
 							res_box.height += res_del.height
 							
-							res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-							res_rev.bind(on_release = partial(self.review, pop_item))
-							res_box.add_widget(res_rev)
-							res_box.height += res_rev.height
-							
-							res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-							res_edit.bind(on_release = partial(self.edit_post, pop_item))
-							res_box.add_widget(res_edit)
-							res_box.height += res_edit.height
+							if self.state_topic == "obj":
+								res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								res_rev.bind(on_release = partial(self.review, pop_item))
+								res_box.add_widget(res_rev)
+								res_box.height += res_rev.height
+								
+								res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								res_edit.bind(on_release = partial(self.edit_post, pop_item))
+								res_box.add_widget(res_edit)
+								res_box.height += res_edit.height
 							#res_del.bind(on_release = partial(self.del_nomen, pop_item))
 							try:
 								begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
