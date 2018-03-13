@@ -496,16 +496,15 @@ class MainScreen(Screen):
 				res_box.add_widget(data_end)
 				res_box.height= "%ssp"%str(8*self.txt_height)
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_begin, data_end))
-			if self.state_topic=="obj" and self.state_sub_topic=="review":
-				###now!
-				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_box.add_widget(Label(text="begin date, time"))
-				res_box.add_widget(data_begin)
-				res_box.add_widget(Label(text="end date, time"))
-				res_box.add_widget(data_end)
+			elif self.state_topic=="obj" and self.state_sub_topic=="review":
+				data_mood = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				data_about = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				res_box.add_widget(Label(text="mood"))
+				res_box.add_widget(data_mood)
+				res_box.add_widget(Label(text="about"))
+				res_box.add_widget(data_about)
 				res_box.height= "%ssp"%str(8*self.txt_height)
-				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_begin, data_end))				
+				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_mood, data_about))
 			else:
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			self.ids.main_box.add_widget(res_box)
@@ -553,6 +552,22 @@ class MainScreen(Screen):
 								end_lbl=Label(text="end: %s"%ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								end_box.add_widget(end_lbl)
 								self.ids.main_box.add_widget(end_box)
+							except:
+								pass
+							try:
+								mood_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								moodning = self.pop_choices[self.topic][1][pop_item]["mood"]
+								mood_lbl=Label(text="mood: %s"%moodning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								mood_box.add_widget(mood_lbl)
+								self.ids.main_box.add_widget(mood_box)
+							except:
+								pass
+							try:
+								about_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								abouting = self.pop_choices[self.topic][1][pop_item]["about"]
+								about_lbl=Label(text="about: %s"%abouting, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								about_box.add_widget(about_lbl)
+								self.ids.main_box.add_widget(about_box)
 							except:
 								pass
 						
@@ -651,6 +666,8 @@ class MainScreen(Screen):
 					nomen_var = ""
 					begin_var = ""
 					end_var = ""
+					mood_var = ""
+					about_var = ""
 					for j in ["title","state","nomen","begin","end"] :
 						if j == "title" :
 							title_var = str(think_things_cpy[key][j])
@@ -668,16 +685,22 @@ class MainScreen(Screen):
 								end_var = str(think_things_cpy[key][j])
 							except:
 								pass						
+						if j == "mood" :
+							try:
+								modd_var = str(think_things_cpy[key][j])
+							except:
+								pass
+						if j == "about" :
+							try:
+								about_var = str(think_things_cpy[key][j])
+							except:
+								pass						
 					#print "key to delete: %s" % key
 					think_things.delete(key)
 					think_things_cpy.pop(key, None)
 					#times_matched += 1
-					if begin_var == "" and end_var == "":
-						think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
-						think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-					else:
-						think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var, begin=begin_var, end=end_var)
-						think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var, "begin":begin_var, "end":end_var}
+					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var, begin=begin_var, end=end_var, mood=mood_var, about=about_var)
+					think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var, "begin":begin_var, "end":end_var, "mood":mood_var, "about":about_var}
 					#think_things.put("%s"%(times_matched), title=title_var, state=state_var, nomen=nomen_var)
 					#think_things["%s"%(times_matched)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
 					times_matched += 1
@@ -694,7 +717,7 @@ class MainScreen(Screen):
 			maxed = max(maxing)+1
 		except:
 			pass
-		
+###!		
 		if len(args)>2:
 			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=str(args[0].text), end=str(args[1].text))
 			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":str(args[0].text), "end":str(args[1].text)}
