@@ -466,16 +466,16 @@ class MainScreen(Screen):
 			rubric_box.add_widget(mis_btn)
 			rubric_box.add_widget(vis_btn)
 			self.ids.main_box.add_widget(rubric_box)
-			if self.state_topic=="obj":
-				sub_rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				plan_btn=Button(text="Plan", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
-				plan_btn.bind(on_release=lambda obj_btn: self.chng_state_obj())
-				review_btn=Button(text="Review", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
-				review_btn.bind(on_release=lambda obj_btn: self.chng_state_obj())
-				eval("%s_btn"%self.state_sub_topic).background_color= (.75, .25, 0, 1.0)
-				sub_rubric_box.add_widget(plan_btn)
-				sub_rubric_box.add_widget(review_btn)
-				self.ids.main_box.add_widget(sub_rubric_box)
+#			if self.state_topic=="obj":
+#				sub_rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+#				plan_btn=Button(text="Plan", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+#				plan_btn.bind(on_release=lambda obj_btn: self.chng_state_obj())
+#				review_btn=Button(text="Review", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+#				review_btn.bind(on_release=lambda obj_btn: self.chng_state_obj())
+#				eval("%s_btn"%self.state_sub_topic).background_color= (.75, .25, 0, 1.0)
+#				sub_rubric_box.add_widget(plan_btn)
+#				sub_rubric_box.add_widget(review_btn)
+#				self.ids.main_box.add_widget(sub_rubric_box)
 			#self.state_topic='objectives'
 			#res_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -496,15 +496,6 @@ class MainScreen(Screen):
 				res_box.add_widget(data_end)
 				res_box.height= "%ssp"%str(8*self.txt_height)
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_begin, data_end))
-			elif self.state_topic=="obj" and self.state_sub_topic=="review":
-				data_mood = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				data_about = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_box.add_widget(Label(text="mood"))
-				res_box.add_widget(data_mood)
-				res_box.add_widget(Label(text="about"))
-				res_box.add_widget(data_about)
-				res_box.height= "%ssp"%str(8*self.txt_height)
-				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_mood, data_about))
 			else:
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			self.ids.main_box.add_widget(res_box)
@@ -527,17 +518,27 @@ class MainScreen(Screen):
 					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
 						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen and self.state_topic==preNomen:
 							
-							res_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							res_box = BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res = self.pop_choices[self.topic][1][pop_item]["title"]
 							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res_box.add_widget(res_lbl)
 							res_box.height += res_lbl.height
-							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							
+							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res_del.bind(on_release = partial(self.del_func, pop_item))
-							#res_del.bind(on_release = partial(self.del_nomen, pop_item))
 							res_box.add_widget(res_del)
 							res_box.height += res_del.height
+							
+							res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							res_rev.bind(on_release = partial(self.review, pop_item))
+							res_box.add_widget(res_rev)
+							res_box.height += res_rev.height
+							
+							res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							res_edit.bind(on_release = partial(self.edit_post, pop_item))
+							res_box.add_widget(res_edit)
+							res_box.height += res_edit.height
+							#res_del.bind(on_release = partial(self.del_nomen, pop_item))
 							try:
 								begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
@@ -611,6 +612,170 @@ class MainScreen(Screen):
 			self.ids.main_box.height += bttn.height
 		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
 		#self.ids.main_box.height += 1*self.txt_height + Window.height
+
+	def edit_post(self, pop_item, *args):
+		res= think_things[pop_item]['title']
+		try:
+			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
+		except:
+			pass
+		try:
+			self.main_x_box.clear_widgets()
+		except:
+			pass			
+		try:
+			self.popup2.dismiss()
+		except:
+			pass
+		try:
+			self.popup1.dismiss()
+		except:
+			pass			
+
+
+
+		self.pop_bubble.background_color =(20, 0, 0, .5) 
+		self.pop_bubble.border = [50, 50, 50, 10]
+		#self.pop_bubble.size = (150, 50)
+		self.pop_bubble.arrow_pos= 'top_mid'
+		my_bub_lbl=Label(text="Edit %s"%res)
+
+		data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box.add_widget(Label(text=res))
+		res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box.add_widget(res_inpt)
+		
+		data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box.add_widget(Label(text="begin date, time"))
+		res_box.add_widget(data_begin)
+		res_box.add_widget(Label(text="end date, time"))
+		res_box.add_widget(data_end)
+		res_box.height= "%ssp"%str(8*self.txt_height)
+		
+		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_bttn=BubbleButton(text="change")
+		res_bttn.bind(on_release=partial(self.edit_nomen, pop_item, res_inpt, data_begin, data_end))
+
+		my_bub_btnN=BubbleButton(text="cancel")
+		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
+			
+		self.main_x_box.add_widget(my_bub_lbl)
+		self.main_x_box.add_widget(res_box)
+		#self.main_x_box.add_widget(res_bttn)
+		#self.main_x_box.add_widget(my_bub_btnN)
+		bttn_box.add_widget(res_bttn)
+		bttn_box.add_widget(my_bub_btnN)		
+		self.main_x_box.add_widget(bttn_box)
+		
+		self.popup2.open()
+
+	def edit_nomen(self, pop_item, res, begin, end, *args):
+		preNomen=self.state_topic
+		res = res.text
+		begin2var = begin.text
+		end2var = end.text
+
+		try:
+			mood2var = think_things[pop_item]['mood']
+		except:
+			pass
+		try:
+			about2var = think_things[pop_item]['about']
+		except:
+			pass
+		
+		think_things.delete(pop_item)
+		think_things_cpy.pop(pop_item, None)
+		think_things.put("%s"%pop_item, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
+		think_things_cpy["%s"%pop_item]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":begin2var, "end":end2var, "mood":mood2var, "about":about2var}
+		self.planupdate()
+		
+	def review(self, pop_item, *args):
+		res= think_things[pop_item]['title']
+		try:
+			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
+		except:
+			pass
+		try:
+			self.main_x_box.clear_widgets()
+		except:
+			pass			
+		try:
+			self.popup2.dismiss()
+		except:
+			pass
+		try:
+			self.popup1.dismiss()
+		except:
+			pass			
+
+
+
+		self.pop_bubble.background_color =(20, 0, 0, .5) 
+		self.pop_bubble.border = [50, 50, 50, 10]
+		#self.pop_bubble.size = (150, 50)
+		self.pop_bubble.arrow_pos= 'top_mid'
+		my_bub_lbl=Label(text="Edit %s"%res)
+
+		data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box.add_widget(Label(text="%s"%res))
+		#res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		#res_box.add_widget(res_inpt)
+		
+		data_mood = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		data_about = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box.add_widget(Label(text="mood"))
+		res_box.add_widget(data_mood)
+		res_box.add_widget(Label(text="about"))
+		res_box.add_widget(data_about)
+		res_box.height= "%ssp"%str(8*self.txt_height)
+		
+		
+		
+
+		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_bttn=BubbleButton(text="Save")
+		res_bttn.bind(on_release=partial(self.add_review, pop_item, data_mood, data_about))
+
+		my_bub_btnN=BubbleButton(text="cancel")
+		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
+			
+		bttn_box.add_widget(res_bttn)
+		bttn_box.add_widget(my_bub_btnN)
+		
+		
+		
+		self.main_x_box.add_widget(my_bub_lbl)
+		self.main_x_box.add_widget(res_box)
+		self.main_x_box.add_widget(bttn_box)
+		
+		self.popup2.open()
+
+	def add_review(self, pop_item, mood, about, *args):
+		res= think_things[pop_item]['title']
+		preNomen=self.state_topic
+
+		try:
+			begin2var = think_things[pop_item]['begin']
+		except:
+			pass
+		try:
+			end2var = think_things[pop_item]['end']
+		except:
+			pass			
+
+		mood2var = mood.text
+		about2var = about.text
+		
+		think_things.delete(pop_item)
+		think_things_cpy.pop(pop_item, None)
+		think_things.put("%s"%pop_item, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
+		think_things_cpy["%s"%pop_item]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":begin2var, "end":end2var, "mood":mood2var, "about":about2var}
+		self.planupdate()
 
 	def chng_obj(self):
 		self.state_topic="obj"
@@ -717,9 +882,15 @@ class MainScreen(Screen):
 			maxed = max(maxing)+1
 		except:
 			pass
+		
+		if self.state_topic=="obj":
+			begin2var=str(args[0].text)
+			end2var=str(args[1].text)
+			mood2var=""
+			about2var=""
 ###!		
-		if len(args)>2:
-			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=str(args[0].text), end=str(args[1].text))
+		
+			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
 			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":str(args[0].text), "end":str(args[1].text)}
 		else:
 			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen )
