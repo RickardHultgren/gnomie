@@ -261,6 +261,7 @@ class MainScreen(Screen):
 	'stast' : '\n\n'}
 	topic='start'
 	state_topic='obj'
+	state_sub_topic='plan'
 	mindf_time=NumericProperty(0)
 	mindf_part=0
 	mindf_limit=0
@@ -465,6 +466,16 @@ class MainScreen(Screen):
 			rubric_box.add_widget(mis_btn)
 			rubric_box.add_widget(vis_btn)
 			self.ids.main_box.add_widget(rubric_box)
+			if self.state_topic=="obj":
+				sub_rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				plan_btn=Button(text="Plan", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+				plan_btn.bind(on_release=lambda obj_btn: self.chng_state_obj())
+				review_btn=Button(text="Review", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+				review_btn.bind(on_release=lambda obj_btn: self.chng_state_obj())
+				eval("%s_btn"%self.state_sub_topic).background_color= (.75, .25, 0, 1.0)
+				sub_rubric_box.add_widget(plan_btn)
+				sub_rubric_box.add_widget(review_btn)
+				self.ids.main_box.add_widget(sub_rubric_box)
 			#self.state_topic='objectives'
 			#res_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -476,7 +487,7 @@ class MainScreen(Screen):
 			res_bttn.padding = (self.ids.main_box.width * 0.2, self.ids.main_box.height * 0.2)
 			bttn_box.add_widget(res_bttn)
             #res_bttn.spacing = "10ssp"
-			if self.state_topic=="obj":
+			if self.state_topic=="obj" and self.state_sub_topic=="plan":
 				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 				res_box.add_widget(Label(text="begin date, time"))
@@ -485,6 +496,16 @@ class MainScreen(Screen):
 				res_box.add_widget(data_end)
 				res_box.height= "%ssp"%str(8*self.txt_height)
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_begin, data_end))
+			if self.state_topic=="obj" and self.state_sub_topic=="review":
+				###now!
+				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				res_box.add_widget(Label(text="begin date, time"))
+				res_box.add_widget(data_begin)
+				res_box.add_widget(Label(text="end date, time"))
+				res_box.add_widget(data_end)
+				res_box.height= "%ssp"%str(8*self.txt_height)
+				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_begin, data_end))				
 			else:
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			self.ids.main_box.add_widget(res_box)
@@ -578,6 +599,13 @@ class MainScreen(Screen):
 
 	def chng_obj(self):
 		self.state_topic="obj"
+		self.planupdate()
+
+	def chng_state_obj(self):
+		if self.state_sub_topic=="plan":
+			self.state_sub_topic="review"
+		else:
+			self.state_sub_topic="plan"
 		self.planupdate()
 		
 	def chng_mis(self):
