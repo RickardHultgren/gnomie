@@ -65,24 +65,6 @@ KIVY_FONTS = [
 for font in KIVY_FONTS:
     LabelBase.register(**font)
 
-#https://www.snip2code.com/Snippet/344451/Kivy--Android-keep-screen-on
-#https://gist.github.com/kived/4b3c1a78b0104e52b2a1
-#try:
-#	from jnius import autoclass
-#	PythonActivity = autoclass('org.kivy.android.PythonActivity')
-#	View = autoclass('android.view.View')
-#	Params = autoclass('android.view.WindowManager$LayoutParams')
-#	from android.runnable import run_on_ui_thread
-#except:
-#	pass
-
-#Declaration of global variables:
-#mindf_things = JsonStore('app/mindf_things.json')
-#state_things = JsonStore('app/state_things.json')
-#think_things = JsonStore('app/think_things.json')
-#temp_timers = dict(JsonStore('app/mindf_things.json'))
-#temp_claims = dict(JsonStore('app/state_things.json'))
-#temp_think = dict(JsonStore('app/think_things.json'))
 mindf_things = JsonStore('mindf_things.json')
 state_things = JsonStore('state_things.json')
 think_things = JsonStore('think_things.json')
@@ -95,9 +77,6 @@ mindf_things_cpy = dict()
 state_things_cpy = dict()
 think_things_cpy = dict()
 temp_set_cpy = dict()
-#mindf_things.put(str(theitem), itemtype=topic, name=theitem)
-
-#the_screenmanager = ScreenManager()
 
 for key in temp_timers:
 	counting = 0
@@ -114,7 +93,6 @@ for key in temp_timers:
 			thekey=str()
 			thevalue=str()
 			counting = 0
-
 
 for key in temp_claims:
 	counting = 0
@@ -256,7 +234,6 @@ class MainScreen(Screen):
 	'settings' : ["exit"],
 	'start' : ["mindfulness", "statements", "statistics"],
 	'mindf' : ["previous","next","exit"],
-	#'mindf' : [["next","previous","exit"],['mindf' : ["next","previous","exit"],].['mindf' : ["next","previous","exit"]]],
 	'state' : ["statements","exit"],
 	'stast' : '\n\n'}
 	topic='start'
@@ -267,7 +244,6 @@ class MainScreen(Screen):
 	mindf_limit=0
 	mindf_speed=0
 	state_claim=""
-	#act_ttsvar = False
 	box = BoxLayout(orientation='vertical')
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
 	poptop=BoxLayout(orientation='vertical',size_hint_y=.4, size_hint_x=1)
@@ -455,29 +431,16 @@ class MainScreen(Screen):
 			self.ids.main_box.add_widget(cat_lbl)
 			
 			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
-			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
-			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
-			mis_btn.bind(on_release=lambda mis_btn: self.chng_mis())
-			vis_btn=Button(text="Vissions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
-			vis_btn.bind(on_release=lambda vis_btn: self.chng_vis())
+			temp_dict = {"obj":"Objective","mis":"Mission","vis":"Vision"}
+			for temp_word in temp_dict:
+				eval("%s_btn"%temp_word)=Button(text=eval("%s_btn"%temp_dict), size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+				eval("%s_btn"%temp_word).bind(on_release=lambda eval("%s_btn"%temp_word): self.eval("chng_%s()"%temp_word))
 			eval("%s_btn"%self.state_topic).background_color= (.75, .25, 0, 1.0)
-			rubric_box.add_widget(obj_btn)
-			rubric_box.add_widget(mis_btn)
-			rubric_box.add_widget(vis_btn)
+			for temp_word in temp_dict:
+				rubric_box.add_widget(eval("%s_btn"%temp_word))
+			temp_dict = None
 			self.ids.main_box.add_widget(rubric_box)
-#			if self.state_topic=="obj":
-#				sub_rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-#				plan_btn=Button(text="Plan", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
-#				plan_btn.bind(on_release=lambda obj_btn: self.chng_state_obj())
-#				review_btn=Button(text="Review", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
-#				review_btn.bind(on_release=lambda obj_btn: self.chng_state_obj())
-#				eval("%s_btn"%self.state_sub_topic).background_color= (.75, .25, 0, 1.0)
-#				sub_rubric_box.add_widget(plan_btn)
-#				sub_rubric_box.add_widget(review_btn)
-#				self.ids.main_box.add_widget(sub_rubric_box)
-			#self.state_topic='objectives'
-			#res_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+
 			res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(Label(text="name"))
 			res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -486,7 +449,7 @@ class MainScreen(Screen):
 			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_bttn.padding = (self.ids.main_box.width * 0.2, self.ids.main_box.height * 0.2)
 			bttn_box.add_widget(res_bttn)
-            #res_bttn.spacing = "10ssp"
+
 			if self.state_topic=="obj" and self.state_sub_topic=="plan":
 				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -502,18 +465,10 @@ class MainScreen(Screen):
 			self.ids.main_box.add_widget(bttn_box)
 			
 			for preNomen in ["obj","mis","vis"]:
-				if preNomen == "obj" and self.state_topic=="obj":
-					obj_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-					self.ids.main_box.add_widget(obj_lbl)
-					self.ids.main_box.height += obj_lbl.height
-				if preNomen == "mis" and self.state_topic=="mis":
-					mis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-					self.ids.main_box.add_widget(mis_lbl)
-					self.ids.main_box.height += mis_lbl.height
-				if preNomen == "vis" and self.state_topic=="vis":
-					vis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-					self.ids.main_box.add_widget(vis_lbl)
-					self.ids.main_box.height += vis_lbl.height
+				eval("%s_lbl"%preNomen)
+				eval("%s_lbl"%preNomen)=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				self.ids.main_box.add_widget(eval("%s_lbl"%preNomen))
+				self.ids.main_box.height += eval("%s_lbl"%preNomen).height
 				for pop_item in self.pop_choices[self.topic][1]:
 					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
 						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen and self.state_topic==preNomen:
@@ -544,32 +499,36 @@ class MainScreen(Screen):
 								begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
 								begin_lbl=Label(text="begin: %s"%beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-								begin_box.add_widget(begin_lbl)
-								self.ids.main_box.add_widget(begin_box)
+								if self.pop_choices[self.topic][1][pop_item]["begin"] != "add" or self.pop_choices[self.topic][1][pop_item]["begin"] != "" :
+									begin_box.add_widget(begin_lbl)
+									self.ids.main_box.add_widget(begin_box)
 							except:
 								pass
 							try:
 								end_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								ending = self.pop_choices[self.topic][1][pop_item]["end"]
 								end_lbl=Label(text="end: %s"%ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-								end_box.add_widget(end_lbl)
-								self.ids.main_box.add_widget(end_box)
+								if self.pop_choices[self.topic][1][pop_item]["end"] != "add" or self.pop_choices[self.topic][1][pop_item]["end"] != "" :
+									end_box.add_widget(end_lbl)
+									self.ids.main_box.add_widget(end_box)
 							except:
 								pass
 							try:
 								mood_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								moodning = self.pop_choices[self.topic][1][pop_item]["mood"]
 								mood_lbl=Label(text="mood: %s"%moodning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-								mood_box.add_widget(mood_lbl)
-								self.ids.main_box.add_widget(mood_box)
+								if self.pop_choices[self.topic][1][pop_item]["mood"] != "":
+									mood_box.add_widget(mood_lbl)
+									self.ids.main_box.add_widget(mood_box)
 							except:
 								pass
 							try:
 								about_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								abouting = self.pop_choices[self.topic][1][pop_item]["about"]
 								about_lbl=Label(text="about: %s"%abouting, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-								about_box.add_widget(about_lbl)
-								self.ids.main_box.add_widget(about_box)
+								if self.pop_choices[self.topic][1][pop_item]["about"] != "":
+									about_box.add_widget(about_lbl)
+									self.ids.main_box.add_widget(about_box)
 							except:
 								pass
 						
@@ -815,8 +774,6 @@ class MainScreen(Screen):
 		times_matched = 0
 		length = int(len(think_things_cpy)+1)
 
-		
-
 		#fixed length:
 		for h in range(1,length) :
 			keylist=list(think_things_cpy.keys())
@@ -834,6 +791,7 @@ class MainScreen(Screen):
 					end_var = ""
 					mood_var = ""
 					about_var = ""
+					print think_things_cpy[key]
 					for j in ["title","state","nomen","begin","end"] :
 						if j == "title" :
 							title_var = str(think_things_cpy[key][j])
@@ -884,18 +842,24 @@ class MainScreen(Screen):
 		except:
 			pass
 		
-		if self.state_topic=="obj":
+		#if self.state_topic=="obj" and args>2:
+		#if self.state_topic=="obj":
+		try:
 			begin2var=str(args[0].text)
-			end2var=str(args[1].text)
-			mood2var=""
-			about2var=""
+		except:
+			begin2var=""
+		try:
+			end2var=str(args[0].text)
+		except:
+			end2var=""
+		mood2var=""
+		about2var=""
 ###!		
-		
-			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
-			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":str(args[0].text), "end":str(args[1].text)}
-		else:
-			think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen )
-			think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
+		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
+		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":begin2var, "end":end2var}
+		#else:
+		#	think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen )
+		#	think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
 		index_nr = 0
 
