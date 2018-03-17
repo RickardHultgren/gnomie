@@ -785,17 +785,13 @@ class MainScreen(Screen):
 		res = res.text
 		times_matched = 0
 		length = int(len(think_things_cpy)+1)
-
-		#fixed length:
+		
 		for h in range(1,length) :
 			keylist=list(think_things_cpy.keys())
-			#print sorted(keylist)
+			print sorted(keylist)
 			for key in sorted(keylist):
-				#print "key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
-				if int(key) == h:
-					times_matched += 1
-					#break
-				elif times_matched < h and int(key) > h:
+				#print "\nh:%s\nkey: %s ; h: %s ; times_matched: %s"%("abc", key, h, times_matched)
+				if times_matched < h and int(key) > h:
 					title_var = ""
 					state_var = ""
 					nomen_var = ""
@@ -803,7 +799,6 @@ class MainScreen(Screen):
 					end_var = ""
 					mood_var = ""
 					about_var = ""
-					print think_things_cpy[key]
 					for j in ["title","state","nomen","begin","end"] :
 						if j == "title" :
 							title_var = str(think_things_cpy[key][j])
@@ -820,39 +815,26 @@ class MainScreen(Screen):
 							try:
 								end_var = str(think_things_cpy[key][j])
 							except:
-								pass						
+								pass
 						if j == "mood" :
 							try:
-								modd_var = str(think_things_cpy[key][j])
+								mood_var = str(think_things_cpy[key][j])
 							except:
 								pass
 						if j == "about" :
 							try:
 								about_var = str(think_things_cpy[key][j])
 							except:
-								pass						
-					#print "key to delete: %s" % key
+								pass
 					think_things.delete(key)
 					think_things_cpy.pop(key, None)
-					#times_matched += 1
 					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var, begin=begin_var, end=end_var, mood=mood_var, about=about_var)
 					think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var, "begin":begin_var, "end":end_var, "mood":mood_var, "about":about_var}
-					#think_things.put("%s"%(times_matched), title=title_var, state=state_var, nomen=nomen_var)
-					#think_things["%s"%(times_matched)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
 					times_matched += 1
-					
 					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
-					
-					#break
-					#continue
-		maxed=0
-		maxing = []
-		for n in think_things_cpy:
-			maxing.append(int(n))
-		try:
-			maxed = max(maxing)+1
-		except:
-			pass
+				else:
+					times_matched += 1
+		maxed=length+1
 		
 		#if self.state_topic=="obj" and args>2:
 		#if self.state_topic=="obj":
