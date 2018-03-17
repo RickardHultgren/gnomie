@@ -836,8 +836,6 @@ class MainScreen(Screen):
 					times_matched += 1
 		maxed=length+1
 		
-		#if self.state_topic=="obj" and args>2:
-		#if self.state_topic=="obj":
 		begin2var=""
 		end2var=""
 		mood2var=""
@@ -846,17 +844,13 @@ class MainScreen(Screen):
 		if len(args)>2:
 			begin2var=str(args[0].text)
 			end2var=str(args[1].text)
-###!		
+	
 		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
 		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":begin2var, "end":end2var}
-		#else:
-		#	think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen )
-		#	think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
 		index_nr = 0
 
 	def del_func(self, pop_item, *args):
-		
 		try:
 			self.popbox.clear_widgets()
 			self.poptop.clear_widgets()
