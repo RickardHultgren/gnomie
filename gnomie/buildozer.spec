@@ -45,7 +45,7 @@ requirements = plyer,kivy
 #garden_requirements =
 
 # (str) Presplash of the application
-presplash.filename = logo.png
+presplash.filename = logotype.png
 
 # (str) Icon of the application
 icon.filename = logo.png
