@@ -1391,10 +1391,14 @@ class MainScreen(Screen):
 		#self.pop_bubble.add_widget(my_bub_btnN)
 		#self.add_widget(self.pop_bubble)
 		#self.popbox.add_widget(self.pop_bubble)
-		self.main_x_box.add_widget(my_bub_lbl)
-		self.main_x_box.add_widget(my_bub_btnY)
-		self.main_x_box.add_widget(my_bub_btnN)
-		self.popup2.open()
+		#self.main_x_box.add_widget(my_bub_lbl)
+		#self.main_x_box.add_widget(my_bub_btnY)
+		#self.main_x_box.add_widget(my_bub_btnN)
+		#self.popup2.open()
+		self.popbox.add_widget(my_bub_lbl)
+		self.popbox.add_widget(my_bub_btnY)
+		self.popbox.add_widget(my_bub_btnN)
+		self.popup1.open()
 
 	def del_pop_N(self):
 		self.popup2.dismiss()
