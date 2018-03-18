@@ -157,7 +157,7 @@ Builder.load_string('''
                 BorderImage:
                     pos: self.pos
                     size: self.size
-                    source: "gnomie.png"
+                    source: "bg1.png"
                     
             ActionView:
                 use_separator: True
@@ -166,7 +166,7 @@ Builder.load_string('''
                     #title: ''
                     app_icon: 'gnomie.png'
                     with_previous: False
-                    #on_release: root.start()
+                    on_release: root.start()
                     #on_press: root.start()
                     #background_normal: ''
                     #background_color: 1, .3, .4, .85
@@ -176,7 +176,7 @@ Builder.load_string('''
                     background_normal: './menu.png'
                     background_down: './menu.png'
                     background_disabled_normal: './menu.png'
-                    border: 30, 30, 3, 3                    
+                    border: 60, 60, 60, 3                    
                     ActionButton:
                         text: 'about'
                         font_name: 'DejaVuSerif'
@@ -188,6 +188,59 @@ Builder.load_string('''
                         on_release: root.settings()
                         background_color:255,0,0,1                    
 
+        ActionBar:
+
+            height:root.height / 8
+            width:root.width
+            background_color:0,50,50,.2
+            pos_hint: {'top':1}            
+            padding: '2ssp'
+            canvas:
+                Color:
+                    rgba: self.background_color
+                BorderImage:
+                    pos: self.pos
+                    size: self.size
+                    source: "bg1.png"
+                    
+            ActionView:
+                use_separator: True
+                ActionPrevious:
+                    #title: 'gnomie'
+                    #title: ''
+                    app_icon: 'bg1.png'
+                    with_previous: False
+                    #on_release: root.start()
+                    #on_press: root.start()
+                    #background_normal: ''
+                    #background_color: 1, .3, .4, .85
+                ActionButton:
+                    #text: ''
+                    #font_name: 'DejaVuSerif'
+                    on_release: root.mindf()
+                    background_color:255,255,255,1
+                    background_normal: './brain.png'
+                    background_down: './brain.png'
+                    background_disabled_normal: './brain.png'
+                    border: 48, 48, 3, 3                    
+                ActionButton:
+                    #text: ''
+                    #font_name: 'DejaVuSerif'
+                    on_release: root.state()
+                    background_color:255,255,255,1
+                    background_normal: './goal.png'
+                    background_down: './goal.png'
+                    background_disabled_normal: './goal.png'
+                    border: 48, 48, 3, 3  
+                ActionButton:
+                    #text: ''
+                    #font_name: 'DejaVuSerif'
+                    on_release: root.stati()
+                    background_color:255,255,255,1
+                    background_normal: './stat.png'
+                    background_down: './stat.png'
+                    background_disabled_normal: './stat.png'
+                    border: 48, 48, 3, 3                   
                     
         ScrollView:
             size: self.size
@@ -206,11 +259,8 @@ Builder.load_string('''
 
 ''')  
 
-paused=True
-
 class MainScreen(Screen):
 	#global the_screenmanager
-	global paused
 	global mindf_things_cpy
 	global state_things_cpy
 	global think_things_cpy
@@ -223,27 +273,30 @@ class MainScreen(Screen):
 	'start' : "\n\n\n\nWelcome to my little home!\nI'm Gnomie the gnome.\n\n\n\n",
 	'mindf' : '\n\n',
 	'state' : '\n\n',
-	'stast' : '\n\n'}
+	'stati' : '\n\n'}
 	pop_choices = {
 	'settings' : '\n\n',
 	'start' : '\n\n',
 	'mindf' : [mindf_things_cpy],
 	'state' : [state_things_cpy, think_things_cpy],
-	'stast' : '\n\n'}
+	'stati' : '\n\n'}
 	main_buttons = {
-	'settings' : ["exit"],
-	'start' : ["mindfulness", "statements", "statistics"],
-	'mindf' : ["previous","next","exit"],
+	'settings' : [],
+	#'start' : ["mindfulness", "statements", "statistics"],
+	'start' : [],
+	'mindf' : ["<<",">>","||"],
 	'state' : ["statements","exit"],
-	'stast' : '\n\n'}
+	'stati' : '\n\n'}
 	topic='start'
 	state_topic='obj'
 	state_sub_topic='plan'
 	mindf_time=NumericProperty(0)
 	mindf_part=0
+	paused = False
 	mindf_limit=0
 	mindf_speed=0
 	state_claim=""
+
 	box = BoxLayout(orientation='vertical')
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
 	poptop=BoxLayout(orientation='vertical',size_hint_y=.4, size_hint_x=1)
@@ -273,7 +326,7 @@ class MainScreen(Screen):
 
 	#main_x_scroll= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	delbox = BoxLayout(orientation='vertical')
-	main_x_scroll=ScrollView(size= delbox.size, bar_pos_x="top")
+	main_x_scroll=ScrollView(size=delbox.size, bar_pos_x="top")
 	main_x_box=GridLayout(
                 cols=1,
                 orientation='vertical',
@@ -281,13 +334,13 @@ class MainScreen(Screen):
                 #height=root.bigheight,
                 padding = (main_x_scroll.width * 0.02, main_x_scroll.height * 0.02),
                 spacing = (main_x_scroll.width * 0.02, main_x_scroll.height * 0.02),
-                size_hint_y= None,
-                size_hint_x= 1,
-                do_scroll_x= False,
-                do_scroll_y= True
+                size_hint_y = None,
+                size_hint_x = 1,
+                do_scroll_x = False,
+                do_scroll_y = True
                 )
 	main_x_scroll.add_widget(main_x_box)
-	popup2 = Popup(content=delbox, size_hint=(.875, .875))
+	popup2 = Popup(content=delbox, size_hint = (.875, .875))
 	delbox.add_widget(main_x_scroll)
 
 	pop_bubble= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
@@ -301,7 +354,6 @@ class MainScreen(Screen):
 	
 	def planupdate(self,*args):
 		#global the_screenmanager
-		global paused
 		self.main_height=0
 		try:
 			self.ids.main_box.clear_widgets()
@@ -309,15 +361,6 @@ class MainScreen(Screen):
 			pass
 
 		if self.topic != "mindf" :
-			paused = True
-			try:
-				the_screenmanager.on_pause=False
-			except:
-				pass
-			#try:
-			#	PythonActivity.mActivity.getWindow().clearFlags(Params.FLAG_KEEP_SCREEN_ON)
-			#except:
-			#	pass
 			try:
 				self.main_x_box.clear_widgets()
 				self.popup2.dismiss()
@@ -351,10 +394,6 @@ class MainScreen(Screen):
 		self.ids.main_box.height += main_txt.height
 
 		if self.topic == "settings":
-			#main_txt.text="settings settings"
-			#self.ids.main_box.add_widget(Label(text="Settings:"))
-			#if platform == 'android':
-			#	if paused==True:
 			smallbar=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			chk1=CheckBox()
 			try:
@@ -374,33 +413,20 @@ class MainScreen(Screen):
 
 		
 		if self.topic == "mindf":
-			#if platform == 'android':
-			#	if paused==True:
-			if paused==True:
-					try:
-						vibrator.vibrate(0.125)
-						#vibrator.cancel()
-					except:
-						pass
-					if temp_set_cpy['tts'] == "True":
-						#print "tts: " + temp_set_cpy['tts']
-					#if self.act_ttsvar == True:	
-						try:
-							tts.speak(self.parts[self.mindf_part])
-						except NotImplementedError:
-							popup = ErrorPopup()
-							popup.open()									
-					paused=False
-					try:
-						the_screenmanager.on_pause=False
-					except:
-						pass
+			try:
+				vibrator.vibrate(0.125)
+				#vibrator.cancel()
+			except:
+				pass
+			if temp_set_cpy['tts'] == "True":
+				#print "tts: " + temp_set_cpy['tts']
+			#if self.act_ttsvar == True:	
+				try:
+					tts.speak(self.parts[self.mindf_part])
+				except NotImplementedError:
+					popup = ErrorPopup()
+					popup.open()									
 				
-			#try:
-			#	PythonActivity.mActivity.getWindow().addFlags(Params.FLAG_KEEP_SCREEN_ON)
-			#except:
-			#	pass
-			#self.parts = ["Breath calm and Relax muscles","Feel muscles and organs","Feel sensations","Feel inner state","Feel inner awareness","End of mindfulness"]
 			main_txt.text=self.parts[self.mindf_part]
 			mindf_bar=ProgressBar(
 				max=self.mindf_limit
@@ -414,7 +440,6 @@ class MainScreen(Screen):
 				else:
 					self.mindf_part+=1
 					self.mindf_time = 0
-					paused=True
 			elif self.mindf_part != len(self.parts)-1:		
 				self.mindf_time += self.mindf_speed
 			
@@ -579,6 +604,12 @@ class MainScreen(Screen):
 				if self.mindf_part == len(self.parts)-1 and b_nr==1:
 					bttn.text = "again?"
 					#bttn.color=(1,1,1,.5)
+				if b_nr==2:
+					if self.paused == True:
+						bttn.text = ">"
+					if self.mindf_part == len(self.parts)-1:
+						#bttn.text = "again?"
+						bttn.color=(1,1,1,.5)
 
 			self.ids.main_box.add_widget(bttn)
 			self.ids.main_box.height += bttn.height
@@ -898,6 +929,15 @@ class MainScreen(Screen):
 		else:
 			self.mindf_part = 0
 		self.mindf_time = 0
+
+	def pausing(self, *args):
+		if self.paused == False:
+			self.paused = True
+			Clock.unschedule(self.planupdate)
+			self.planupdate()
+		else:
+			self.paused = False
+			Clock.schedule_interval(self.planupdate, 0.2)
 			
 	def exitb(self, *args):
 		self.mindf_part = 0
@@ -1013,6 +1053,7 @@ class MainScreen(Screen):
 			popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			
 			popping_box_del.bind(on_release = partial(self.del_pop, pop_item))
+			###three dot menu on select button
 			popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			predict = self.pop_funcs[self.topic].__name__
 			popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
@@ -1029,7 +1070,7 @@ class MainScreen(Screen):
 			#popping_box.minimum_height="2ssp"
 			#popping_box.width=self.ids.main_box.width
 			popping_box.size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height))
-						
+			#popping_box.size = Window.size
 			
 			popping_box.add_widget(popping_box_title)
 			popping_box.add_widget(popping_box_min)
@@ -1183,8 +1224,8 @@ class MainScreen(Screen):
 		self.pop_unit_name = ""
 		self.popping()
 
-	def stast(self, *args):
-		self.topic="stast"
+	def stati(self, *args):
+		self.topic="stati"
 		pass
 
 	def add_claim(self,state_obj_inpt, state_mis_inpt, state_vis_inpt):
@@ -1293,11 +1334,12 @@ class MainScreen(Screen):
 		self.planupdate()
 
 	main_funcs = {
-	'settings': [exitb],
-	'start': [mindf, state, stast],
-	'mindf': [prevb, nxtb, exitb],
+	'settings': [],
+	'start': [],
+	#'start': [mindf, state, stati],
+	'mindf': [prevb, nxtb, pausing],
 	'state': [state, exitb],
-	'stast': '\n\n'}		
+	'stati': '\n\n'}		
 
 	pop_funcs = {
 	'mindf' : start_timer,
@@ -1305,7 +1347,6 @@ class MainScreen(Screen):
 	}
 
 class emadrsApp(App):
-	global paused
 	#global the_screenmanager
 	def build(self):
 		#global the_screenmanager
@@ -1316,12 +1357,7 @@ class emadrsApp(App):
 		return the_screenmanager
 
 	def on_pause(self):
-		global paused
-		if paused == True:
-			# Here you can save data if needed
-			return True
-		else:
-			return False
+		return False
 
 	def on_resume(self):
 		the_screenmanager = ScreenManager()
