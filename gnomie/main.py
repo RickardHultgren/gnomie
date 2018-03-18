@@ -293,6 +293,7 @@ class MainScreen(Screen):
 	mindf_time=NumericProperty(0)
 	mindf_part=0
 	paused = False
+	going = False
 	mindf_limit=0
 	mindf_speed=0
 	state_claim=""
@@ -413,20 +414,24 @@ class MainScreen(Screen):
 
 		
 		if self.topic == "mindf":
-			try:
-				vibrator.vibrate(0.125)
-				#vibrator.cancel()
-			except:
-				pass
-			if temp_set_cpy['tts'] == "True":
-				#print "tts: " + temp_set_cpy['tts']
-			#if self.act_ttsvar == True:	
+			if self.going == True:
 				try:
-					tts.speak(self.parts[self.mindf_part])
-				except NotImplementedError:
-					popup = ErrorPopup()
-					popup.open()									
-				
+					vibrator.vibrate(0.125)
+					#vibrator.cancel()
+					
+				except:
+					pass
+				if temp_set_cpy['tts'] == "True":
+					#print "tts: " + temp_set_cpy['tts']
+				#if self.act_ttsvar == True:	
+					try:
+						tts.speak(self.parts[self.mindf_part])
+					except NotImplementedError:
+						popup = ErrorPopup()
+						popup.open()									
+
+				self.going=False
+			
 			main_txt.text=self.parts[self.mindf_part]
 			mindf_bar=ProgressBar(
 				max=self.mindf_limit
@@ -440,6 +445,7 @@ class MainScreen(Screen):
 				else:
 					self.mindf_part+=1
 					self.mindf_time = 0
+					self.going=True
 			elif self.mindf_part != len(self.parts)-1:		
 				self.mindf_time += self.mindf_speed
 			
@@ -1040,7 +1046,8 @@ class MainScreen(Screen):
 
 			#popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			popping_box_title = Button(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			popping_box_title.bind(on_release = partial(self.edit_pop, pop_item, str(self.pop_choices[self.topic][0][pop_item])))
+			predict = self.pop_funcs[self.topic].__name__
+			popping_box_title.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
 			#popping_box_title.size_hint_y= None
 			#popping_box_title.width=.31*self.popbox.width
 			#popping_box_title.text_size=(self.width, None)
@@ -1054,7 +1061,8 @@ class MainScreen(Screen):
 
 			#popping_box_min = Label(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			popping_box_min = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			popping_box_min.bind(on_release = partial(self.edit_pop, pop_item, str(self.pop_choices[self.topic][0][pop_item])))
+			predict = self.pop_funcs[self.topic].__name__
+			popping_box_min.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
 			#popping_box_min.size_hint_y= None
 			#popping_box_min.width=.31*self.popbox.width
 			#popping_box_min.text_size=(self.width, None)
@@ -1067,23 +1075,17 @@ class MainScreen(Screen):
 			popping_box_min.bind(height=popping_box_min.setter('self.minimum_height'))	
 
 			
-			popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			popping_box_del=Button(text = '...',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			
-			popping_box_del.bind(on_release = partial(self.del_pop, pop_item))
-			###three dot menu on select button
-			popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			predict = self.pop_funcs[self.topic].__name__
-			popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
+			popping_box_del.bind(on_release = partial(self.menu, pop_item))
 			if popping_box_min.height>popping_box_title.height:
 				#popping_box.height=self.txt_height * 0.2
 				popping_box.height=2*popping_box_min.height
 				popping_box_del.height=2*popping_box_min.height
-				popping_box_slct.height=2*popping_box_min.height
 			else:
 				#popping_box.height=self.txt_height * 0.2
 				popping_box.height=2*popping_box_title.height
 				popping_box_del.height=2*popping_box_title.height
-				popping_box_slct.height=2*popping_box_title.height
 			#popping_box.minimum_height="2ssp"
 			#popping_box.width=self.ids.main_box.width
 			popping_box.size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height))
@@ -1091,16 +1093,89 @@ class MainScreen(Screen):
 			
 			popping_box.add_widget(popping_box_title)
 			popping_box.add_widget(popping_box_min)
-			#title_box.add_widget(popping_box_title)
-			#min_box.add_widget(popping_box_min)
-			#popping_box.add_widget(title_box)
-			#popping_box.add_widget(min_box)
 			
 			popping_box.add_widget(popping_box_del)
-			popping_box.add_widget(popping_box_slct)
 			self.popbox.add_widget(popping_box)
 			self.popbox.height += popping_box.height
 		self.popup1.open()
+
+	def menu(self, pop_item, *args):
+		try:
+			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
+		except:
+			pass
+		try:
+			self.main_x_box.clear_widgets()
+		except:
+			pass			
+		try:
+			self.popup2.dismiss()
+		except:
+			pass
+		try:
+			self.popup1.dismiss()
+		except:
+			pass			
+
+
+		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		poplbl.bind(width=lambda s, w:
+		       s.setter('text_size')(s, (self.width, None)))
+		poplbl.bind(height=poplbl.setter('texture_size[1]'))
+		poplbl.bind(height=poplbl.setter('self.minimum_height'))
+
+		#self.popbox.add_widget(poplbl)
+		self.poptop.add_widget(poplbl)
+		#self.popbox.height += poplbl.height
+		self.poptop.height += poplbl.height
+
+
+		
+		popping_box=BoxLayout(size_hint_y=None, size_hint_x=None, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		###size_hint_x=.5,
+		popping_box_title = Button(text="%s"%(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.main_x_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		popping_box_title.bind(on_release = partial(self.edit_pop, pop_item, str(self.pop_choices[self.topic][0][pop_item])))
+		popping_box_title.bind(width=lambda s, w:
+		       s.setter('text_size')(s, (self.width, None)))
+		popping_box_title.bind(height=popping_box_title.setter('texture_size[1]'))
+		popping_box_title.bind(height=popping_box_title.setter('self.minimum_height'))
+
+		popping_box_min = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][pop_item]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.main_x_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		popping_box_min.bind(on_release = partial(self.edit_pop, pop_item, str(self.pop_choices[self.topic][0][pop_item])))
+		popping_box_min.bind(width=lambda s, w:
+			   s.setter('text_size')(s, (self.width, None)))
+		popping_box_min.bind(height=popping_box_min.setter('texture_size[1]')) 
+		popping_box_min.bind(height=popping_box_min.setter('self.minimum_height'))	
+
+
+
+
+		popping_box_del=Button(text = 'del',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		
+		popping_box_del.bind(on_release = partial(self.del_pop, pop_item))
+		###three dot menu on select button
+		popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		predict = self.pop_funcs[self.topic].__name__
+		popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
+		if popping_box_min.height>popping_box_title.height:
+			popping_box.height=2*popping_box_min.height
+			popping_box_del.height=2*popping_box_min.height
+			popping_box_slct.height=2*popping_box_min.height
+		else:
+			popping_box.height=2*popping_box_title.height
+			popping_box_del.height=2*popping_box_title.height
+			popping_box_slct.height=2*popping_box_title.height
+		popping_box.size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height))
+		
+		popping_box.add_widget(popping_box_title)
+		popping_box.add_widget(popping_box_min)
+
+		popping_box.add_widget(popping_box_del)
+		popping_box.add_widget(popping_box_slct)
+		self.main_x_box.add_widget(popping_box)
+		self.main_x_box.height += popping_box.height
+		self.popup2.open()
 
 	def edit_pop(self, pop_item, cat, *args):
 		try:
