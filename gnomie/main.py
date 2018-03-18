@@ -908,7 +908,11 @@ class MainScreen(Screen):
 			self.popup1.dismiss()
 		except:
 			pass			
-		self.popup2.title="delete?"
+		
+		self.pop_bubble.background_color =(20, 0, 0, .5) 
+		self.pop_bubble.border = [50, 50, 50, 10]
+		#self.pop_bubble.size = (150, 50)
+		self.pop_bubble.arrow_pos= 'top_mid'
 		my_bub_lbl=Label(text="Are you sure you want to delete this item?")
 		my_bub_btnY=Button(text='Yes')
 		my_bub_btnN=Button(text='No')
@@ -917,9 +921,9 @@ class MainScreen(Screen):
 		#self.popbox.add_widget(box2)
 		my_bub_btnY.bind(on_release=lambda my_bub_btnY: self.del_nomen(pop_item))
 		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
-		self.main_x_box.add_widget(my_bub_btnY)
-		self.main_x_box.add_widget(my_bub_btnN)
-		self.popup2.open()
+		self.popbox.add_widget(my_bub_btnY)
+		self.popbox.add_widget(my_bub_btnN)
+		self.popup1.open()
 
 	def del_nomen(self, pop_item, *args):
 		if self.topic=='state':
