@@ -313,6 +313,7 @@ class MainScreen(Screen):
                 do_scroll_y= True
                 )
 	popscroll.add_widget(popbox)
+	#87.5% of the screen in X and Y:
 	popup1 = Popup(content=box, size_hint=(.875, .875))
 	box.add_widget(poptop)
 	box.add_widget(popscroll)
@@ -324,7 +325,6 @@ class MainScreen(Screen):
 	pop_unit_name = ""
 	pop_title_name = ""
 
-	#main_x_scroll= Bubble(orientation = 'vertical',size_hint=(None, None),size=(600, 100),pos=(200,0))
 	delbox = BoxLayout(orientation='vertical')
 	main_x_scroll=ScrollView(size=delbox.size, bar_pos_x="top")
 	main_x_box=GridLayout(
@@ -383,7 +383,7 @@ class MainScreen(Screen):
 		
 		self.popbox.spacing = .75*self.txt_height
 		self.ids.main_box.height=self.main_height
-		main_txt=Label(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))#, font_size=self.fontheight)
+		main_txt=Label(size_hint_y=None, width=self.ids.main_box.width, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))#, font_size=self.fontheight)
 		main_txt.bind(width=lambda s, w:
 			   s.setter('text_size')(s, (self.width-.1*self.ids.main_box.width, None)))
 		main_txt.bind(height=main_txt.setter('texture_size[1]'))
@@ -447,15 +447,18 @@ class MainScreen(Screen):
 
 			main_txt.text=self.state_claim
 			
+			edit_box = BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 2, self.txt_height * 2))
 			res_lbl=Button(text=str(self.state_claim), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
 			cat_lbl = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][self.state_claim]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			cat_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
 			
-			self.ids.main_box.add_widget(res_lbl)
-			self.ids.main_box.add_widget(cat_lbl)
+			edit_box.add_widget(res_lbl)
+			edit_box.add_widget(cat_lbl)
+
+			self.ids.main_box.add_widget(edit_box)
 			
-			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
 			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
@@ -830,7 +833,7 @@ class MainScreen(Screen):
 					end_var = ""
 					mood_var = ""
 					about_var = ""
-					for j in ["title","state","nomen","begin","end"] :
+					for j in ["title","state","nomen","begin","end","mood","about"] :
 						if j == "title" :
 							title_var = str(think_things_cpy[key][j])
 						if j == "state" :
@@ -959,9 +962,16 @@ class MainScreen(Screen):
 			self.popup1.dismiss()
 		except:
 			pass
+		about_box = BoxLayout(orientation='vertical')
 		self.popup1.title="about"
-		about_txt=Label(text = 'Gnomie is an open source app licensed under\nthe BSD2-license. The founder and principal developer is\nRickard Verner Hultgren',size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		self.popbox.add_widget(about_txt)
+		about_txt=Label(text = 'Gnomie is an open source app licensed under the BSD2-license. The founder and principal developer is Rickard Verner Hultgren',size_hint_y=None, width=self.ids.main_box.width, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		about_txt.bind(width=lambda s, w:
+				s.setter('text_size')(s, (self.width, None)))
+		about_txt.bind(height=about_txt.setter('texture_size[1]'))
+		about_txt.bind(height=about_txt.setter('self.minimum_height'))
+		about_box.add_widget(about_txt)
+		
+		self.popbox.add_widget(about_box)
 		self.popbox.height += about_txt.height
 		
 		exit_bttn=Button(text="OK",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -977,13 +987,20 @@ class MainScreen(Screen):
 	
 	def popping(self):
 		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		poplbl.bind(width=lambda s, w:
+		       s.setter('text_size')(s, (self.width, None)))
+		poplbl.bind(height=poplbl.setter('texture_size[1]'))
+		poplbl.bind(height=poplbl.setter('self.minimum_height'))
+
 		#self.popbox.add_widget(poplbl)
 		self.poptop.add_widget(poplbl)
 		#self.popbox.height += poplbl.height
 		self.poptop.height += poplbl.height
+
+
 		
-		box1 = BoxLayout(orientation='horizontal', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		box2 = BoxLayout(orientation='horizontal', size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box1 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.ids.main_box.width, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box2 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.ids.main_box.width, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
