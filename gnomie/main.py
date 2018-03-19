@@ -454,13 +454,22 @@ class MainScreen(Screen):
 			main_txt.text=self.state_claim
 			
 			edit_box = BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 2, self.txt_height * 2))
-			res_lbl=Button(text=str(self.state_claim), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			res_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
-			cat_lbl = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][self.state_claim]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			cat_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
+			res_lbl=Button(text=str(self.state_claim), size_hint_y=None, size_hint_x=None, size=(.31*self.ids.megabox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+###
+#print vars
+			print self.edit_pop
+			print self.state_claim
+			print self.pop_choices[self.topic][0]
+			#error prone:
+			#print self.pop_choices[self.topic][0][self.state_claim]
+			#exit()
+
+			#res_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
+			#cat_lbl = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][self.state_claim]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#cat_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
 			
 			edit_box.add_widget(res_lbl)
-			edit_box.add_widget(cat_lbl)
+			#edit_box.add_widget(cat_lbl)
 
 			main_box.add_widget(edit_box)
 			main_box.height += edit_box.height
