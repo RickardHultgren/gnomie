@@ -109,7 +109,6 @@ for key in temp_claims:
 			thekey=str()
 			thevalue=str()
 			counting = 0
-print temp_set
 
 for key in temp_set:
 	counting = 0
@@ -123,7 +122,6 @@ for key in temp_set:
 		thekey=str()
 		thevalue=str()
 		counting = 0
-print temp_set_cpy
 
 thekey = str()
 thevalue = str()
@@ -145,11 +143,10 @@ Builder.load_string('''
 		cols:1
         orientation: 'vertical'
         ActionBar:
-
             height:root.height / 8
             width:root.width
             background_color:255,0,0,.5
-            pos_hint: {'top':1}            
+            pos_hint: {'top':1}    
             padding: '2ssp'
             canvas:
                 Color:
@@ -242,21 +239,9 @@ Builder.load_string('''
                     background_disabled_normal: './stat.png'
                     border: 48, 48, 3, 3                   
                     
-        ScrollView:
-            size: self.size
-            GridLayout:
-                cols:1
-                orientation:'vertical'
-                height:self.minimum_height
-                #height:root.main_height
-                #padding: root.width * 0.02, root.height * 0.02
-                #spacing: root.width * 0.02, root.height * 0.02            
-                size_hint_y: None
-                size_hint_x: 1            
-                do_scroll_x: False
-                do_scroll_y: True
-                id: main_box
-
+        GridLayout:
+            cols:1
+            id: megabox
 ''')  
 
 class MainScreen(Screen):
@@ -285,7 +270,7 @@ class MainScreen(Screen):
 	#'start' : ["mindfulness", "statements", "statistics"],
 	'start' : [],
 	'mindf' : ["<<",">>","||"],
-	'state' : ["statements","exit"],
+	'state' : [],
 	'stati' : '\n\n'}
 	topic='start'
 	state_topic='obj'
@@ -293,7 +278,7 @@ class MainScreen(Screen):
 	mindf_time=NumericProperty(0)
 	mindf_part=0
 	paused = False
-	going = False
+	going = True
 	mindf_limit=0
 	mindf_speed=0
 	state_claim=""
@@ -354,10 +339,25 @@ class MainScreen(Screen):
 		self.planupdate()
 	
 	def planupdate(self,*args):
+		zcroller=ScrollView(size=self.size, bar_pos_x = "top")
+		main_box=GridLayout(
+		   cols=1,
+		   orientation='vertical',
+		   #height=self.minimum_height,
+		   #height=root.bigheight,
+		   #padding= (thescroll.width * 0.02, thescroll.height * 0.02),
+		   #spacing= (thescroll.width * 0.02, thescroll.height * 0.02),
+		   size_hint_y= None,
+		   size_hint_x= 1,
+		   do_scroll_x= False,
+		   do_scroll_y= True
+		   )
+
+
 		#global the_screenmanager
 		self.main_height=0
 		try:
-			self.ids.main_box.clear_widgets()
+			self.ids.megabox.clear_widgets()
 		except:
 			pass
 
@@ -379,23 +379,21 @@ class MainScreen(Screen):
 			self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
 		else:
 			self.txt_height=self.fontheight		
-		self.ids.main_box.padding=.25*self.txt_height
-		self.ids.main_box.spacing=.25*self.txt_height
 		
 		self.popbox.spacing = .75*self.txt_height
-		self.ids.main_box.height=self.main_height
-		main_txt=Label(size_hint_y=None, width=self.ids.main_box.width, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))#, font_size=self.fontheight)
+		main_box.height=self.main_height
+		main_txt=Label(size_hint_y=None, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))#, font_size=self.fontheight)
 		main_txt.bind(width=lambda s, w:
-			   s.setter('text_size')(s, (self.width-.1*self.ids.main_box.width, None)))
+			   s.setter('text_size')(s, (self.width, None)))
 		main_txt.bind(height=main_txt.setter('texture_size[1]'))
 		main_txt.bind(height=main_txt.setter('self.minimum_height'))
 		main_txt.text=str("%s"%self.main_headline[self.topic])
 		
-		self.ids.main_box.add_widget(main_txt)
-		self.ids.main_box.height += main_txt.height
+		main_box.add_widget(main_txt)
+		main_box.height += main_txt.height
 
 		if self.topic == "settings":
-			smallbar=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			smallbar=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			chk1=CheckBox()
 			try:
 				if temp_set_cpy['tts'] == "True":
@@ -410,7 +408,7 @@ class MainScreen(Screen):
 			#chk1.bind(passive=self.act_tts)
 			smallbar.add_widget(chk1)
 			smallbar.add_widget(Label(text="text2voice"))
-			self.ids.main_box.add_widget(smallbar)
+			main_box.add_widget(smallbar)
 
 		
 		if self.topic == "mindf":
@@ -426,9 +424,11 @@ class MainScreen(Screen):
 				#if self.act_ttsvar == True:	
 					try:
 						tts.speak(self.parts[self.mindf_part])
-					except NotImplementedError:
-						popup = ErrorPopup()
-						popup.open()									
+					except:
+					#except NotImplementedError:
+						#popup = ErrorPopup()
+						#popup.open()
+						pass
 
 				self.going=False
 			
@@ -437,8 +437,8 @@ class MainScreen(Screen):
 				max=self.mindf_limit
 				)
 			mindf_bar.value=self.mindf_time
-			self.ids.main_box.add_widget(mindf_bar)
-			self.ids.main_box.height += mindf_bar.height
+			main_box.add_widget(mindf_bar)
+			main_box.height += mindf_bar.height
 			if self.mindf_time >= self.mindf_limit and self.mindf_part <= len(self.parts)-1:
 				if self.mindf_part == len(self.parts)-1:
 					self.mindf_time = 0
@@ -453,7 +453,7 @@ class MainScreen(Screen):
 
 			main_txt.text=self.state_claim
 			
-			edit_box = BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 2, self.txt_height * 2))
+			edit_box = BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 2, self.txt_height * 2))
 			res_lbl=Button(text=str(self.state_claim), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
 			cat_lbl = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][self.state_claim]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -462,14 +462,15 @@ class MainScreen(Screen):
 			edit_box.add_widget(res_lbl)
 			edit_box.add_widget(cat_lbl)
 
-			self.ids.main_box.add_widget(edit_box)
+			main_box.add_widget(edit_box)
+			main_box.height += edit_box.height
 			
 			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
-			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			mis_btn.bind(on_release=lambda mis_btn: self.chng_mis())
-			vis_btn=Button(text="Visions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			vis_btn=Button(text="Visions", size_hint_y=None, size_hint_x=None, size=(0.33*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			vis_btn.bind(on_release=lambda vis_btn: self.chng_vis())
 
 			eval("%s_btn"%self.state_topic).background_color= (.75, .25, 0, 1.0)
@@ -477,20 +478,20 @@ class MainScreen(Screen):
 			for temp_word in temp_list:
 				rubric_box.add_widget(eval("%s_btn"%temp_word))
 			temp_list = None
-			self.ids.main_box.add_widget(rubric_box)
+			main_box.add_widget(rubric_box)
 
-			res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(Label(text="name"))
-			res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(res_inpt)
-			bttn_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			res_bttn.padding = (self.ids.main_box.width * 0.2, self.ids.main_box.height * 0.2)
+			bttn_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_bttn.padding = (self.ids.megabox.width * 0.2, main_box.height * 0.2)
 			bttn_box.add_widget(res_bttn)
 
 			if self.state_topic=="obj" and self.state_sub_topic=="plan":
-				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 				res_box.add_widget(Label(text="begin date, time"))
 				res_box.add_widget(data_begin)
 				res_box.add_widget(Label(text="end date, time"))
@@ -499,96 +500,100 @@ class MainScreen(Screen):
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_begin, data_end))
 			else:
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
-			self.ids.main_box.add_widget(res_box)
-			self.ids.main_box.add_widget(bttn_box)
+			main_box.add_widget(res_box)
+			main_box.add_widget(bttn_box)
 			
 			for preNomen in ["obj","mis","vis"]:
 				if preNomen == "obj":
-					obj_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-					self.ids.main_box.add_widget(obj_lbl)
-					self.ids.main_box.height += obj_lbl.height
+					obj_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+					main_box.add_widget(obj_lbl)
+					main_box.height += obj_lbl.height
 				if preNomen == "mis":
-					mis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-					self.ids.main_box.add_widget(mis_lbl)
-					self.ids.main_box.height += mis_lbl.height
+					mis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+					main_box.add_widget(mis_lbl)
+					main_box.height += mis_lbl.height
 				if preNomen == "vis":
-					vis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))					
-					self.ids.main_box.add_widget(vis_lbl)
-					self.ids.main_box.height += vis_lbl.height
+					vis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))					
+					main_box.add_widget(vis_lbl)
+					main_box.height += vis_lbl.height
 				for pop_item in self.pop_choices[self.topic][1]:
 					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
 						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen and self.state_topic==preNomen:
-							
-							res_box = BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							###
+							res_box = BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res = self.pop_choices[self.topic][1][pop_item]["title"]
-							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=.75, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							res_lbl.bind(width=lambda s, w:
+								   s.setter('text_size')(s, (self.width, None)))
+							res_lbl.bind(height=res_lbl.setter('texture_size[1]'))
+							res_lbl.bind(height=res_lbl.setter('self.minimum_height'))
 							res_box.add_widget(res_lbl)
 							res_box.height += res_lbl.height
 							
-							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res_del.bind(on_release = partial(self.del_func, pop_item))
 							res_box.add_widget(res_del)
 							res_box.height += res_del.height
 							
 							if self.state_topic == "obj":
-								res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								res_rev.bind(on_release = partial(self.review, pop_item))
 								res_box.add_widget(res_rev)
 								res_box.height += res_rev.height
 								
-								res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								res_edit.bind(on_release = partial(self.edit_post, pop_item))
 								res_box.add_widget(res_edit)
 								res_box.height += res_edit.height
 								#res_del.bind(on_release = partial(self.del_nomen, pop_item))
 								try:
-									begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
-									begin_lbl=Label(text="begin: %s"%beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									begin_lbl=Label(text="begin: %s"%beginning, size_hint_y=None, size_hint_x=None, size=(0.75*main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									#if self.pop_choices[self.topic][1][pop_item]["begin"] != "add" or self.pop_choices[self.topic][1][pop_item]["begin"] != "" :
 									#	begin_box.add_widget(begin_lbl)
-									#	self.ids.main_box.add_widget(begin_box)
+									#	main_box.add_widget(begin_box)
 								except:
 									pass
 								try:
-									end_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									end_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									ending = self.pop_choices[self.topic][1][pop_item]["end"]
-									end_lbl=Label(text="end: %s"%ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									end_lbl=Label(text="end: %s"%ending, size_hint_y=None, size_hint_x=None, size=(0.75*main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									#if self.pop_choices[self.topic][1][pop_item]["end"] != "add" or self.pop_choices[self.topic][1][pop_item]["end"] != "" :
 									#	end_box.add_widget(end_lbl)
-									#	self.ids.main_box.add_widget(end_box)
+									#	main_box.add_widget(end_box)
 								except:
 									pass
 								try:
-									mood_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									mood_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									moodning = self.pop_choices[self.topic][1][pop_item]["mood"]
-									mood_lbl=Label(text="mood: %s"%moodning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									mood_lbl=Label(text="mood: %s"%moodning, size_hint_y=None, size_hint_x=None, size=(0.75*main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									if self.pop_choices[self.topic][1][pop_item]["mood"] != "":
 										mood_box.add_widget(mood_lbl)
-										self.ids.main_box.add_widget(mood_box)
+										main_box.add_widget(mood_box)
 								except:
 									pass
 								try:
-									about_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									about_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									abouting = self.pop_choices[self.topic][1][pop_item]["about"]
-									about_lbl=Label(text="about: %s"%abouting, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									about_lbl=Label(text="about: %s"%abouting, size_hint_y=None, size_hint_x=None, size=(0.75*main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									if self.pop_choices[self.topic][1][pop_item]["about"] != "":
 										about_box.add_widget(about_lbl)
-										self.ids.main_box.add_widget(about_box)
+										main_box.add_widget(about_box)
 								except:
 									pass
 							
-							self.ids.main_box.add_widget(res_box)
-							self.ids.main_box.height += res_box.height
-				#res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				#res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				#res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							main_box.add_widget(res_box)
+							main_box.height += res_box.height
+				#res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				#res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+				#res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 				#res_bttn.bind(on_release=partial(self.add_nomen, preNomen, res_inpt))
 				#res_box.add_widget(res_inpt)
 				#res_box.add_widget(res_bttn)
-				#self.ids.main_box.add_widget(res_box)
-				self.ids.main_box.height += res_box.height
-				self.ids.main_box.height += 1*self.txt_height
+				#main_box.add_widget(res_box)
+				main_box.height += res_box.height
+				main_box.height += 1*self.txt_height
 
 		try:
 			data.clear()
@@ -603,7 +608,7 @@ class MainScreen(Screen):
 			else:
 				self.txt_height=self.fontheight
 
-			bttn = Button(text="%s"%(main_button), size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
+			bttn = Button(text="%s"%(main_button), size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif")
 			funcy = self.main_funcs[self.topic][b_nr].__name__
 			bttn.bind(on_release = partial((eval("self.%s"%(funcy)))))
 
@@ -620,10 +625,15 @@ class MainScreen(Screen):
 						#bttn.text = "again?"
 						bttn.color=(1,1,1,.5)
 
-			self.ids.main_box.add_widget(bttn)
-			self.ids.main_box.height += bttn.height
-		#self.ids.main_box.height += 1*self.txt_height + Window.keyboard_height
-		#self.ids.main_box.height += 1*self.txt_height + Window.height
+			main_box.add_widget(bttn)
+			main_box.height += bttn.height
+			
+		#zcroller.clear_widgets()
+		zcroller.add_widget(main_box)
+		self.ids.megabox.add_widget(zcroller)
+
+		#main_box.height += 1*self.txt_height + Window.keyboard_height
+		#main_box.height += 1*self.txt_height + Window.height
 
 	def edit_post(self, pop_item, *args):
 		res= think_things[pop_item]['title']
@@ -653,20 +663,20 @@ class MainScreen(Screen):
 		self.pop_bubble.arrow_pos= 'top_mid'
 		my_bub_lbl=Label(text="Edit %s"%res)
 
-		data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_box.add_widget(Label(text=res))
-		res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_box.add_widget(res_inpt)
 		
-		data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_box.add_widget(Label(text="begin date, time"))
 		res_box.add_widget(data_begin)
 		res_box.add_widget(Label(text="end date, time"))
 		res_box.add_widget(data_end)
 		res_box.height= "%ssp"%str(8*self.txt_height)
 		
-		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_bttn=BubbleButton(text="change")
 		res_bttn.bind(on_release=partial(self.edit_nomen, pop_item, res_inpt, data_begin, data_end))
 
@@ -732,14 +742,14 @@ class MainScreen(Screen):
 		self.pop_bubble.arrow_pos= 'top_mid'
 		my_bub_lbl=Label(text="Edit %s"%res)
 
-		data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_box.add_widget(Label(text="%s"%res))
-		#res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		#res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		#res_box.add_widget(res_inpt)
 		
-		data_mood = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		data_about = TextInput(multiline=False, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		data_mood = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		data_about = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_box.add_widget(Label(text="mood"))
 		res_box.add_widget(data_mood)
 		res_box.add_widget(Label(text="about"))
@@ -749,7 +759,7 @@ class MainScreen(Screen):
 		
 		
 
-		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_bttn=BubbleButton(text="Save")
 		res_bttn.bind(on_release=partial(self.add_review, pop_item, data_mood, data_about))
 
@@ -790,10 +800,12 @@ class MainScreen(Screen):
 		self.planupdate()
 
 	def chng_obj(self):
+
 		self.state_topic="obj"
 		self.planupdate()
 
 	def chng_state_obj(self):
+
 		if self.state_sub_topic=="plan":
 			self.state_sub_topic="review"
 		else:
@@ -801,10 +813,12 @@ class MainScreen(Screen):
 		self.planupdate()
 		
 	def chng_mis(self):
+
 		self.state_topic="mis"
 		self.planupdate()
 		
 	def chng_vis(self):
+
 		self.state_topic="vis"
 		self.planupdate()
 		
@@ -828,7 +842,7 @@ class MainScreen(Screen):
 		
 		for h in range(1,length) :
 			keylist=list(think_things_cpy.keys())
-			print sorted(keylist)
+			#print sorted(keylist)
 			for key in sorted(keylist):
 				#print "\nh:%s\nkey: %s ; h: %s ; times_matched: %s"%("abc", key, h, times_matched)
 				if times_matched < h and int(key) > h:
@@ -974,7 +988,7 @@ class MainScreen(Screen):
 			pass
 		about_box = BoxLayout(orientation='vertical')
 		self.popup1.title="about"
-		about_txt=Label(text = 'Gnomie is an open source app licensed under the BSD2-license. The founder and principal developer is Rickard Verner Hultgren',size_hint_y=None, width=self.ids.main_box.width, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		about_txt=Label(text = 'Gnomie is an open source app licensed under the BSD2-license. The founder and principal developer is Rickard Verner Hultgren',size_hint_y=None, width=self.ids.megabox.width, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		about_txt.bind(width=lambda s, w:
 				s.setter('text_size')(s, (self.width, None)))
 		about_txt.bind(height=about_txt.setter('texture_size[1]'))
@@ -984,7 +998,7 @@ class MainScreen(Screen):
 		self.popbox.add_widget(about_box)
 		self.popbox.height += about_txt.height
 		
-		exit_bttn=Button(text="OK",size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		exit_bttn=Button(text="OK",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		exit_bttn.bind(on_release=lambda prv_bttn: self.popup1.dismiss())
 		self.popbox.add_widget(exit_bttn)			
 		self.popbox.height += exit_bttn.height
@@ -996,7 +1010,7 @@ class MainScreen(Screen):
 		self.planupdate()
 	
 	def popping(self):
-		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		poplbl.bind(width=lambda s, w:
 		       s.setter('text_size')(s, (self.width, None)))
 		poplbl.bind(height=poplbl.setter('texture_size[1]'))
@@ -1009,9 +1023,9 @@ class MainScreen(Screen):
 
 
 		
-		box1 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.ids.main_box.width, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		box2 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.ids.main_box.width, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box1 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.ids.megabox.width, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box2 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.ids.megabox.width, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		if self.topic=="mindf":
@@ -1044,9 +1058,9 @@ class MainScreen(Screen):
 			popping_box=BoxLayout(size_hint_y=None, size_hint_x=None, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			#popping_box=GridLayout(cols=4,size_hint_y=None, size_hint_x=1, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			#horizontal boxing
-			#title_box=BoxLayout(size_hint_y=None, size_hint_x=1,size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#title_box=BoxLayout(size_hint_y=None, size_hint_x=1,size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			
-			#min_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#min_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 
 			#popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			popping_box_title = Button(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -1091,8 +1105,8 @@ class MainScreen(Screen):
 				popping_box.height=2*popping_box_title.height
 				popping_box_del.height=2*popping_box_title.height
 			#popping_box.minimum_height="2ssp"
-			#popping_box.width=self.ids.main_box.width
-			popping_box.size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height))
+			#popping_box.width=self.ids.megabox.width
+			popping_box.size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height))
 			#popping_box.size = Window.size
 			
 			popping_box.add_widget(popping_box_title)
@@ -1123,7 +1137,7 @@ class MainScreen(Screen):
 			pass			
 
 
-		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.main_box.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		poplbl.bind(width=lambda s, w:
 		       s.setter('text_size')(s, (self.width, None)))
 		poplbl.bind(height=poplbl.setter('texture_size[1]'))
@@ -1170,7 +1184,7 @@ class MainScreen(Screen):
 			popping_box.height=2*popping_box_title.height
 			popping_box_del.height=2*popping_box_title.height
 			popping_box_slct.height=2*popping_box_title.height
-		popping_box.size=(self.ids.main_box.width, "%ssp"%str(2*self.txt_height))
+		popping_box.size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height))
 		
 		popping_box.add_widget(popping_box_title)
 		popping_box.add_widget(popping_box_min)
@@ -1206,8 +1220,8 @@ class MainScreen(Screen):
 		#self.pop_bubble.size = (150, 50)
 		self.pop_bubble.arrow_pos= 'top_mid'
 		my_bub_lbl=Label(text="Edit %s"%pop_item)
-		my_bub_title=TextInput(text="%s"%pop_item, multiline=False, size_hint_x=1, size_hint_y="%ssp"%str(.5*self.txt_height), size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		my_bub_cat=TextInput(text="%s"%cat, multiline=False, size_hint_x=1, size_hint_y="%ssp"%str(.5*self.txt_height), size=(self.ids.main_box.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		my_bub_title=TextInput(text="%s"%pop_item, multiline=False, size_hint_x=1, size_hint_y="%ssp"%str(.5*self.txt_height), size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		my_bub_cat=TextInput(text="%s"%cat, multiline=False, size_hint_x=1, size_hint_y="%ssp"%str(.5*self.txt_height), size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		my_bub_bttn=BubbleButton(text="change")
 		my_bub_bttn.bind(on_release=partial(self.chng_edit, pop_item, my_bub_title, my_bub_cat))
 		my_bub_btnN=BubbleButton(text="cancel")
@@ -1438,7 +1452,7 @@ class MainScreen(Screen):
 	'start': [],
 	#'start': [mindf, state, stati],
 	'mindf': [prevb, nxtb, pausing],
-	'state': [state, exitb],
+	'state': [],
 	'stati': '\n\n'}		
 
 	pop_funcs = {
