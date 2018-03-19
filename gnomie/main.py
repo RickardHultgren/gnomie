@@ -465,12 +465,12 @@ class MainScreen(Screen):
 			main_box.add_widget(edit_box)
 			main_box.height += edit_box.height
 			
-			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
-			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			mis_btn.bind(on_release=lambda mis_btn: self.chng_mis())
-			vis_btn=Button(text="Visions", size_hint_y=None, size_hint_x=None, size=(0.33*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			vis_btn=Button(text="Visions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			vis_btn.bind(on_release=lambda vis_btn: self.chng_vis())
 
 			eval("%s_btn"%self.state_topic).background_color= (.75, .25, 0, 1.0)
@@ -522,26 +522,26 @@ class MainScreen(Screen):
 							###
 							res_box = BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res = self.pop_choices[self.topic][1][pop_item]["title"]
-							res_lbl=Label(text=res, size_hint_y=None, size_hint_x=.75, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							res_lbl=Label(halign="left", valign="middle", text=res, size_hint_y=None, size_hint_x=.75, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res_lbl.bind(width=lambda s, w:
-								   s.setter('text_size')(s, (self.width, None)))
+								   s.setter('text_size')(s, (.50*self.width, None)))
 							res_lbl.bind(height=res_lbl.setter('texture_size[1]'))
 							res_lbl.bind(height=res_lbl.setter('self.minimum_height'))
 							res_box.add_widget(res_lbl)
 							res_box.height += res_lbl.height
 							
-							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							res_del=Button(text="del", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 							res_del.bind(on_release = partial(self.del_func, pop_item))
 							res_box.add_widget(res_del)
 							res_box.height += res_del.height
 							
 							if self.state_topic == "obj":
-								res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								res_rev.bind(on_release = partial(self.review, pop_item))
 								res_box.add_widget(res_rev)
 								res_box.height += res_rev.height
 								
-								res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*main_box.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+								res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								res_edit.bind(on_release = partial(self.edit_post, pop_item))
 								res_box.add_widget(res_edit)
 								res_box.height += res_edit.height
@@ -549,7 +549,7 @@ class MainScreen(Screen):
 								try:
 									begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
-									begin_lbl=Label(text="begin: %s"%beginning, size_hint_y=None, size_hint_x=None, size=(0.75*main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									begin_lbl=Label(text="begin: %s"%beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									#if self.pop_choices[self.topic][1][pop_item]["begin"] != "add" or self.pop_choices[self.topic][1][pop_item]["begin"] != "" :
 									#	begin_box.add_widget(begin_lbl)
 									#	main_box.add_widget(begin_box)
@@ -558,7 +558,7 @@ class MainScreen(Screen):
 								try:
 									end_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									ending = self.pop_choices[self.topic][1][pop_item]["end"]
-									end_lbl=Label(text="end: %s"%ending, size_hint_y=None, size_hint_x=None, size=(0.75*main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									end_lbl=Label(text="end: %s"%ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									#if self.pop_choices[self.topic][1][pop_item]["end"] != "add" or self.pop_choices[self.topic][1][pop_item]["end"] != "" :
 									#	end_box.add_widget(end_lbl)
 									#	main_box.add_widget(end_box)
@@ -567,7 +567,7 @@ class MainScreen(Screen):
 								try:
 									mood_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									moodning = self.pop_choices[self.topic][1][pop_item]["mood"]
-									mood_lbl=Label(text="mood: %s"%moodning, size_hint_y=None, size_hint_x=None, size=(0.75*main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									mood_lbl=Label(text="mood: %s"%moodning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									if self.pop_choices[self.topic][1][pop_item]["mood"] != "":
 										mood_box.add_widget(mood_lbl)
 										main_box.add_widget(mood_box)
@@ -576,7 +576,7 @@ class MainScreen(Screen):
 								try:
 									about_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									abouting = self.pop_choices[self.topic][1][pop_item]["about"]
-									about_lbl=Label(text="about: %s"%abouting, size_hint_y=None, size_hint_x=None, size=(0.75*main_box.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+									about_lbl=Label(text="about: %s"%abouting, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 									if self.pop_choices[self.topic][1][pop_item]["about"] != "":
 										about_box.add_widget(about_lbl)
 										main_box.add_widget(about_box)
@@ -1010,12 +1010,13 @@ class MainScreen(Screen):
 		self.planupdate()
 	
 	def popping(self):
-		poplbl=Label(text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		poplbl=Label(halign="center", valign="top", text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		poplbl.bind(width=lambda s, w:
-		       s.setter('text_size')(s, (self.width, None)))
+		       s.setter('text_size')(s, (.66*self.width, None)))
 		poplbl.bind(height=poplbl.setter('texture_size[1]'))
 		poplbl.bind(height=poplbl.setter('self.minimum_height'))
 
+							
 		#self.popbox.add_widget(poplbl)
 		self.poptop.add_widget(poplbl)
 		#self.popbox.height += poplbl.height
@@ -1035,6 +1036,8 @@ class MainScreen(Screen):
 		
 		box1.add_widget(Label(text = "", size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
 		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		
+
 		new_box_add.bind(on_release=lambda new_box_add: self.add_new(new_box_title.text, new_box_unit.text))
 		
 		new_box.add_widget(new_box_title)
@@ -1064,6 +1067,13 @@ class MainScreen(Screen):
 
 			#popping_box_title = Label(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			popping_box_title = Button(text=str(pop_item), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+###
+			popping_box_title.bind(width=lambda s, w:
+				   s.setter('text_size')(s, (.25*self.width, None)))
+			popping_box_title.bind(height=popping_box_title.setter('texture_size[1]'))
+			popping_box_title.bind(height=popping_box_title.setter('self.minimum_height'))
+
+
 			predict = self.pop_funcs[self.topic].__name__
 			popping_box_title.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
 			#popping_box_title.size_hint_y= None
