@@ -152,13 +152,14 @@ Builder.load_string('''
             canvas:
                 Color:
                     rgba: self.background_color
-                BorderImage:
-                    pos: self.pos
-                    size: self.size
-                    source: "bg1.png"
+                #BorderImage:
+                    #pos: self.pos
+                    #size: self.size
+                    #source: "bg1.png"
                     
             ActionView:
-                use_separator: True
+                
+                
                 ActionPrevious:
                     #title: 'gnomie'
                     #title: ''
@@ -169,12 +170,25 @@ Builder.load_string('''
                     #background_normal: ''
                     #background_color: 1, .3, .4, .85
                 ActionGroup:
+                
+					text: "|||"
+					#icon: './menu.png'
+                
+                    font_size:48
                     #orientation: 'horizontal'
                     mode: 'spinner'
-                    background_normal: './menu.png'
-                    background_down: './menu.png'
-                    background_disabled_normal: './menu.png'
-                    border: 60, 60, 60, 3                    
+                    background_color:255,0,0,.5
+                    background_down: ''
+                    background_disabled_normal: ''
+                    #border: 60, 60, 60, 3      
+                    text_width:'48ssp'              
+                    canvas.before:
+                        PushMatrix
+                        Rotate:
+                            angle: 90
+                            origin: self.center
+                    canvas.after:
+                        PopMatrix
                     ActionButton:
                         text: 'about'
                         font_name: 'DejaVuSerif'
@@ -213,33 +227,18 @@ Builder.load_string('''
                     #background_normal: ''
                     #background_color: 1, .3, .4, .85
                 ActionButton:
-                    #text: ''
-                    #font_name: 'DejaVuSerif'
                     on_release: root.mindf()
-                    background_color:255,255,255,1
-                    background_normal: './brain.png'
-                    background_down: './brain.png'
-                    background_disabled_normal: './brain.png'
-                    border: 48, 48, 3, 3                    
+                    text: ''
+                    icon: './brain.png'
                 ActionButton:
-                    #text: ''
-                    #font_name: 'DejaVuSerif'
+                    text: ''
                     on_release: root.state()
-                    background_color:255,255,255,1
-                    background_normal: './goal.png'
-                    background_down: './goal.png'
-                    background_disabled_normal: './goal.png'
-                    border: 48, 48, 3, 3  
+                    icon:'./goal.png'
                 ActionButton:
-                    #text: ''
-                    #font_name: 'DejaVuSerif'
+                    text: ''
                     on_release: root.stati()
-                    background_color:255,255,255,1
-                    background_normal: './stat.png'
-                    background_down: './stat.png'
-                    background_disabled_normal: './stat.png'
-                    border: 48, 48, 3, 3                   
-                    
+                    icon: './stat.png'
+                   
         GridLayout:
             cols:1
             id: megabox
@@ -361,7 +360,6 @@ class MainScreen(Screen):
 			self.ids.megabox.clear_widgets()
 		except:
 			pass
-
 		if self.topic != "mindf" :
 			try:
 				self.main_x_box.clear_widgets()
@@ -458,16 +456,13 @@ class MainScreen(Screen):
 			
 		if self.topic == "state":
 
-			main_txt.text=self.state_claim
+			main_txt.text="title: %s\ncategory:%s %s"%(self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim]),self.pop_unit_name)
 			
 			edit_box = BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 2, self.txt_height * 2))
-			res_lbl=Button(text=str(self.state_claim), size_hint_y=None, size_hint_x=None, size=(.31*self.ids.megabox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			res_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
-			cat_lbl = Button(text="%s %s"%(str(self.pop_choices[self.topic][0][self.state_claim]),self.pop_unit_name), size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			cat_lbl.bind(on_release = partial(self.edit_pop, self.state_claim, str(self.pop_choices[self.topic][0][self.state_claim])))
+			res_lbl=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(.31*self.ids.megabox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_lbl.bind(on_release = partial(self.menu, self.state_claim))
 			
 			edit_box.add_widget(res_lbl)
-			edit_box.add_widget(cat_lbl)
 
 			main_box.add_widget(edit_box)
 			main_box.height += edit_box.height
