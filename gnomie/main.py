@@ -41,15 +41,61 @@ except:
 	pass
 
 ####
-try:
-    from jnius import autoclass
-    Calendar = autoclass('java.util.Calendar')
+if platform == 'android':
+#try:
+	from jnius import autoclass
+	
+	PythonActivity = autoclass('org.renpy.android.PythonActivity') #request the activity instance
+	Intent = autoclass('android.content.Intent') # get the Android Intend class
 
-    c = Calendar.getInstance()
-    #c.setTimeInMillis(1480103863835)
-    #Logger.info(c.getTimeInMillis()) //  -1659853285
-except:
-	pass
+	String = autoclass('java.lang.String') # get the Java object
+
+	cat_intent = Intent() # create a new Android Intent
+	#cat_intent.setAction(Intent.ACTION_SEND) #set the action	
+
+
+	#cal_intent.putExtra("beginTime", cal.getTimeInMillis());
+	#cal_intent.putExtra("allDay", false);
+	#cal_intent.putExtra("rrule", "FREQ=DAILY");
+	#cal_intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+	#cal_intent.putExtra("title", "A Test Event from android app");
+	#cal_intent.setType('text/plain') #text message
+	#cal_intent.setType("vnd.android.cursor.item/event");
+	#currentActivity = cast('android.app.Activity', PythonActivity.mActivity)
+	#currentActivity.startActivity(cal_intent) # show the intent in the game activity
+	##cal_intent = Intent(Intent.ACTION_VIEW)
+	#PythonActivity.mActivity.startActivity(cal_intent)
+
+
+#PythonActivity = autoclass('org.renpy.android.PythonActivity')
+#Intent = autoclass('android.content.Intent')
+#Uri = autoclass('android.net.Uri')
+#cal_intent.setType("vnd.android.cursor.item/event");
+#cal_intent.putExtra("beginTime", cal.getTimeInMillis());
+#cal_intent.putExtra("allDay", false);
+#cal_intent.putExtra("rrule", "FREQ=DAILY");
+#cal_intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+#cal_intent.putExtra("title", "A Test Event from android app");
+#cal_intent = Intent(Intent.ACTION_VIEW)
+#PythonActivity.mActivity.startActivity(cal_intent)
+	
+#	PythonActivity = autoclass('org.renpy.android.PythonActivity') #request the activity instance
+#	Intent = autoclass('android.content.Intent') # get the Android Intend class
+#	Calendar = autoclass('java.util.Calendar')
+#
+#	PythonActivity = autoclass('org.renpy.android.PythonActivity')
+#	cal_intent = autoclass('android.content.Intent')
+#	cal_intent.setType("vnd.android.cursor.item/event");
+#	cal_intent.putExtra("beginTime", cal.getTimeInMillis());
+#	cal_intent.putExtra("allDay", false);
+#	cal_intent.putExtra("rrule", "FREQ=DAILY");
+#	cal_intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+#	cal_intent.putExtra("title", "A Test Event from android app");
+#	cal_intent = Intent(Intent.ACTION_VIEW)
+#	PythonActivity.mActivity.startActivity(cal_intent)
+#except:
+#	pass
+
 ####
 
 from kivy.core.window import Window
@@ -174,7 +220,7 @@ Builder.load_string('''
 					text: "|||"
 					#icon: './menu.png'
                 
-                    font_size:48
+                    font_size:"48sp"
                     #orientation: 'horizontal'
                     mode: 'spinner'
                     background_color:255,0,0,.5
@@ -1170,7 +1216,7 @@ class MainScreen(Screen):
 		self.popup2.open()
 
 
-
+### check similarities in add_nomen
 	def chng_edit(self, res, new_res, cat, *args):
 		cat=cat.text
 		new_res=new_res.text
