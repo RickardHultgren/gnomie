@@ -49,19 +49,19 @@ if platform == 'android':
 
 	PythonActivity = autoclass('org.renpy.android.PythonActivity')
 	Intent = autoclass('android.content.Intent')
-	Calendar = autoclass('java.util.Calendar')
+	#Calendar = autoclass('java.util.Calendar')
 	
 	intent = Intent()
-	calendar = Calendar.getInstance()
+	#calendar = Calendar.getInstance()
 	
 	#calendar.setTimeInMillis(1480103863835)
 	#Logger.info(calendar.getTimeInMillis()) //  -1659853285
-	#calendar.setType("vnd.android.cursor.item/event");
-	#calendar.putExtra("beginTime", cal.getTimeInMillis());
-	#calendar.putExtra("allDay", false);
-	#calendar.putExtra("rrule", "FREQ=DAILY");
-	#calendar.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
-	#calendar.putExtra("title", "A Test Event from android app");
+	#intent.setType("vnd.android.cursor.item/event");
+	#intent.putExtra("beginTime", cal.getTimeInMillis());
+	#intent.putExtra("allDay", false);
+	#intent.putExtra("rrule", "FREQ=DAILY");
+	#intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
+	intent.putExtra("title", "A Test Event from android app");
 
 	intent.setAction(Intent.ACTION_VIEW)
 	PythonActivity.mActivity.startActivity(intent)
