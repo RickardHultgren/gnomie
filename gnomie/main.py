@@ -54,78 +54,16 @@ if platform == 'android':
 	intent = Intent()
 	#calendar = Calendar.getInstance()
 
-	#Intent intent = new Intent(Intent.ACTION_INSERT)
-	intent.setType("vnd.android.cursor.item/event")
-	#intent.putExtra(Events.TITLE, "Learn Android")
-	##intent.putExtra(Events.EVENT_LOCATION, "Home suit home")
-	##intent.putExtra(Events.DESCRIPTION, "Download Examples")
-	# Setting dates GregorianCalendar calDate = new GregorianCalendar(2012, 10, 02)
-	##intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, calDate.getTimeInMillis())
-	##intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, calDate.getTimeInMillis())
-	# Make it a full day event intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true)
-	# Make it a recurring Event intent.putExtra(Events.RRULE, "FREQ=WEEKLY
-	#COUNT=11
-	#WKST=SU
-	#BYDAY=TU,TH")
-	# Making it private and shown as busy intent.putExtra(Events.ACCESS_LEVEL, Events.ACCESS_PRIVATE)
-	##intent.putExtra(Events.AVAILABILITY, Events.AVAILABILITY_BUSY)
-	#startActivity(intent)
-
-	 
-		
 	#calendar.setTimeInMillis(1480103863835)
-	#Logger.info(calendar.getTimeInMillis()) //  -1659853285
-	#intent.setType("vnd.android.cursor.item/event");
-	#intent.putExtra("beginTime", cal.getTimeInMillis());
-	#intent.putExtra("allDay", false);
-	#intent.putExtra("rrule", "FREQ=DAILY");
-	#intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
-	intent.putExtra("title", "A Test Event from android app");
+	intent.setType("vnd.android.cursor.item/event")
+
+	#intent.putExtra(Events.DESCRIPTION, "Download Examples")
+
+	#intent.putExtra("title", "A Test Event from android app");
 
 	intent.setAction(Intent.ACTION_VIEW)
 	PythonActivity.mActivity.startActivity(intent)
 
-	#currentActivity = cast('android.app.Activity', PythonActivity.mActivity)
-	#currentActivity.startActivity(intent)
-
-	#cal_intent = autoclass('android.content.Intent')
-
-
-	#cal_intent.setType("vnd.android.cursor.item/event");
-	#cal_intent.putExtra("beginTime", cal.getTimeInMillis());
-	#cal_intent.putExtra("allDay", false);
-	#cal_intent.putExtra("rrule", "FREQ=DAILY");
-	#cal_intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
-	#cal_intent.putExtra("title", "A Test Event from android app");
-	#cal_intent = Intent(Intent.ACTION_VIEW)
-	#PythonActivity.mActivity.startActivity(cal_intent)
-
-#PythonActivity = autoclass('org.renpy.android.PythonActivity')
-#Intent = autoclass('android.content.Intent')
-#Uri = autoclass('android.net.Uri')
-#cal_intent.setType("vnd.android.cursor.item/event");
-#cal_intent.putExtra("beginTime", cal.getTimeInMillis());
-#cal_intent.putExtra("allDay", false);
-#cal_intent.putExtra("rrule", "FREQ=DAILY");
-#cal_intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
-#cal_intent.putExtra("title", "A Test Event from android app");
-#cal_intent = Intent(Intent.ACTION_VIEW)
-#PythonActivity.mActivity.startActivity(cal_intent)
-	
-#	PythonActivity = autoclass('org.renpy.android.PythonActivity') #request the activity instance
-#	Intent = autoclass('android.content.Intent') # get the Android Intend class
-#	Calendar = autoclass('java.util.Calendar')
-#
-#	PythonActivity = autoclass('org.renpy.android.PythonActivity')
-#	cal_intent = autoclass('android.content.Intent')
-#	cal_intent.setType("vnd.android.cursor.item/event");
-#	cal_intent.putExtra("beginTime", cal.getTimeInMillis());
-#	cal_intent.putExtra("allDay", false);
-#	cal_intent.putExtra("rrule", "FREQ=DAILY");
-#	cal_intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
-#	cal_intent.putExtra("title", "A Test Event from android app");
-#	cal_intent = Intent(Intent.ACTION_VIEW)
-#	PythonActivity.mActivity.startActivity(cal_intent)
 #except:
 #	pass
 
