@@ -41,32 +41,16 @@ except:
 	pass
 
 ####
-if platform == 'android':
-#try:
-	from jnius import autoclass
+#if platform == 'android':
+#	from jnius import autoclass
 
-	PythonActivity = autoclass('org.renpy.android.PythonActivity')
-
-	PythonActivity = autoclass('org.renpy.android.PythonActivity')
-	Intent = autoclass('android.content.Intent')
-	#Calendar = autoclass('java.util.Calendar')
+#	PythonActivity = autoclass('org.renpy.android.PythonActivity')
+#	Intent = autoclass('android.content.Intent')
 	
-	intent = Intent()
-	#calendar = Calendar.getInstance()
-
-	#calendar.setTimeInMillis(1480103863835)
-	intent.setType("vnd.android.cursor.item/event")
-
-	#intent.putExtra(Events.DESCRIPTION, "Download Examples")
-
-	#intent.putExtra("title", "A Test Event from android app");
-
-	intent.setAction(Intent.ACTION_VIEW)
-	PythonActivity.mActivity.startActivity(intent)
-
-#except:
-#	pass
-
+#	intent = Intent()
+#	intent.setType("vnd.android.cursor.item/event")
+#	intent.setAction(Intent.ACTION_VIEW)
+#	PythonActivity.mActivity.startActivity(intent)
 ####
 
 from kivy.core.window import Window
@@ -82,6 +66,53 @@ KIVY_FONTS = [
                    ]
 for font in KIVY_FONTS:
     LabelBase.register(**font)
+
+###
+if platform == 'android':
+	from jnius import autoclass
+	PythonActivity = autoclass('org.renpy.android.PythonActivity')
+	
+	#Intent = autoclass('android.content.Intent')
+	
+	#intent = Intent()
+	Environment = autoclass('android.os.Environment')
+	#if Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED:
+		#root = Environment.getExternalStorageDirectory().getAbsolutePath()
+	#rootG = Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_PICTURES).getAbsolutePath()
+	#getDownloadCacheDirectory
+	#root = Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_PICTURES).getAbsolutePath() + '/'
+	FileClass = autoclass("java.io.File")
+	fG = FileClass('/storage/emulated/0/gnomie/')
+	#fG = FileClass('file:///sdcard/gnomie/')
+	#fG = FileClass(Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_PICTURES).getAbsolutePath() + '/gnomie/')
+	#fG = FileClass('file:///sdcard/gnomie/')
+
+#String sdpath, sd1path, usbdiskpath, sd0path; 
+#if (new File("/storage/extSdCard/").exists()) {
+#    sdpath="/storage/extSdCard/";
+#    Log.i("Sd Cardext Path", sdpath);
+#}
+#if (new File("/storage/sdcard1/").exists()) {
+#    sd1path="/storage/sdcard1/";
+#    Log.i("Sd Card1 Path", sd1path);
+#}
+#if (new File("/storage/usbcard1/").exists()) {
+#    usbdiskpath="/storage/usbcard1/";
+#    Log.i("USB Path", usbdiskpath);
+#}
+#if (new File("/storage/sdcard0/").exists()) {
+#    sd0path="/storage/sdcard0/";
+#    Log.i("Sd Card0 Path", sd0path);
+#}
+#
+	if not fG.exists():
+		fG.mkdir()
+
+	#except:
+	#	pass
+
+
+###
 
 mindf_things = JsonStore('mindf_things.json')
 state_things = JsonStore('state_things.json')
