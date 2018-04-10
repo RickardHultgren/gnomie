@@ -72,56 +72,56 @@ if platform == 'android':
 	from jnius import autoclass
 	PythonActivity = autoclass('org.renpy.android.PythonActivity')
 	
-	#Intent = autoclass('android.content.Intent')
-	
-	#intent = Intent()
 	Environment = autoclass('android.os.Environment')
-	#if Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED:
-		#root = Environment.getExternalStorageDirectory().getAbsolutePath()
-	#rootG = Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_PICTURES).getAbsolutePath()
-	#getDownloadCacheDirectory
-	#root = Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_PICTURES).getAbsolutePath() + '/'
 	FileClass = autoclass("java.io.File")
 	fG = FileClass('/storage/emulated/0/gnomie/')
-	#fG = FileClass('file:///sdcard/gnomie/')
-	#fG = FileClass(Environment.getExternalStoragePublicDirectory (Environment.DIRECTORY_PICTURES).getAbsolutePath() + '/gnomie/')
-	#fG = FileClass('file:///sdcard/gnomie/')
-
-#String sdpath, sd1path, usbdiskpath, sd0path; 
-#if (new File("/storage/extSdCard/").exists()) {
-#    sdpath="/storage/extSdCard/";
-#    Log.i("Sd Cardext Path", sdpath);
-#}
-#if (new File("/storage/sdcard1/").exists()) {
-#    sd1path="/storage/sdcard1/";
-#    Log.i("Sd Card1 Path", sd1path);
-#}
-#if (new File("/storage/usbcard1/").exists()) {
-#    usbdiskpath="/storage/usbcard1/";
-#    Log.i("USB Path", usbdiskpath);
-#}
-#if (new File("/storage/sdcard0/").exists()) {
-#    sd0path="/storage/sdcard0/";
-#    Log.i("Sd Card0 Path", sd0path);
-#}
-#
+	
 	if not fG.exists():
 		fG.mkdir()
+	
+	try:
+		mindf_things = JsonStore('/storage/emulated/0/gnomie/mindf_things.json')
+		temp_timers = dict(JsonStore('/storage/emulated/0/gnomie/mindf_things.json'))
+	except:
+		pass
+	try:
+		state_things = JsonStore('/storage/emulated/0/gnomie/state_things.json')
+		temp_claims = dict(JsonStore('/storage/emulated/0/gnomie/state_things.json'))
+	except:
+		pass
+	try:
+		think_things = JsonStore('/storage/emulated/0/gnomie/think_things.json')
+		temp_think = dict(JsonStore('/storage/emulated/0/gnomie/think_things.json'))
+	except:
+		pass
+	try:
+		setting_things = JsonStore('/storage/emulated/0/gnomie/settings.json')
+		temp_set = dict(JsonStore('/storage/emulated/0/gnomie/settings.json'))	
+	except:
+		pass
 
-	#except:
-	#	pass
+else:
+	try:
+		mindf_things = JsonStore('mindf_things.json')
+		temp_timers = dict(JsonStore('mindf_things.json'))
+	except:
+		pass
+	try:
+		state_things = JsonStore('state_things.json')
+		temp_claims = dict(JsonStore('state_things.json'))
+	except:
+		pass
+	try:
+		think_things = JsonStore('think_things.json')
+		temp_think = dict(JsonStore('think_things.json'))
+	except:
+		pass
+	try:
+		setting_things = JsonStore('settings.json')
+		temp_set = dict(JsonStore('settings.json'))
+	except:
+		pass
 
-
-###
-
-mindf_things = JsonStore('mindf_things.json')
-state_things = JsonStore('state_things.json')
-think_things = JsonStore('think_things.json')
-setting_things = JsonStore('settings.json')
-temp_timers = dict(JsonStore('mindf_things.json'))
-temp_claims = dict(JsonStore('state_things.json'))
-temp_think = dict(JsonStore('think_things.json'))
-temp_set = dict(JsonStore('settings.json'))
 mindf_things_cpy = dict()
 state_things_cpy = dict()
 think_things_cpy = dict()
