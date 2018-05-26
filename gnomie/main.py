@@ -987,6 +987,71 @@ class MainScreen(Screen):
 		self.popbox.add_widget(my_bub_btnY)
 		self.popbox.add_widget(my_bub_btnN)
 		self.popup1.open()
+		
+	def chng_edit(self, res, new_res, cat, *args):
+		cat=cat.text
+		new_res=new_res.text
+		times_matched = 0
+		length = int(len(think_things_cpy)+1)
+		nowlen = 1
+		keylist=list(think_things_cpy.keys())
+
+
+		for key in sorted(keylist):
+
+				title_var = ""
+				state_var = ""
+				nomen_var = ""
+				begin_var = ""
+				end_var = ""
+				mood_var = ""
+				about_var = ""
+				for j in ["title","state","nomen","begin","end","mood","about"] :
+					if j == "title" :
+						title_var = str(think_things_cpy[key][j])
+					if j == "state" :
+						state_var = str(think_things_cpy[key][j])
+					if j == "nomen" :
+						nomen_var = str(think_things_cpy[key][j])
+					if j == "begin" :
+						try:
+							begin_var = str(think_things_cpy[key][j])
+						except:
+							pass
+					if j == "end" :
+						try:
+							end_var = str(think_things_cpy[key][j])
+						except:
+							pass
+					if j == "mood" :
+						try:
+							mood_var = str(think_things_cpy[key][j])
+						except:
+							pass
+					if j == "about" :
+						try:
+							about_var = str(think_things_cpy[key][j])
+						except:
+							pass
+				think_things.delete(key)
+				think_things_cpy.pop(key, None)
+				if begin_var == "" and end_var == "":
+					think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=new_res)
+					think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":new_res}
+				else:
+					think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=new_res, begin=begin_var, end=end_var)
+					think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":new_res, "begin":begin_var, "end":end_var}
+					#think_things.put("%s"%(key), title=title_var, state=state_var, nomen=new_res, begin=begin_var, end=end_var)
+					#think_things_cpy["%s"%(key)] = {"title":title_var, "state":state_var, "nomen":new_res, "begin":begin_var, "end":end_var}
+				nowlen+=1
+
+
+		eval("%s_things"%self.topic).delete(res)
+		eval("%s_things_cpy"%self.topic).pop(res, None)
+		eval("%s_things"%self.topic).put(str(res), category=cat, title=res)
+		self.pop_choices[self.topic][0][res] = cat
+		
+		eval("self.%s()"%self.topic)
 
 	def del_nomen(self, pop_item, *args):
 		if self.topic=='state':
