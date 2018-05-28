@@ -1,6 +1,8 @@
 # coding:utf-8
 import kivy
 kivy.require('1.7.2') # replace with your current kivy version !
+import kivy.garden
+#from kivy.garden.graph import Graph, MeshLinePlot
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 from kivy.properties import ListProperty, ObjectProperty, StringProperty, NumericProperty
@@ -67,7 +69,6 @@ KIVY_FONTS = [
 for font in KIVY_FONTS:
     LabelBase.register(**font)
 
-###
 if platform == 'android':
 	from jnius import autoclass
 	PythonActivity = autoclass('org.renpy.android.PythonActivity')
@@ -542,12 +543,8 @@ class MainScreen(Screen):
 			if self.state_topic=="obj" and self.state_sub_topic=="plan":
 				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_box.add_widget(Label(text="begin date, time"))
-				res_box.add_widget(data_begin)
-				res_box.add_widget(Label(text="end date, time"))
-				res_box.add_widget(data_end)
 				res_box.height= "%ssp"%str(8*self.txt_height)
-				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt, data_begin, data_end))
+				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			else:
 				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			main_box.add_widget(res_box)
@@ -585,53 +582,16 @@ class MainScreen(Screen):
 							res_box.height += res_del.height
 							
 							if self.state_topic == "obj":
-								res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-								res_rev.bind(on_release = partial(self.review, pop_item))
-								res_box.add_widget(res_rev)
-								res_box.height += res_rev.height
+#								res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+#								res_rev.bind(on_release = partial(self.review, pop_item))
+#								res_box.add_widget(res_rev)
+#								res_box.height += res_rev.height
 								
 								res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 								res_edit.bind(on_release = partial(self.edit_post, pop_item))
 								res_box.add_widget(res_edit)
 								res_box.height += res_edit.height
 								#res_del.bind(on_release = partial(self.del_nomen, pop_item))
-								try:
-									begin_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-									beginning = self.pop_choices[self.topic][1][pop_item]["begin"]
-									begin_lbl=Label(text="begin: %s"%beginning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-									#if self.pop_choices[self.topic][1][pop_item]["begin"] != "add" or self.pop_choices[self.topic][1][pop_item]["begin"] != "" :
-									#	begin_box.add_widget(begin_lbl)
-									#	main_box.add_widget(begin_box)
-								except:
-									pass
-								try:
-									end_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-									ending = self.pop_choices[self.topic][1][pop_item]["end"]
-									end_lbl=Label(text="end: %s"%ending, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-									#if self.pop_choices[self.topic][1][pop_item]["end"] != "add" or self.pop_choices[self.topic][1][pop_item]["end"] != "" :
-									#	end_box.add_widget(end_lbl)
-									#	main_box.add_widget(end_box)
-								except:
-									pass
-								try:
-									mood_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-									moodning = self.pop_choices[self.topic][1][pop_item]["mood"]
-									mood_lbl=Label(text="mood: %s"%moodning, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-									if self.pop_choices[self.topic][1][pop_item]["mood"] != "":
-										mood_box.add_widget(mood_lbl)
-										main_box.add_widget(mood_box)
-								except:
-									pass
-								try:
-									about_box = BoxLayout(orientation="horizontal",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-									abouting = self.pop_choices[self.topic][1][pop_item]["about"]
-									about_lbl=Label(text="about: %s"%abouting, size_hint_y=None, size_hint_x=None, size=(0.75*self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-									if self.pop_choices[self.topic][1][pop_item]["about"] != "":
-										about_box.add_widget(about_lbl)
-										main_box.add_widget(about_box)
-								except:
-									pass
-							
 							main_box.add_widget(res_box)
 							main_box.height += res_box.height
 				#res_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -718,16 +678,9 @@ class MainScreen(Screen):
 		res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_box.add_widget(res_inpt)
 		
-		data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		res_box.add_widget(Label(text="begin date, time"))
-		res_box.add_widget(data_begin)
-		res_box.add_widget(Label(text="end date, time"))
-		res_box.add_widget(data_end)
-		res_box.height= "%ssp"%str(8*self.txt_height)
-		
 		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		res_bttn=BubbleButton(text="change")
-		res_bttn.bind(on_release=partial(self.edit_nomen, pop_item, res_inpt, data_begin, data_end))
+		res_bttn.bind(on_release=partial(self.edit_nomen, pop_item, res_inpt))
 
 		my_bub_btnN=BubbleButton(text="cancel")
 		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
@@ -742,111 +695,102 @@ class MainScreen(Screen):
 		
 		self.popup2.open()
 
-	def edit_nomen(self, pop_item, res, begin, end, *args):
+	def edit_nomen(self, pop_item, res, *args):
 		preNomen=self.state_topic
 		res = res.text
 		begin2var = begin.text
 		end2var = end.text
-
-		try:
-			mood2var = think_things[pop_item]['mood']
-		except:
-			pass
-		try:
-			about2var = think_things[pop_item]['about']
-		except:
-			pass
 		
 		think_things.delete(pop_item)
 		think_things_cpy.pop(pop_item, None)
-		think_things.put("%s"%pop_item, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
-		think_things_cpy["%s"%pop_item]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":begin2var, "end":end2var, "mood":mood2var, "about":about2var}
+		think_things.put("%s"%pop_item, title=res, state=self.state_claim, nomen=preNomen)
+		think_things_cpy["%s"%pop_item]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
 		
-	def review(self, pop_item, *args):
-		res= think_things[pop_item]['title']
-		try:
-			self.popbox.clear_widgets()
-			self.poptop.clear_widgets()
-		except:
-			pass
-		try:
-			self.main_x_box.clear_widgets()
-		except:
-			pass			
-		try:
-			self.popup2.dismiss()
-		except:
-			pass
-		try:
-			self.popup1.dismiss()
-		except:
-			pass			
+	#def review(self, pop_item, *args):
+	#	res= think_things[pop_item]['title']
+	#	try:
+	#		self.popbox.clear_widgets()
+	#		self.poptop.clear_widgets()
+	#	except:
+	#		pass
+	#	try:
+	#		self.main_x_box.clear_widgets()
+	#	except:
+	#		pass			
+	#	try:
+	#		self.popup2.dismiss()
+	#	except:
+	#		pass
+	#	try:
+	#		self.popup1.dismiss()
+	#	except:
+	#		pass			
 
 
 
-		self.pop_bubble.background_color =(20, 0, 0, .5) 
-		self.pop_bubble.border = [50, 50, 50, 10]
+#		self.pop_bubble.background_color =(20, 0, 0, .5) 
+	#	self.pop_bubble.border = [50, 50, 50, 10]
 		#self.pop_bubble.size = (150, 50)
-		self.pop_bubble.arrow_pos= 'top_mid'
-		my_bub_lbl=Label(text="Edit %s"%res)
-
-		data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		res_box.add_widget(Label(text="%s"%res))
+	#	self.pop_bubble.arrow_pos= 'top_mid'
+#		my_bub_lbl=Label(text="Edit %s"%res)
+#
+#		data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+#		res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+#		res_box.add_widget(Label(text="%s"%res))
 		#res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		#res_box.add_widget(res_inpt)
 		
-		data_mood = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		data_about = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		res_box.add_widget(Label(text="mood"))
-		res_box.add_widget(data_mood)
-		res_box.add_widget(Label(text="about"))
-		res_box.add_widget(data_about)
-		res_box.height= "%ssp"%str(8*self.txt_height)
+#		data_mood = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+#		data_about = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+#		res_box.add_widget(Label(text="mood"))
+#		res_box.add_widget(data_mood)
+#		res_box.add_widget(Label(text="about"))
+#		res_box.add_widget(data_about)
+#		res_box.height= "%ssp"%str(8*self.txt_height)
 		
 		
 		
 
-		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		res_bttn=BubbleButton(text="Save")
-		res_bttn.bind(on_release=partial(self.add_review, pop_item, data_mood, data_about))
+#		bttn_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+#		res_bttn=BubbleButton(text="Save")
+#		res_bttn.bind(on_release=partial(self.add_review, pop_item, data_mood, data_about))
 
-		my_bub_btnN=BubbleButton(text="cancel")
-		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
+#		my_bub_btnN=BubbleButton(text="cancel")
+#		my_bub_btnN.bind(on_release=lambda my_bub_btnN: self.planupdate())
 			
-		bttn_box.add_widget(res_bttn)
-		bttn_box.add_widget(my_bub_btnN)
+#		bttn_box.add_widget(res_bttn)
+#		bttn_box.add_widget(my_bub_btnN)
 		
 		
 		
-		self.main_x_box.add_widget(my_bub_lbl)
-		self.main_x_box.add_widget(res_box)
-		self.main_x_box.add_widget(bttn_box)
-		
-		self.popup2.open()
+#		self.main_x_box.add_widget(my_bub_lbl)
+#		self.main_x_box.add_widget(res_box)
+#		self.main_x_box.add_widget(bttn_box)
+#		
+#		self.popup2.open()
 
-	def add_review(self, pop_item, mood, about, *args):
-		res = think_things[pop_item]['title']
-		preNomen=self.state_topic
+#	def add_review(self, pop_item, mood, about, *args):
+#		res = think_things[pop_item]['title']
+#		preNomen=self.state_topic
 
-		try:
-			begin2var = think_things[pop_item]['begin']
-		except:
-			pass
-		try:
-			end2var = think_things[pop_item]['end']
-		except:
-			pass			
+#		try:
+#			begin2var = think_things[pop_item]['begin']
+#		except:
+#			pass
+#		try:
+#			end2var = think_things[pop_item]['end']
+#		except:
+#			pass			
 
-		mood2var = mood.text
-		about2var = about.text
+#		mood2var = mood.text
+#		about2var = about.text
 		
-		think_things.delete(pop_item)
-		think_things_cpy.pop(pop_item, None)
-		think_things.put("%s"%pop_item, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
-		think_things_cpy["%s"%pop_item]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":begin2var, "end":end2var, "mood":mood2var, "about":about2var}
-		self.planupdate()
+#		think_things.delete(pop_item)
+#		think_things_cpy.pop(pop_item, None)
+#		think_things.put("%s"%pop_item, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
+#		think_things_cpy["%s"%pop_item]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":begin2var, "end":end2var, "mood":mood2var, "about":about2var}
+#		self.planupdate()
 
 	def chng_obj(self):
 
@@ -855,12 +799,13 @@ class MainScreen(Screen):
 
 	def chng_state_obj(self):
 
-		if self.state_sub_topic=="plan":
-			self.state_sub_topic="review"
-		else:
-			self.state_sub_topic="plan"
-		self.planupdate()
-		
+#		if self.state_sub_topic=="plan":
+#			self.state_sub_topic="review"
+#		else:
+#			self.state_sub_topic="plan"
+#		self.planupdate()
+		self.state_sub_topic="plan"
+		self.planupdate()		
 	def chng_mis(self):
 
 		self.state_topic="mis"
@@ -898,41 +843,17 @@ class MainScreen(Screen):
 					title_var = ""
 					state_var = ""
 					nomen_var = ""
-					begin_var = ""
-					end_var = ""
-					mood_var = ""
-					about_var = ""
-					for j in ["title","state","nomen","begin","end","mood","about"] :
+					for j in ["title","state","nomen"] :
 						if j == "title" :
 							title_var = str(think_things_cpy[key][j])
 						if j == "state" :
 							state_var = str(think_things_cpy[key][j])
 						if j == "nomen" :
 							nomen_var = str(think_things_cpy[key][j])
-						if j == "begin" :
-							try:
-								begin_var = str(think_things_cpy[key][j])
-							except:
-								pass
-						if j == "end" :
-							try:
-								end_var = str(think_things_cpy[key][j])
-							except:
-								pass
-						if j == "mood" :
-							try:
-								mood_var = str(think_things_cpy[key][j])
-							except:
-								pass
-						if j == "about" :
-							try:
-								about_var = str(think_things_cpy[key][j])
-							except:
-								pass
 					think_things.delete(key)
 					think_things_cpy.pop(key, None)
-					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var, begin=begin_var, end=end_var, mood=mood_var, about=about_var)
-					think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var, "begin":begin_var, "end":end_var, "mood":mood_var, "about":about_var}
+					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
+					think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
 					times_matched += 1
 					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
 				else:
@@ -948,8 +869,8 @@ class MainScreen(Screen):
 			begin2var=str(args[0].text)
 			end2var=str(args[1].text)
 	
-		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen, begin=begin2var, end=end2var, mood=mood2var, about=about2var)
-		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen, "begin":begin2var, "end":end2var}
+		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
+		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
 		index_nr = 0
 
@@ -1002,49 +923,18 @@ class MainScreen(Screen):
 				title_var = ""
 				state_var = ""
 				nomen_var = ""
-				begin_var = ""
-				end_var = ""
-				mood_var = ""
-				about_var = ""
-				for j in ["title","state","nomen","begin","end","mood","about"] :
+				for j in ["title","state","nomen"] :
 					if j == "title" :
 						title_var = str(think_things_cpy[key][j])
 					if j == "state" :
 						state_var = str(think_things_cpy[key][j])
 					if j == "nomen" :
 						nomen_var = str(think_things_cpy[key][j])
-					if j == "begin" :
-						try:
-							begin_var = str(think_things_cpy[key][j])
-						except:
-							pass
-					if j == "end" :
-						try:
-							end_var = str(think_things_cpy[key][j])
-						except:
-							pass
-					if j == "mood" :
-						try:
-							mood_var = str(think_things_cpy[key][j])
-						except:
-							pass
-					if j == "about" :
-						try:
-							about_var = str(think_things_cpy[key][j])
-						except:
-							pass
 				think_things.delete(key)
 				think_things_cpy.pop(key, None)
-				if begin_var == "" and end_var == "":
-					think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=new_res)
-					think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":new_res}
-				else:
-					think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=new_res, begin=begin_var, end=end_var)
-					think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":new_res, "begin":begin_var, "end":end_var}
-					#think_things.put("%s"%(key), title=title_var, state=state_var, nomen=new_res, begin=begin_var, end=end_var)
-					#think_things_cpy["%s"%(key)] = {"title":title_var, "state":state_var, "nomen":new_res, "begin":begin_var, "end":end_var}
+				think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=new_res)
+				think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":new_res}
 				nowlen+=1
-
 
 		eval("%s_things"%self.topic).delete(res)
 		eval("%s_things_cpy"%self.topic).pop(res, None)
@@ -1272,7 +1162,6 @@ class MainScreen(Screen):
 		popping_box_del=Button(halign="left", valign="middle", text="del", size_hint_y=None, size_hint_x=None, font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		popping_box_del.width=.5*self.width
 		popping_box_del.bind(on_release = partial(self.del_pop, pop_item))
-		###three dot menu on select button
 		popping_box_slct=Button(text = 'select',size_hint_y=None, size_hint_x=None, size=("%ssp"%str(5*self.txt_height), "%ssp"%str(2*self.txt_height)), font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		predict = self.pop_funcs[self.topic].__name__
 		popping_box_slct.bind(on_release = partial(eval("self.%s"%(predict)),pop_item))
@@ -1283,7 +1172,6 @@ class MainScreen(Screen):
 		self.popup2.open()
 
 
-### check similarities in add_nomen
 	def chng_edit(self, res, new_res, cat, *args):
 		cat=cat.text
 		new_res=new_res.text
@@ -1298,45 +1186,17 @@ class MainScreen(Screen):
 				title_var = ""
 				state_var = ""
 				nomen_var = ""
-				begin_var = ""
-				end_var = ""
-				mood_var = ""
-				about_var = ""
-				for j in ["title","state","nomen","begin","end","mood","about"] :
+				for j in ["title","state","nomen"] :
 					if j == "title" :
 						title_var = str(think_things_cpy[key][j])
 					if j == "state" :
 						state_var = str(think_things_cpy[key][j])
 					if j == "nomen" :
 						nomen_var = str(think_things_cpy[key][j])
-					if j == "begin" :
-						try:
-							begin_var = str(think_things_cpy[key][j])
-						except:
-							pass
-					if j == "end" :
-						try:
-							end_var = str(think_things_cpy[key][j])
-						except:
-							pass
-					if j == "mood" :
-						try:
-							mood_var = str(think_things_cpy[key][j])
-						except:
-							pass
-					if j == "about" :
-						try:
-							about_var = str(think_things_cpy[key][j])
-						except:
-							pass
 					think_things.delete(key)
 					think_things_cpy.pop(key, None)
-					if begin_var == "" and end_var == "":
-						think_things.put("%s"%(key), title=title_var, state=state_var, nomen=new_res)
-						think_things_cpy["%s"%(key)] = {"title":title_var, "state":state_var, "nomen":new_res}
-					else:
-						think_things.put("%s"%(key), title=title_var, state=state_var, nomen=new_res, begin=begin_var, end=end_var)
-						think_things_cpy["%s"%(key)] = {"title":title_var, "state":state_var, "nomen":new_res, "begin":begin_var, "end":end_var}
+					think_things.put("%s"%(key), title=title_var, state=state_var, nomen=new_res)
+					think_things_cpy["%s"%(key)] = {"title":title_var, "state":state_var, "nomen":new_res}
 					#think_things.put("%s"%(key), title=title_var, state=state_var, nomen=new_res, begin=begin_var, end=end_var)
 					#think_things_cpy["%s"%(key)] = {"title":title_var, "state":state_var, "nomen":new_res, "begin":begin_var, "end":end_var}
 
@@ -1399,9 +1259,34 @@ class MainScreen(Screen):
 		self.pop_unit_name = ""
 		self.popping()
 
+###
 	def stati(self, *args):
+		try:
+			self.pop_bubble.clear_widgets()
+		except:
+			pass		
+		try:
+			self.popbox.clear_widgets()
+			self.poptop.clear_widgets()
+		except:
+			pass
+		try:
+			Clock.unschedule(self.planupdate)
+		except:
+			pass
 		self.topic="stati"
-		pass
+		self.popup1.title = "statistics"
+		#if self.fontheight*(len(self.main_headline[self.topic])/self.line_len) > self.fontheight :
+		#	self.txt_height=0*self.fontheight+self.fontheight*(len(self.main_headline[topic])/self.line_len)
+		#else:
+		#	self.txt_height=self.fontheight		
+		self.pop_rubric = 'Statistics'
+		self.pop_unit = "category"
+		self.pop_action = "add"
+		self.pop_title = "title"
+		self.pop_title_name = ""
+		self.pop_unit_name = ""
+		self.popping()
 
 	def add_claim(self,state_obj_inpt, state_mis_inpt, state_vis_inpt):
 		pass
