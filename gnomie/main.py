@@ -189,11 +189,14 @@ Builder.load_string('''
             size: self.size
     GridLayout:
     
-        row_default_height:root.height / 8
+        #row_default_height:root.height / 8
+        row_default_height:"64sp"
 		cols:1
         orientation: 'vertical'
         ActionBar:
-            height:root.height / 8
+            #height:root.height / 8
+            height:"32sp"
+            #height:"32pt"
             width:root.width
             background_color:255,0,0,.5
             pos_hint: {'top':1}    
@@ -251,7 +254,7 @@ Builder.load_string('''
 
         ActionBar:
 
-            height:root.height / 8
+            height:"32sp"
             width:root.width
             background_color:0,50,50,.2
             pos_hint: {'top':1}            
@@ -448,7 +451,7 @@ class MainScreen(Screen):
 		main_box.height += main_txt.height
 
 		if self.topic == "settings":
-			smallbar=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			smallbar1=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			chk1=CheckBox()
 			try:
 				if temp_set_cpy['tts'] == "True":
@@ -461,9 +464,36 @@ class MainScreen(Screen):
 				setting_things.put("tts", tts="True")
 			chk1.bind(active=self.act_tts)
 			#chk1.bind(passive=self.act_tts)
-			smallbar.add_widget(chk1)
-			smallbar.add_widget(Label(text="text2voice"))
-			main_box.add_widget(smallbar)
+			smallbar1.add_widget(chk1)
+			smallbar1.add_widget(Label(text="text2voice"))
+			main_box.add_widget(smallbar1)
+
+			smallbar2=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))			
+			chk2=CheckBox()
+			try:
+				if temp_set_cpy['vibr'] == "True":
+					chk2.active=True
+				else:
+					chk2.active=False
+			except:
+				chk2.active=True
+				temp_set_cpy['vibr'] = "True"
+				setting_things.put("vibr", vibr="True")
+			chk2.bind(active=self.act_vibr)
+			#chk2.bind(passive=self.act_vibr)
+			smallbar2.add_widget(chk2)
+			smallbar2.add_widget(Label(text="vibration"))
+			main_box.add_widget(smallbar2)
+			
+			smallbar3=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
+			name_bttn=Button(text="Change name", size_hint_y=None, size_hint_x=None, size=(.31*self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
+			name_inpt = TextInput(text=temp_set_cpy['setname'], multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
+			name_bttn.bind(on_release=partial(self.chng_setname, name_inpt))
+###
+			smallbar3.add_widget(name_inpt)
+			smallbar3.add_widget(name_bttn)
+			main_box.add_widget(smallbar3)
+
 
 		if self.topic == "mindf":
 			if self.going == True:
@@ -517,11 +547,11 @@ class MainScreen(Screen):
 			main_box.height += edit_box.height
 			
 			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/3, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
-			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/3, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			mis_btn.bind(on_release=lambda mis_btn: self.chng_mis())
-			vis_btn=Button(text="Visions", size_hint_y=None, size_hint_x=None, size=(0.33*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			vis_btn=Button(text="Visions", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/3, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			vis_btn.bind(on_release=lambda vis_btn: self.chng_vis())
 
 			eval("%s_btn"%self.state_topic).background_color= (.75, .25, 0, 1.0)
@@ -533,20 +563,18 @@ class MainScreen(Screen):
 
 			res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(Label(text="name"))
-			res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			if self.state_topic=="obj" and self.state_sub_topic=="plan":
+				res_inpt = TextInput(text=("%s " % temp_set_cpy['setname']),multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			else:
+				res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(res_inpt)
 			bttn_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_bttn.padding = (self.ids.megabox.width * 0.2, main_box.height * 0.2)
 			bttn_box.add_widget(res_bttn)
 
-			if self.state_topic=="obj" and self.state_sub_topic=="plan":
-				data_begin = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				data_end = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-				res_box.height= "%ssp"%str(8*self.txt_height)
-				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
-			else:
-				res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
+			res_box.height= "%ssp"%str(8*self.txt_height)
+			res_bttn.bind(on_release=partial(self.add_nomen, self.state_topic, res_inpt))
 			main_box.add_widget(res_box)
 			main_box.add_widget(bttn_box)
 			
@@ -828,6 +856,20 @@ class MainScreen(Screen):
 			#self.act_ttsvar = False
 			temp_set_cpy['tts'] = "False"
 			setting_things.put("tts", tts="False")
+
+	def act_vibr(self, checkbox, value):
+		if value:
+			#self.act_vibrvar = True
+			
+			#set_things_cpy.pop("vibr", None)
+			#set_things.delete("vibr")
+			temp_set_cpy['vibr'] = "True"
+			setting_things.put("vibr", vibr="True")
+		else:
+			#self.act_vibrvar = False
+			temp_set_cpy['vibr'] = "False"
+			setting_things.put("vibr", vibr="False")
+			
 			
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
@@ -1012,7 +1054,11 @@ class MainScreen(Screen):
 	def settings(self):
 		self.topic="settings"
 		self.planupdate()
-	
+		
+	def chng_setname(self, name_inpt, *args):
+		temp_set_cpy['setname'] = name_inpt.text
+		setting_things.put("setname", setname=name_inpt.text)
+
 	def popping(self):
 		
 		poplbl=Label(halign="center", valign="top", text = self.pop_rubric, size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -1283,7 +1329,7 @@ class MainScreen(Screen):
 		self.pop_rubric = 'Statistics'
 		self.pop_unit = "category"
 		self.pop_action = "add"
-		self.pop_title = "title"
+		self.pop_title = "stati"
 		self.pop_title_name = ""
 		self.pop_unit_name = ""
 		self.popping()
@@ -1410,7 +1456,7 @@ class MainScreen(Screen):
 	'state' : show_claim
 	}
 
-class emadrsApp(App):
+class gnomieApp(App):
 	#global the_screenmanager
 	def build(self):
 		#global the_screenmanager
@@ -1438,4 +1484,4 @@ class emadrsApp(App):
 		return the_screenmanager
 		
 if __name__ == '__main__':
-	emadrsApp().run()
+	gnomieApp().run()
