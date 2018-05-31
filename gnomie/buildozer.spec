@@ -55,7 +55,7 @@ icon.filename = logo.png
 orientation = portrait
 
 # (bool) Indicate if the application should be fullscreen or not
-fullscreen = 1
+fullscreen = 0
 
 
 #
