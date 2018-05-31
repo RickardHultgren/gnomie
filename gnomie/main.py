@@ -190,7 +190,7 @@ Builder.load_string('''
     GridLayout:
     
         #row_default_height:root.height / 8
-        row_default_height:"64sp"
+        row_default_height:"48sp"
 		cols:1
         orientation: 'vertical'
         ActionBar:
@@ -226,7 +226,8 @@ Builder.load_string('''
 					text: "|||"
 					#icon: './menu.png'
                 
-                    font_size:"48sp"
+                    #font_size:"48sp"
+                    font_size:"16sp"
                     #orientation: 'horizontal'
                     mode: 'spinner'
                     background_color:255,0,0,.5
@@ -487,7 +488,10 @@ class MainScreen(Screen):
 			
 			smallbar3=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
 			name_bttn=Button(text="Change name", size_hint_y=None, size_hint_x=None, size=(.31*self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
-			name_inpt = TextInput(text=temp_set_cpy['setname'], multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
+			try:
+				name_inpt = TextInput(text=temp_set_cpy['setname'], multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
+			except:
+				name_inpt = TextInput(text="", multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
 			name_bttn.bind(on_release=partial(self.chng_setname, name_inpt))
 ###
 			smallbar3.add_widget(name_inpt)
@@ -870,22 +874,22 @@ class MainScreen(Screen):
 			temp_set_cpy['vibr'] = "False"
 			setting_things.put("vibr", vibr="False")
 			
-			
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
 		times_matched = 0
-		length = int(len(think_things_cpy)+1)
+		length = int(len(think_things_cpy))
 		
 		for h in range(1,length) :
 			keylist=list(think_things_cpy.keys())
 			#print sorted(keylist)
 			for key in sorted(keylist):
 				#print "\nh:%s\nkey: %s ; h: %s ; times_matched: %s"%("abc", key, h, times_matched)
-				if times_matched < h and int(key) > h:
+				if int(key) > h:
 					title_var = ""
 					state_var = ""
 					nomen_var = ""
 					for j in ["title","state","nomen"] :
+						print str(think_things_cpy[key][j])
 						if j == "title" :
 							title_var = str(think_things_cpy[key][j])
 						if j == "state" :
@@ -896,21 +900,9 @@ class MainScreen(Screen):
 					think_things_cpy.pop(key, None)
 					think_things.put("%s"%(h), title=title_var, state=state_var, nomen=nomen_var)
 					think_things_cpy["%s"%(h)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-					times_matched += 1
-					#print "REPAIR key: %s ; h: %s ; times_matched: %s"%(key, h, times_matched)
-				else:
-					times_matched += 1
-		maxed=length+1
+					break
+		maxed=length
 		
-		begin2var=""
-		end2var=""
-		mood2var=""
-		about2var=""
-		
-		if len(args)>2:
-			begin2var=str(args[0].text)
-			end2var=str(args[1].text)
-	
 		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
 		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
@@ -925,7 +917,7 @@ class MainScreen(Screen):
 		try:
 			self.main_x_box.clear_widgets()
 		except:
-			pass			
+			pass
 		try:
 			self.popup2.dismiss()
 		except:
@@ -1443,6 +1435,11 @@ class MainScreen(Screen):
 		self.state_claim=pop_item
 		self.planupdate()
 
+	def show_ojbs(self, pop_item, *args):
+		#self.state_claim=pop_item
+		#self.planupdate()
+		pass
+
 	main_funcs = {
 	'settings': [],
 	'start': [],
@@ -1453,7 +1450,8 @@ class MainScreen(Screen):
 
 	pop_funcs = {
 	'mindf' : start_timer,
-	'state' : show_claim
+	'state' : show_claim,
+	'stati' : show_ojbs
 	}
 
 class gnomieApp(App):
