@@ -190,7 +190,7 @@ Builder.load_string('''
     GridLayout:
     
         #row_default_height:root.height / 8
-        row_default_height:"48sp"
+        row_default_height:"32sp"
 		cols:1
         orientation: 'vertical'
         ActionBar:
@@ -1058,23 +1058,23 @@ class MainScreen(Screen):
 		       s.setter('text_size')(s, (.66*self.width, None)))
 		poplbl.bind(height=poplbl.setter('texture_size[1]'))
 		poplbl.bind(height=poplbl.setter('self.minimum_height'))
-		
-		
 							
 		#self.popbox.add_widget(poplbl)
 		self.poptop.add_widget(poplbl)
 		#self.popbox.height += poplbl.height
 		self.poptop.height += poplbl.height
 		
-		box1 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.ids.megabox.width, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		box2 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.ids.megabox.width, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		### size_hint_x=1 prevents boxes from squeezing together
+		box1 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.popbox.width, size_hint_x=1, size=(self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		box2 = BoxLayout(orientation='horizontal', size_hint_y=None, width=.8*self.popbox.width, size_hint_x=1, size=(self.popbox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 		new_box=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=1, size=(.31*self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=1, size=(.31*self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		new_box_title = TextInput(text=self.pop_title_name, multiline=False, size_hint_x=1, size=(.5*box1.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		new_box_unit = TextInput(text=self.pop_unit_name, multiline=False, size_hint_x=1, size=(.5*box1.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+		
 		if self.topic=="mindf":
 			new_box_unit.input_type='number'
-		box1.add_widget(Label(text = self.pop_title, size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
-		box1.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=None, size=(.31*self.popbox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
+		box1.add_widget(Label(text = self.pop_title, size_hint_y=None, size_hint_x=1, size=(.5*box1.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
+		box1.add_widget(Label(text = self.pop_unit, size_hint_y=None, size_hint_x=1, size=(.5*box1.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
 		
 		box1.add_widget(Label(text = "", size_hint_y=None, size_hint_x=None, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2)))
 		new_box_add=Button(text = self.pop_action, size_hint_y=None, size_hint_x=1, size=("%ssp"%str(10*self.txt_height), "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
