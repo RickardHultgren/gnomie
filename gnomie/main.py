@@ -565,7 +565,7 @@ class MainScreen(Screen):
 			temp_list = None
 			main_box.add_widget(rubric_box)
 
-			res_box=GridLayout(cols=2,size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(0.8*self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(Label(text="name"))
 			if self.state_topic=="obj" and self.state_sub_topic=="plan":
 				res_inpt = TextInput(text=("%s " % temp_set_cpy['setname']),multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -876,8 +876,7 @@ class MainScreen(Screen):
 			
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
-		times_matched = 0
-		length = int(len(think_things_cpy))
+		length = int(len(think_things_cpy))+1
 		
 		for h in range(1,length) :
 			keylist=list(think_things_cpy.keys())
