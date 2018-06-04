@@ -551,15 +551,17 @@ class MainScreen(Screen):
 			main_box.height += edit_box.height
 			
 			rubric_box=BoxLayout(orientation="horizontal", size_hint_y=None, size_hint_x=1, spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/3, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			obj_btn=Button(text="Objectives", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/4, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			obj_btn.bind(on_release=lambda obj_btn: self.chng_obj())
-			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/3, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			mis_btn=Button(text="Missions", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/4, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			mis_btn.bind(on_release=lambda mis_btn: self.chng_mis())
-			vis_btn=Button(text="Visions", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/3, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			vis_btn=Button(text="Visions", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/4, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
 			vis_btn.bind(on_release=lambda vis_btn: self.chng_vis())
+			val_btn=Button(text="Value", size_hint_y=None, size_hint_x=None, size=(self.ids.megabox.width/4, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2),background_color= (.25, .75, 1.0, 1.0))
+			val_btn.bind(on_release=lambda val_btn: self.chng_val())
 
 			eval("%s_btn"%self.state_topic).background_color= (.75, .25, 0, 1.0)
-			temp_list=["obj","vis","mis"]
+			temp_list=["obj","mis","vis","val"]
 			for temp_word in temp_list:
 				rubric_box.add_widget(eval("%s_btn"%temp_word))
 			temp_list = None
@@ -567,10 +569,11 @@ class MainScreen(Screen):
 
 			res_box=GridLayout(cols=1,size_hint_y=None, size_hint_x=1, size=(0.8*self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(Label(text="name"))
-			if self.state_topic=="obj" and self.state_sub_topic=="plan":
-				res_inpt = TextInput(text=("%s " % temp_set_cpy['setname']),multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-			else:
-				res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#if self.state_topic=="obj" and self.state_sub_topic=="plan":
+			#	res_inpt = TextInput(text=("%s " % temp_set_cpy['setname']),multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			#else:
+			#	res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+			res_inpt = TextInput(multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_box.add_widget(res_inpt)
 			bttn_box=BoxLayout(orientation="vertical",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(4*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 			res_bttn = Button(text="add", size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
@@ -582,7 +585,7 @@ class MainScreen(Screen):
 			main_box.add_widget(res_box)
 			main_box.add_widget(bttn_box)
 			
-			for preNomen in ["obj","mis","vis"]:
+			for preNomen in ["obj","mis","vis","val"]:
 				if preNomen == "obj":
 					obj_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 					main_box.add_widget(obj_lbl)
@@ -595,6 +598,10 @@ class MainScreen(Screen):
 					vis_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))					
 					main_box.add_widget(vis_lbl)
 					main_box.height += vis_lbl.height
+				if preNomen == "val":
+					val_lbl=Label(text="",size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(1*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))					
+					main_box.add_widget(val_lbl)
+					main_box.height += val_lbl.height					
 				for pop_item in self.pop_choices[self.topic][1]:
 					if self.pop_choices[self.topic][1][pop_item]["state"] == self.state_claim:
 						if self.pop_choices[self.topic][1][pop_item]["nomen"] == preNomen and self.state_topic==preNomen:
@@ -846,6 +853,11 @@ class MainScreen(Screen):
 	def chng_vis(self):
 
 		self.state_topic="vis"
+		self.planupdate()
+
+	def chng_val(self):
+
+		self.state_topic="val"
 		self.planupdate()
 		
 	def act_tts(self, checkbox, value):
@@ -1323,9 +1335,7 @@ class MainScreen(Screen):
 		self.pop_unit_name = ""
 		self.popping()
 
-	def add_claim(self,state_obj_inpt, state_mis_inpt, state_vis_inpt):
-		pass
-		
+
 	def add_new(self,mindf_title,mindf_time):
 		checking=1
 		for pop_item in self.pop_choices[self.topic][0]:
