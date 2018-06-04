@@ -912,7 +912,7 @@ class MainScreen(Screen):
 				think_things_cpy.pop("%s"%str(keylist[h][0]), None)
 				think_things.put("%s"%(str(h)), title=title_var, state=state_var, nomen=nomen_var)
 				think_things_cpy["%s"%(str(h))] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-		maxed=length+1
+		maxed=length+2
 		
 		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
 		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
