@@ -622,16 +622,16 @@ class MainScreen(Screen):
 							res_box.add_widget(res_del)
 							res_box.height += res_del.height
 							
-							if self.state_topic == "obj":
+							#if self.state_topic == "obj":
 #								res_rev=Button(text="review", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
 #								res_rev.bind(on_release = partial(self.review, pop_item))
 #								res_box.add_widget(res_rev)
 #								res_box.height += res_rev.height
 								
-								res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
-								res_edit.bind(on_release = partial(self.edit_post, pop_item))
-								res_box.add_widget(res_edit)
-								res_box.height += res_edit.height
+							#	res_edit=Button(text="edit", size_hint_y=None, size_hint_x=None, size=(0.25*self.ids.megabox.width, "%ssp"%str(2*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.2, self.txt_height * 0.2))
+							#	res_edit.bind(on_release = partial(self.edit_post, pop_item))
+							#	res_box.add_widget(res_edit)
+							#	res_box.height += res_edit.height
 								#res_del.bind(on_release = partial(self.del_nomen, pop_item))
 							main_box.add_widget(res_box)
 							main_box.height += res_box.height
@@ -918,7 +918,7 @@ class MainScreen(Screen):
 		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
 		index_nr = 0
-
+###
 	def del_func(self, pop_item, *args):
 		try:
 			self.popbox.clear_widgets()
@@ -977,7 +977,7 @@ class MainScreen(Screen):
 						nomen_var = str(think_things_cpy[key][j])
 				think_things.delete(key)
 				think_things_cpy.pop(key, None)
-				think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=new_res)
+				think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=nomen_var)
 				think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":new_res}
 				nowlen+=1
 
@@ -992,6 +992,34 @@ class MainScreen(Screen):
 		if self.topic=='state':
 			think_things.delete(str("%s"%pop_item))
 		self.pop_choices[self.topic][1].pop(pop_item, None)
+		
+		times_matched = 0
+		length = int(len(think_things_cpy)+1)
+		nowlen = 1
+		keylist=list(think_things_cpy.keys())
+
+
+		for key in sorted(keylist):
+
+				title_var = ""
+				state_var = ""
+				nomen_var = ""
+				for j in ["title","state","nomen"] :
+					if j == "title" :
+						title_var = str(think_things_cpy[key][j])
+					if j == "state" :
+						state_var = str(think_things_cpy[key][j])
+					if j == "nomen" :
+						nomen_var = str(think_things_cpy[key][j])
+				think_things.delete(key)
+				think_things_cpy.pop(key, None)
+				###
+				think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=nomen_var)
+				think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+				nowlen+=1
+		
+		
+		
 		self.planupdate()
 				
 	def prevb(self, *args):
