@@ -993,30 +993,30 @@ class MainScreen(Screen):
 			think_things.delete(str("%s"%pop_item))
 		self.pop_choices[self.topic][1].pop(pop_item, None)
 		
-		times_matched = 0
-		length = int(len(think_things_cpy)+1)
-		nowlen = 1
-		keylist=list(think_things_cpy.keys())
+#		times_matched = 0
+#		length = int(len(think_things_cpy)+1)
+#		nowlen = 1
+#		keylist=list(think_things_cpy.keys())
 
 
-		for key in sorted(keylist):
+#		for key in sorted(keylist):
 
-				title_var = ""
-				state_var = ""
-				nomen_var = ""
-				for j in ["title","state","nomen"] :
-					if j == "title" :
-						title_var = str(think_things_cpy[key][j])
-					if j == "state" :
-						state_var = str(think_things_cpy[key][j])
-					if j == "nomen" :
-						nomen_var = str(think_things_cpy[key][j])
-				think_things.delete(key)
-				think_things_cpy.pop(key, None)
-				###
-				think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=nomen_var)
-				think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-				nowlen+=1
+#				title_var = ""
+#				state_var = ""
+#				nomen_var = ""
+#				for j in ["title","state","nomen"] :
+#					if j == "title" :
+#						title_var = str(think_things_cpy[key][j])
+#					if j == "state" :
+#						state_var = str(think_things_cpy[key][j])
+#					if j == "nomen" :
+#						nomen_var = str(think_things_cpy[key][j])
+#				think_things.delete(key)
+#				think_things_cpy.pop(key, None)
+#				###
+#				think_things.put("%s"%(nowlen), title=title_var, state=state_var, nomen=nomen_var)
+#				think_things_cpy["%s"%(nowlen)] = {"title":title_var, "state":state_var, "nomen":nomen_var}
+#				nowlen+=1
 		
 		
 		
