@@ -891,29 +891,29 @@ class MainScreen(Screen):
 	def add_nomen(self, preNomen, res, *args):
 		res = res.text
 		length = int(len(think_things_cpy))
-		print length
 		
+		keylist = []
+		for key in think_things_cpy.keys():
+			keylist.append(int(key))
+		print keylist
+		keylist =  sorted(keylist)		
 		for h in range(0,length) :
-			keylist=list((think_things_cpy.keys()))
-			keylist = [map(int, x) for x in keylist]
-			keylist =  sorted(keylist)
-			if keylist[h][0] > h:
+			if keylist[h] > h:
 				title_var = ""
 				state_var = ""
 				nomen_var = ""
 				for j in ["title","state","nomen"] :
 					if j == "title" :
-						title_var = str(think_things_cpy["%s"%(keylist[h][0])][j])
+						title_var = str(think_things_cpy["%s"%(keylist[h])][j])
 					if j == "state" :
-						state_var = str(think_things_cpy["%s"%(keylist[h][0])][j])
+						state_var = str(think_things_cpy["%s"%(keylist[h])][j])
 					if j == "nomen" :
-						nomen_var = str(think_things_cpy["%s"%(keylist[h][0])][j])
-				think_things.delete("%s"%str(keylist[h][0]))
-				think_things_cpy.pop("%s"%str(keylist[h][0]), None)
+						nomen_var = str(think_things_cpy["%s"%(keylist[h])][j])
+				think_things.delete("%s"%str(keylist[h]))
+				think_things_cpy.pop("%s"%str(keylist[h]), None)
 				think_things.put("%s"%(str(h)), title=title_var, state=state_var, nomen=nomen_var)
 				think_things_cpy["%s"%(str(h))] = {"title":title_var, "state":state_var, "nomen":nomen_var}
-		maxed=length+2
-		
+		maxed=length
 		think_things.put("%s"%maxed, title=res, state=self.state_claim, nomen=preNomen)
 		think_things_cpy["%s"%maxed]={"title":res, "state":self.state_claim, "nomen":preNomen}
 		self.planupdate()
