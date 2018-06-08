@@ -489,7 +489,7 @@ class MainScreen(Screen):
 			smallbar3=BoxLayout(size_hint_y=None, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
 			name_bttn=Button(text="Change name", size_hint_y=None, size_hint_x=None, size=(.31*self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
 			try:
-				name_inpt = TextInput(text=temp_set_cpy['setname'], multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
+				name_inpt = TextInput(text=("%s senses  when %s "%(temp_set_cpy['setname'],temp_set_cpy['setname'])), multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
 			except:
 				name_inpt = TextInput(text="", multiline=False, size_hint_x=1, size=(self.ids.megabox.width, "%ssp"%str(3*self.txt_height)),font_name="DejaVuSerif",spacing=(self.txt_height * 0.3, self.txt_height * 0.3))
 			name_bttn.bind(on_release=partial(self.chng_setname, name_inpt))
