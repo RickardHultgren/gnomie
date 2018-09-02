@@ -284,7 +284,7 @@ class MainScreen(Screen):
 	'settings' : [],
 	#'start' : ["mindfulness", "statements", "statistics"],
 	'start' : [],
-	'mindf' : ["<<",">>","||"],
+	'mindf' : ["<<",">>","||","cycle ON"],
 	'state' : [],
 	'stati' : '\n\n'}
 	topic='start'
@@ -297,6 +297,7 @@ class MainScreen(Screen):
 	mindf_limit=0
 	mindf_speed=0
 	state_claim=""
+	cycle = True
 
 	box = BoxLayout(orientation='vertical')
 	popscroll=ScrollView(size= box.size, bar_pos_x="top")
@@ -369,7 +370,13 @@ class MainScreen(Screen):
 		else:
 			self.paused = False
 			Clock.schedule_interval(self.planupdate, 0.2)
-			
+
+	def cycling(self, *args):
+		if self.cycle == False:
+			self.cycle = True
+		else:
+			self.cycle = False
+				
 	def exitb(self, *args):
 		self.mindf_part = 0
 		self.mindf_time = 0
@@ -588,17 +595,15 @@ class MainScreen(Screen):
 			main_box.add_widget(mindf_bar)
 			main_box.height += mindf_bar.height
 			if self.mindf_time >= self.mindf_limit and self.mindf_part <= len(self.parts)-1:
-				if self.mindf_part == len(self.parts)-1:
-					self.mindf_time = 0
-				else:
-					self.mindf_part+=1
-					self.mindf_time = 0
-					self.going=True
+				self.mindf_part+=1
+				self.mindf_time = 0
+				self.going=True
 			elif self.mindf_part != len(self.parts)-1:		
 				self.mindf_time += self.mindf_speed
 				if not (self.mindf_time/self.mindf_speed)%60 :
 					self.going=True
-
+			elif self.cycle==True and self.mindf_part == len(self.parts)-1:
+					self.mindf_part = 0
 			
 		if self.topic == "state":
 
@@ -737,6 +742,9 @@ class MainScreen(Screen):
 					if self.mindf_part == len(self.parts)-1:
 						#bttn.text = "again?"
 						bttn.color=(1,1,1,.5)
+				if b_nr==3 and self.cycle==False:
+					bttn.text = "cycle OFF"
+					#bttn.color=(1,1,1,.5)
 
 			main_box.add_widget(bttn)
 			main_box.height += bttn.height
@@ -1066,7 +1074,7 @@ class MainScreen(Screen):
 	'settings': [],
 	'start': [],
 	#'start': [mindf, state, stati],
-	'mindf': [prevb, nxtb, pausing],
+	'mindf': [prevb, nxtb, pausing, cycling],
 	#'state': [],
 	#'stati': '\n\n'
 	}		
